@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mrkb.dao.dao.UserSaleMapper">
+   <insert id="addUserSale" parameterType="com.mrkb.dao.modle.sale.UserSale"
+		useGeneratedKeys="true" keyProperty="user_sale_id">
+		insert into ${table_name}
+		(user_basics_id,sale_date,sale_volume0,sale_volume1,sale_volume2,sale_volume3,sale_money)
+		value (#{user_basics_id,jdbcType=INTEGER}
+		,#{sale_date,jdbcType=INTEGER}
+		,#{sale_volume0,jdbcType=DOUBLE}
+		,#{sale_volume1,jdbcType=DOUBLE}
+		,#{sale_volume2,jdbcType=DOUBLE}
+		,#{sale_volume3,jdbcType=DOUBLE}
+		,#{sale_money,jdbcType=DOUBLE}
+		);
+	</insert>
+<update id="updateUserSale" parameterType="com.mrkb.dao.modle.sale.UserSale">
+         update ${table_name}  
+         set user_basics_id=#{user_basics_id,jdbcType=INTEGER} 
+         <if test="sale_volume0!=null and sale_volume0!=0.00">
+         ,sale_volume0=sale_volume0+#{sale_volume0,jdbcType=DOUBLE} 
+         </if>
+        <if test="sale_volume1!=null and sale_volume1!=0.00">
+         ,sale_volume1=sale_volume1+#{sale_volume1,jdbcType=DOUBLE} 
+         </if>
+         <if test="sale_volume2!=null and sale_volume2!=0.00">
+         ,sale_volume2=sale_volume2+#{sale_volume2,jdbcType=DOUBLE} 
+         </if>
+         <if test="sale_volume3!=null and sale_volume3!=0.00">
+         ,sale_volume3=sale_volume3+#{sale_volume3,jdbcType=DOUBLE} 
+         </if>
+         <if test="sale_money!=null and sale_money!=0.00">
+         ,sale_money=sale_money+#{sale_money,jdbcType=DOUBLE} 
+         </if>
+         where 1=1 
+         and user_basics_id=#{user_basics_id,jdbcType=INTEGER} 
+         and sale_date=#{sale_date,jdbcType=VARCHAR};
+ </update>
+ <select id="findSaleDay" resultType="com.mrkb.dao.modle.sale.UserSale">
+      SELECT * From ${table_name}  
+      where 1=1 
+      <if test="user_basics_id!=null">
+      and user_basics_id=#{user_basics_id,jdbcType=INTEGER} 
+      </if>
+      <if test="sale_date!=null">
+      and sale_date=#{sale_date,jdbcType=INTEGER} 
+      </if>
+    </select>
+    
+    
+    <!-- 根据月份查询个人销售信息 -->
+    <select id="findAllUserSalsesByMonth" resultType="com.mrkb.dao.modle.sale.UserSale" parameterType="com.mrkb.dao.modle.sale.UserSale">
+      select a.*,b.information_compellation,c.weixin_nickname from ${table_name} a,user_information b,user_weixin c where a.user_basics_id=b.user_basics_id and a.user_basics_id=c.user_basics_id
+      <if test="user_basics_id!=null">
+      and user_basics_id=#{user_basics_id,jdbcType=INTEGER} 
+      </if>
+      <if test="begain_date!=null">
+      and sale_date>=#{begain_date,jdbcType=INTEGER} 
+      </if>
+      <if test="end_date!=null">
+      and sale_date=#{end_date,jdbcType=INTEGER} 
+      </if>
+    </select>
+</mapper>

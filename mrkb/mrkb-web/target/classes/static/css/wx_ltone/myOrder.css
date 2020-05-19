@@ -1,0 +1,101 @@
+body {
+    background-color: #f0f0f0;
+}
+
+.mui-content {
+    background-color: #f0f0f0;
+    -webkit-overflow-scrolling: touch;
+}
+
+img{
+	width: 100%;
+    vertical-align: middle;
+}
+
+.menu-order {
+	position: relative;
+	overflow: hidden;
+	background-color: white;
+	text-align: center;
+	line-height: 40px;
+}
+
+.menu-order-single {
+	width: 25%;
+	float: left;
+}
+
+.menu-order-active {
+	color: #be86fc;
+}
+
+.order-list {
+	position: relative;
+    overflow: hidden;
+    clear: both;
+    padding: 10px;
+}
+
+.order-single {
+	/* width: 100%; */
+	margin-bottom: 15px;
+	border-radius: 5px;
+	background-color: #fff;
+	padding: 0 5px;
+}
+
+.order-detail {
+	display: block;
+	border-bottom: 1px solid #f0f0f0;
+	padding: 5px;
+	position: relative;
+	clear: both;
+	overflow: hidden;
+}
+
+.order-img {
+	position: absolute;
+    top: 0;
+    left: -10px;
+    padding: 5px;
+    width: 100px;
+    height: auto;
+}
+
+.order-info {
+	position: relative;
+    clear: both;
+    overflow: hidden;
+    line-height: 1.8;
+    padding: 5px 5px 5px 100px;
+}
+
+.order-info .store-title {
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+	font-size: 16px;
+	font-weight: 600;
+}
+
+.order-btn-list {
+	position: relative;
+	clear: botn;
+	overflow: hidden;
+	padding: 5px 0;
+	line-height: 40px;
+	text-align: right;
+}
+
+.order-btn-list span {
+	padding: 5px 10px;
+	color: #be86fc;	
+	font-size:15px;	
+}
+
+.order-btn {
+	border: 1px solid #be86fc;
+	border-radius: 5px;
+	margin-right: 10px;
+	padding: 1px 5px;
+}

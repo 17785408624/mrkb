@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mrkb.shiro.mapper.ShiroUserRoleMapper">
+
+<resultMap type="com.mrkb.shiro.model.Role" id="role">
+   <id column="id" property="id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+   <id column="name" property="name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+   <id column="code" property="code" javaType="java.lang.String" jdbcType="VARCHAR"/>
+</resultMap>
+
+<sql id="Base_Column_List">
+	id,code, name,create_time
+</sql>
+<!-- 查询用户拥有的角色 -->
+<select id="findByUserName" resultMap="role">
+	select r.id,r.name,r.code from sys_role r
+	left join sys_user_role ur on(r.id = ur.role_id) 
+	left join user_basics u on(u.user_basics_id = ur.user_id)
+	where u.user_account_num = #{userName}
+</select>
+
+<!-- 新增角色 -->
+<insert id="insert" parameterType="com.mrkb.shiro.model.Role">
+	insert into sys_role(
+		code,name,create_time
+	)values(
+		#{code,jdbcType=VARCHAR},
+		#{name,jdbcType=VARCHAR},
+		#{create_time,jdbcType=DATE}
+	)
+</insert>
+
+<!-- 删除角色 -->
+<delete id="delete" parameterType="java.lang.Integer">
+	delete from sys_role where id=#{id}
+</delete>
+
+
+<!-- 修改角色 -->
+<update id="update" parameterType="com.mrkb.shiro.model.Role">
+	update sys_role
+	<set>
+		<if test="code != null">`code` = #{code},</if>
+		<if test="name != null">`name` = #{name}</if>
+	</set>
+	where id=#{id}
+</update>
+
+
+<!-- 分页查询 -->
+<select id="pageList" parameterType="com.mrkb.shiro.model.Role" resultType="com.mrkb.shiro.model.Role">
+	select 
+	<include refid="Base_Column_List"/>
+	from sys_role
+	<where>
+         <if test="name != null and name != ''">
+             and `name` like concat('%',#{name},'%')
+         </if>
+    </where>
+</select>
+
+
+<!-- 根据ID查询 -->
+<select id="get" parameterType="java.lang.Integer" resultType="com.mrkb.shiro.model.Role">
+	SELECT 
+	<include refid="Base_Column_List"/>
+	from sys_role where id=#{id}
+</select>
+
+
+<!-- 新增用户绑定角色 -->
+<insert id="insertSelective" parameterType="java.util.HashMap">
+	insert into sys_user_role(
+		user_id,role_id,create_time
+	)values(
+		#{user_id,jdbcType=INTEGER},
+		#{role_id,jdbcType=INTEGER},
+		#{create_time,jdbcType=DATE}
+	)
+</insert>
+
+
+<!-- 根据用户ID查询用户角色 -->
+<select id="getRoleByUserId" parameterType="java.lang.Integer" resultType="java.util.HashMap">
+	select * from sys_user_role where user_id=#{user_id}
+</select>
+
+
+<!-- 根据用户ID修改用户角色 -->
+<update id="updateUserRoleByUserId" parameterType="java.util.HashMap">
+	update sys_user_role set role_id=#{role_id} where user_id=#{user_id}
+</update>
+
+
+<!-- 根据用户Id删除用户角色 -->
+<delete id="delByUserId" parameterType="java.lang.Integer">
+	delete from sys_user_role where user_id=#{user_id}
+</delete>
+</mapper>

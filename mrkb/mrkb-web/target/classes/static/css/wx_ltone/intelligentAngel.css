@@ -1,0 +1,85 @@
+.intelligent_angel_div{
+	height: 65px;
+	margin-top:44px;
+}
+.mui-title{
+	color:#fff;	
+}
+.mui-table-view{
+    display: flex; 
+	justify-content: center;
+	align-items:center;
+}
+.mui-media-body{
+	font-size: 14px;
+	color:#333;
+	margin-top: 4px;
+}
+.mui-ellipsis{
+	font-size: 12px;
+	color: #808080;
+}
+.mui-ellipsis label{
+	font-size: 18px;
+	color: #000;
+}
+.mui-pull-left{
+	width:50px;
+	height: 50px;
+	border-radius:100%;
+	float: left;
+	margin-right: 10px;
+}
+ul{
+	list-style: none;
+}
+
+.myintel_nr_jf{
+	text-align: right;
+	margin-right: 15px;
+}
+.myintel_nr_jf span{
+	font-size: 19px;
+	color: #fe4545;
+}
+.mui-table-view::before{
+	height: 0
+}
+.mui-table-view-cell::after{
+	height: 0
+}
+.mui-table-view::after{
+	height: 0
+}
+.mui-table-view{
+	border-bottom:1px solid #c8c7cc;
+}
+.mui-table-view-cell{
+	padding: 8px 15px;
+}
+.nickname{
+	font-size: 14px;
+	color: #1B1B1B;
+}
+.mui-ellipsis-time{
+	font-size: 10px;
+	color: #434343;
+}
+.mui-ellipsis-img{
+	width: 36px;
+	height: 36px;
+	float: right;
+}
+.mui-ellipsis-erweima{
+	width:50px;
+	font-size: 10px;
+	color: #1B1B1B;
+	float: left;
+}
+
+
+
+
+
+
+

@@ -1,0 +1,115 @@
+/*自定义TableView*/
+.mui-table-view {
+	background-color: #fff !important;
+	border: none;
+	padding: 0 5px;
+	margin-bottom: 10px;
+}
+
+/*自定义tableview样式*/
+.mui-content>.mui-table-view:first-child {
+	margin-top: 0px !important;
+}
+
+/*自定义cell样式*/
+.custom-table-view-cell {
+	border-bottom: 1px solid #f0f0f0;
+	position: relative;
+	color: #46385A;
+}
+.custom-table-view-cell>a:not(.mui-btn) {
+	position: relative;
+	display: block;
+	overflow: hidden;
+	margin: -11px -15px;
+	padding: inherit;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	color: #46385A;
+}
+
+/*修改tableview背景色*/
+.mui-table-view::before {
+	background-color: #f0f0f0 !important;
+}
+
+.mui-table-view::after {
+	background-color: #f0f0f0 !important;
+}
+
+.iden-box{
+	float: right;
+	margin-bottom: 0;
+	padding-left: 0;
+	border: 0;
+	padding: 11px 15px;
+}
+
+.iden{
+	clear: both;
+	/* width: 100% !important;
+	min-height: 100px; */
+	border: 1px dashed #333;
+	border-radius: 10px;
+	text-align: center;
+	line-height: 1.1;
+    float: left;
+    padding: 5px 15px;
+}
+
+.iden input[type=file] {
+	position: relative;
+	right: 0;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	opacity: 0;
+}
+
+.mui-input-row label,
+.mui-input-row input[type=text],
+.mui-input-row section[name=sex],
+.mui-input-row input[type=number] {
+	font-size: 15px;
+	color: #333;
+	height: 35px;
+	border: none;
+	outline: 0;
+}
+
+.mui-input-row label span {
+	color: red;
+	padding-right: 5px;
+}
+
+.mui-input-row select {
+	font-size: 15px;
+	height: 35px;
+	padding: 0;
+	color: #666;
+	border: none;
+	padding-right: 12px;
+	appearance:none;
+	-moz-appearance:none;
+	-webkit-appearance:none;
+	outline: 0;
+	background: #fff;
+}
+
+/*身份证信息提交按钮*/
+.submit-idcard-box {
+	position: relative;
+	clear: both;
+	overflow: hidden;
+	text-align: center;
+	line-height: 1.8;
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+
+.submit-idcard-box input[type=button] {
+	background-color: #5db8e1;
+	color: white;
+	border: none;
+	border-radius: 5px;
+}

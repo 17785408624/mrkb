@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<title>产品详情</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link href="../../css/wx_ltone/weui.min.css" th:href="@{/css/wx_ltone/weui.min.css}" media="all" rel="stylesheet"/>
+		<link href="../../css/wx_ltone/jquery-weui.css" th:href="@{/css/wx_ltone/jquery-weui.css}" media="all" rel="stylesheet"/>
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/swiper.min.css" th:href="@{/css/wx_ltone/swiper.min.css}" />
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/mainstyle.css" th:href="@{/css/wx_ltone/mainstyle.css}" />
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/public.css" th:href="@{/css/wx_ltone/public.css}" />
+		<link href="../../css/wx_ltone/reset.css" th:href="@{/css/wx_ltone/reset.css}" media="all" rel="stylesheet"/>
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/productDetails.css" th:href="@{/css/wx_ltone/productDetails.css}"/>
+		
+	</head>
+
+	<body>
+		<div class="search border-blue">
+			<div class="search-left mui-action-back">
+				<a href="javascript:history.go(-1);">
+					<img th:src="@{/img/wx_ltone/icon/mine/fanhui.png}">
+				</a>
+			</div>
+		</div>
+		<div class="mdfd-content">
+			<div class="position-relative">
+				
+				<!-- 商品轮播图 -->
+				<div id="swiper"></div>
+				
+				<!--商品信息-->
+				<div class="position-relative" id="gooddetai">
+					<div class="detail-info-box">
+						<h4 class="default-text-color" id="title"></h4>
+						<p class="default-text-color price"> 
+							<span id="price"></span><label onclick="goProductPay()">立即购买</label>
+						</p>
+					</div>
+				</div>
+
+				<!--评价-->
+				<div class="evaluation">
+					<h4>评价</h4>
+					<div class="evaluation-single-box">
+						<div id="storeEvaltionList" class="evaluation-single"></div>
+					</div>
+					<a onclick="goEvaluation()" class="allevaluation-btn">全部评价&gt;</a>
+				</div>
+
+				<!--产品详情-->
+				<div class="detail-detail">
+					<p class="detail-tip">--详情--</p>
+					<div class="position-relative" id="store_pictures"></div>
+				</div>
+			</div>
+		</div>
+		<script src="../../static/js/wx_ltone/jquery-2.1.4.js" th:src="@{/js/wx_ltone/jquery-2.1.4.js}" ></script>
+		<script src="../../static/js/wx_ltone/fastclick.js" th:src="@{/js/wx_ltone/fastclick.js}" ></script>
+		<script src="../../static/js/wx_ltone/jquery-weui.js" th:src="@{/js/wx_ltone/jquery-weui.js}" ></script>
+		<script src="../../static/js/wx_ltone/swiper.js" th:src="@{/js/wx_ltone/swiper.js}" ></script>
+		<script src="../../static/js/wx_ltone/common.js" th:src="@{/js/wx_ltone/common.js}" ></script>
+		<script src="../../static/js/wx_ltone/banner.js" th:src="@{/js/wx_ltone/banner.js}" ></script>
+		<script src="../../static/js/basePathConfig.js" th:src="@{/js/basePathConfig.js}" ></script>
+		
+		<script>
+			// 获取地址栏参数
+			var store_id = getUrlParam('store_id');
+			
+			$(function() {
+				FastClick.attach(document.body);
+				
+			 	// 获取单个商品数据
+			  	$.ajax({ 
+			     	type : "GET", //提交方式 
+			     	url : basePath + '/wenxin_store/findStore',//路径 
+			     	data : { 
+			      		store_id: store_id
+			     	},//数据，这里使用的是Json格式进行传输 
+			     	success : function(result) {
+			     		//返回数据根据结果进行相应的处理 
+			     		// 保留轮播图数组
+			     		// alert(JSON.stringify(result.data))
+			      		var storePictureArr = result.data.store_picture.split(';');
+			      		// 轮播图的路径
+			      		var productPictureArr = storePictureArr.splice(result.data.tutor_num, (storePictureArr.length - 1));
+			      		//删除数组最后一个空值
+			      		productPictureArr.splice(productPictureArr.length-1,1);
+			      		
+			      		bannerNoClick(document.getElementById('swiper'),productPictureArr);
+			      		$('#title').html(result.data.store_name);
+			      		$('#price').html('￥' + result.data.store_price.toFixed(2));
+			      		$('#store_pictures').html(result.data.store_intro);
+			     	} 
+			    });
+			    
+			    // 增改身份证信息
+				$.ajax({ 
+			    	type : "GET", //提交方式 
+			     	url : basePath + '/wenxin_store/findEvaluationNew',
+			     	data : {
+			     		store_id: store_id
+			     	} ,//数据，这里使用的是Json格式进行传输 
+			     	success : function(result) {
+		      			findEvaluationNew(result.data);
+			     	},
+			     	error: function (err){
+			     		$.toast('网络错误，请稍后重试...');
+			     		return;
+			     	}
+			    });
+			    
+			});
+			
+			//查询最新商品评论
+			function findEvaluationNew(data) {
+				if(data != null) {
+					var htmlStr = '<div class="position-relative">' +
+								  '		<div class="evaluation-touxiang">' +
+								  '			<img src="'+ data.weixin_portrait +'"/>' +
+								  '		</div>' +
+								  '		<h4 class="evaluation-nickname">' + data.weixin_nickname + '</h4>' +
+								  '</div>' +
+								  '<p class="default-text-color">' + data.evaluation_value + '</p>' +
+								  '<p><span>' + formatDateTimeStr(data.evaluation_date,0) + '</span>&nbsp;&nbsp;&nbsp;&nbsp;<span>' + data.store_name + '</span></p>';
+							$("#storeEvaltionList").append(htmlStr);
+				  
+				} else {
+					var htmlStr = '<div class="position-relative">' +
+								  '		<div class="evaluation-touxiang"></div>' +
+								  '</div>' +
+								  '<p class="default-text-color" style="margin-top: 10px;">暂无评价</p>';
+				  	$("#storeEvaltionList").append(htmlStr);
+				}
+			}
+			
+			function goProductPay(){
+				window.location.href = basePath + '/HomeController/productPay?store_id='+store_id;
+			}
+			
+			function goEvaluation(){
+				window.location.href = basePath + '/HomeController/evaluationList?store_id='+store_id;
+			}
+			
+		</script>
+	</body>
+</html>

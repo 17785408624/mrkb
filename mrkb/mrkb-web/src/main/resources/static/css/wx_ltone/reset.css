@@ -1,0 +1,62 @@
+*{
+	touch-action: pan-y;
+}
+/* 重置WEUI的部分样式 */
+.weui-tabbar{
+	background-color: #fff;
+	position: fixed;
+	bottom: 0;
+	left: 0;
+}
+
+.weui-tabbar:before {
+    content: " ";
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    height: 1px;
+    color: #c0bfc4;
+    -webkit-transform-origin: 0 0;
+    transform-origin: 0 0;
+    -webkit-transform: scaleY(.5);
+    transform: scaleY(.5);
+}
+
+.weui-tabbar__item.weui-bar__item--on .weui-tabbar__label {
+    color: rgba(164,108,226,1);
+}
+.weui_content{
+	padding-bottom: 51px;
+	background: #fff;
+}
+.search-left img{
+	width: 13px;height: 20px;margin-top: 12px;
+}
+.submit-add-idinfo-box .btn{
+	width:40%;
+	height: 1.875rem;
+	line-height: 1.875rem;
+	background-color: #5db8e1;
+	margin-top: 1.875rem;
+	color: #fff;
+    background: -webkit-linear-gradient(bottom,#ea87f6,#d487f9,#be86fc);
+}
+.swiper-container-horizontal{
+	height: 200px;
+}
+.weui-cells{
+	margin: 0;
+}
+.weui-agree__checkbox:checked:before{
+	color: #ea87f6 !important;
+}
+.icon-yueduliang{
+	width: 13px !important;
+}
+.icon-zan{
+	width: 13px!important;
+}
+.swiper-pagination-bullet-active {
+   background: -webkit-linear-gradient(bottom,#ea87f6,#d487f9,#be86fc) !important;
+}

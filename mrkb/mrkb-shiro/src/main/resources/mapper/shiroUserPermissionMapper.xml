@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mrkb.shiro.mapper.ShiroUserPermissionMapper">
+
+<resultMap type="com.mrkb.shiro.model.Permission" id="permission">
+   <id column="id" property="id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+   <id column="url" property="url" javaType="java.lang.String" jdbcType="VARCHAR"/>
+   <id column="name" property="name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+   <id column="code" property="code" javaType="java.lang.String" jdbcType="VARCHAR"/>
+   <id column="menu_id" property="menu_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+   <id column="create_time" property="create_time" javaType="java.util.Date" jdbcType="DATE"/>
+   <id column="menu_name" property="menu_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+</resultMap>
+
+<sql id="Base_Column_List">
+	id, url, name,code,menu_id,create_time
+</sql>
+
+<!-- 查询用户角色权限 -->
+<select id="findByUserName" resultMap="permission">
+	select p.id,p.url,p.name,p.code from sys_role r
+	left join sys_user_role ur on(r.id = ur.role_id)
+	left join user_basics u on(u.user_basics_id = ur.user_id)
+	left join sys_role_permission rp on(rp.role_id = r.id) 
+	left join sys_permission p on(p.id = rp.permission_id )
+	where u.user_account_num = #{userName}
+</select>
+
+
+<!-- 删除角色权限 -->
+<delete id="removeUserPermisson" parameterType="java.lang.Integer">
+	delete from sys_role_permission where role_id=#{role_id}
+</delete>
+
+
+<!-- 分页查询 -->
+<select id="pageList" parameterType="com.mrkb.shiro.model.Permission" resultMap="permission">
+	SELECT a.id,a.code,a.name,b.name menu_name,a.create_time from sys_permission a,sys_menu b where a.menu_id=b.id
+	<if test="name != null and name != ''">
+        and a.name like concat('%',#{name},'%')
+    </if>
+</select>
+
+
+<!-- 根据菜单ID查询菜单权限 -->
+<select id="get" parameterType="java.lang.Integer" resultMap="permission">
+	select 
+	<include refid="Base_Column_List"/>
+	from sys_permission
+	where menu_id=#{menu_id}
+</select>
+
+
+<!-- 新增菜单权限 -->
+<insert id="insert" parameterType="com.mrkb.shiro.model.Permission" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+	insert into sys_permission(
+		code,url,name,create_time,menu_id
+	)values(
+		#{code,jdbcType=VARCHAR},
+		#{url,jdbcType=VARCHAR},
+		#{name,jdbcType=VARCHAR},
+		#{create_time,jdbcType=DATE},
+		#{menu_id,jdbcType=INTEGER}
+	)
+</insert>
+
+
+<!-- 修改菜单权限 -->
+<update id="update" parameterType="com.mrkb.shiro.model.Permission">
+	update sys_permission 
+	<set>
+		<if test="code != null">`code` = #{code},</if>
+		<if test="url != null">`url` = #{url},</if>
+		<if test="name != null">`name` = #{name},</if>
+		<if test="menu_id != null">`menu_id` = #{menu_id}</if>
+	</set>
+	where id=#{id}
+</update>
+
+
+
+<!-- 删除权限 -->
+<delete id="delete" parameterType="java.lang.Integer">
+	delete from sys_permission where id=#{id}
+</delete>
+
+
+<!-- 角色菜单权限 -->
+<insert id="insertRolePermission" parameterType="java.util.HashMap" useGeneratedKeys="true" keyProperty="id">
+	insert into sys_role_permission(
+		role_id,permission_id,create_time
+	)values(
+		#{role_id,jdbcType=INTEGER},
+		#{permission_id,jdbcType=INTEGER},
+		#{create_time,jdbcType=DATE}
+	)
+</insert>
+
+
+<!-- 根据菜单ID查询角色菜单权限 -->
+<select id="findRolePermissionByMenuid" parameterType="java.lang.Integer" resultType="java.util.HashMap">
+	select a.id,a.menu_id,b.id role_permission_id  from sys_permission a,sys_role_permission b where a.id=b.permission_id 
+	and a.menu_id=#{menu_id}
+</select>
+
+
+<!-- 删除角色菜单权限 -->
+<delete id="removePermission">
+	delete from sys_role_permission where id=#{role_permission_id}
+</delete>
+
+<!-- 检查菜单是否在权限表 -->
+<select id="checkIsPermission" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+	select id permission_id from sys_permission where menu_id=#{menu_id}
+</select>
+
+
+<!-- 检查是否存在角色权限表 -->
+<select id="checkIsRolePermmission" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+	select id role_permission_id from sys_role_permission where role_id=#{role_id} and permission_id=#{permission_id}
+</select>
+</mapper>

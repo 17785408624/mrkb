@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<title>紫罗兰分院</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/weui.min.css" th:href="@{/css/wx_ltone/weui.min.css}"/>
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/jquery-weui.css" th:href="@{/css/wx_ltone/jquery-weui.css}"/>
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/reset.css" th:href="@{/css/wx_ltone/reset.css}"/>
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/mainstyle.css" th:href="@{/css/wx_ltone/mainstyle.css}" />
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/public.css" th:href="@{/css/wx_ltone/public.css}" />
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/brandAmbassador.css" th:href="@{/css/wx_ltone/brandAmbassador.css}"/>
+	
+	</head>
+	<body>
+		<div class="search">
+			<div class="search-left">
+				<a href="javascript:history.go(-1);">
+					<img th:src="@{/img/wx_ltone/icon/mine/fanhui.png}">
+				</a>
+			</div>
+		</div>
+		<div class="mdfd-content">
+			<div class="jjc_time">
+				<span id="getNowDate"></span>
+				<input class="weui-input" id="demo" type="text" readonly="" placeholder="请选择日期">
+			</div>
+			<div class="bonus-show default-text-color">
+				<div  class="bonus-show-lab">
+					<label>累计总收益：</label>
+					<span>￥<label id="co_total">0</label></span>
+				</div>
+				<div class="bonus-show-lab1">本月管理奖总收益：</div>
+				<div class="bonus-show-span1">￥<label id="management_award">0</label></div>
+			</div>
+			<div class="jjc_div">
+				<div class="jjc_div_tuandui">
+					<img style="width: 13%;height: 1px;" th:src="@{/img/wx_ltone/icon/mine/xian.png}">
+					<label>【我的直属团队】</label>
+					<img style="width: 13%;height: 1px;" th:src="@{/img/wx_ltone/icon/mine/xian.png}">
+				</div>
+				<ul class="ppds_li_ul">
+					<li class="ppds_li" style="border-right: 1px solid #bfbfbf;">
+						<span>本月业绩</span>
+					</li>
+					<li class="ppds_li">
+						<span>本月管理奖</span>
+						
+					</li>
+					<li class="ppds_li_num" style="border-right: 1px solid #bfbfbf;">
+						<span id="total_sale0">47</span>
+					</li>
+					<li class="ppds_li_num">
+						<span id="management_award0">88</span>
+					</li>
+				</ul>
+				<div style="clear: both;"></div>
+				<div  class="jjc_div_tuandui">
+					<img style="width: 13%;height: 1px;" th:src="@{/img/wx_ltone/icon/mine/xian.png}">
+					<label>【我的直属团队】</label>
+					<img style="width: 13%;height: 1px;" th:src="@{/img/wx_ltone/icon/mine/xian.png}">
+				</div>
+				<div style="height: 5px;background: #fff;"></div>
+				<ul class="mdfd-content_huiyuan">
+					<li class="huiyuan_li" style="color: #be86fc;" onclick="clickShowDiv(this,'yghy_div');">
+						<span>第一代紫罗兰分院</span>
+					</li>
+					<li class="huiyuan_li" style="background: #efefef" onclick="clickShowDiv(this,'wghy_div');">
+						<span>第二代紫罗兰分院</span>
+					</li>
+				</ul>
+				<div class="mdfd-content_huiyuans" id="yghy_div">
+					<div style="padding-top:10px;">
+						<div class="mdfd-content_huiyuans_li" style="padding-left:18%;">	
+							<img src="" onerror="javascript:this.src='http://via.placeholder.com/60x60'">
+							<div>浮世绘里的彩色</div>
+						</div>
+						<div style="clear: both;"></div>
+						<ul class="ppds_li_ul">
+							<li class="ppds_li" style="border-right: 1px solid #bfbfbf;">
+								<span>本月业绩</span>
+							</li>
+							<li class="ppds_li">
+								<span>本月管理奖</span>
+							</li>
+							<li class="ppds_li_num" style="border-right: 1px solid #bfbfbf;">
+								<span>255.00</span>
+							</li>
+							<li class="ppds_li_num">
+								<span>1524.00</span>
+							</li>
+						</ul>
+						<div style="height: 5px;background: #efefef;"></div>
+					</div>
+				</div>
+				<div class="mdfd-content_huiyuans" id="wghy_div" style="display: none;">
+					<div style="padding-top:10px;">
+						<div class="mdfd-content_huiyuans_li" style="padding-left:18%;">	
+							<img src="" onerror="javascript:this.src='http://via.placeholder.com/60x60'">
+							<div></div>
+						</div>
+						<div style="clear: both;"></div>
+						<ul class="ppds_li_ul">
+							<li class="ppds_li" style="border-right: 1px solid #bfbfbf;">
+								<span>本月业绩</span>
+							</li>
+							<li class="ppds_li">
+								<span>本月管理奖</span>
+							</li>
+							<li class="ppds_li_num" style="border-right: 1px solid #bfbfbf;">
+								<span></span>
+							</li>
+							<li class="ppds_li_num">
+								<span></span>
+							</li>
+						</ul>
+						<div style="height: 5px;background: #efefef;"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script src="../../static/js/wx_ltone/jquery-2.1.4.js" th:src="@{/js/wx_ltone/jquery-2.1.4.js}" ></script>
+		<script src="../../static/js/wx_ltone/fastclick.js" th:src="@{/js/wx_ltone/fastclick.js}" ></script>
+		<script src="../../static/js/wx_ltone/jquery-weui.js" th:src="@{/js/wx_ltone/jquery-weui.js}" ></script>
+		<script src="../../static/js/basePathConfig.js" th:src="@{/js/basePathConfig.js}" ></script>
+		<script>
+			$(function() {
+				FastClick.attach(document.body);
+			});
+			window.onload = function() {
+				findlowerco();
+			};
+			$(document).on("click", "#show-confirm", function() {
+				$.confirm("您确定要删除文件吗?", "确认删除?", function() {
+					$.toast("文件已经删除!");
+				}, function() {
+					//取消操作
+				});
+			});
+			
+			function findlowerco(){
+				document.getElementById('getNowDate').innerText = getNowFormatDate('YYYYMMDD HHmmss');
+			}
+			function getNowFormatDate(format) {
+				var currentdate; // 时间字符串
+				var date = new Date();
+				var year = date.getFullYear(); // 获取当前年份
+				var month = date.getMonth() + 1; // 获取当前月份
+				month >= 10 ? month = month : month = '0' + month;
+				var day = date.getDate(); //获取当前日(1-31)
+				day >= 10 ? day = day : day = '0' + day;
+				var hours = date.getHours(); //获取当前小时数(0-23)
+				hours >= 10 ? hours = hours : hours = '0' + hours;
+				var minutes = date.getMinutes(); //获取当前分钟数(0-59)
+				minutes >= 10 ? minutes = minutes : minutes = '0' + minutes;
+				
+				if(format == 'YYYYMM'){
+					currentdate = year+"" + month;
+				}else if(format == 'YYYYMMDD HHmmss'){
+					currentdate = year + '年' + month + '月' + day + '日 ' + hours + ':' + minutes;
+				};
+				return currentdate;
+			}
+			function clickShowDiv(e, id) {
+				//菜单切换
+				$(".mdfd-content_huiyuans").each(function(){
+					if($(this).attr("id")==id){
+						$(this).show();
+					}else{
+						$(this).hide();
+					}
+				});
+				$(e).css({
+					"color":"#be86fc",
+					"background": "#fff"
+					});
+				$(e).siblings().each(function(){
+					if($(this).attr("class")=="huiyuan_li"){
+						$(this).css({
+						"color":"#535353",
+						"background": "#efefef"
+					});
+					}
+				});
+			}
+			$("#demo").calendar({
+				onChange: function (p, values, displayValues) {
+				  console.log(values, displayValues);
+				}
+			});
+    
+		</script>
+		
+	</body>
+</html>

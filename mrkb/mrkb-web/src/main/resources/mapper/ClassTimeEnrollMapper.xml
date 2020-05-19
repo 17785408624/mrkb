@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mrkb.dao.dao.ClassTimeEnrollMapper">
+
+	<sql id="Base_Column_List">
+		class_node_id, class_beagain_time, enroll_end_time,store_id,address,times,creat_time,person_num,user_basics_id
+	</sql>
+	
+	
+	<!-- 查询集合 -->
+	<select id="nodes_list" parameterType="java.util.HashMap" resultType="com.mrkb.dao.modle.nodes.ClassTimeNodes">
+		select
+		a.class_node_id, a.class_beagain_time, a.enroll_end_time,a.store_id,
+		a.address,a.times,a.creat_time,a.person_num,a.retraining_num,a.retraining_price,b.store_name,b.tutor_name
+		from class_time_nodes a,store_basics b where a.store_id=b.store_id
+			<if test="class_beagain_time != null">
+				and a.class_beagain_time <![CDATA[ <= ]]> #{class_beagain_time}
+			</if>
+			<if test="store_id != null">
+				and a.store_id = #{store_id}
+			</if>
+	</select>
+	
+	
+	
+	<!-- 更新 -->
+	<update id="update" parameterType="java.lang.Integer">
+		update class_time_nodes
+		set
+		person_num=person_num-1
+		where class_node_id=#{class_node_id}
+	</update>
+	
+	
+	
+	<!--新增 -->
+	<insert id="insert" parameterType="com.mrkb.dao.modle.nodes.ClassTimeEnroll">
+		insert into class_time_enroll(
+			wx_openid, enroll_time,class_node_id,user_basics_id
+		)values(
+			#{wx_openid},
+			#{enroll_time},
+			#{class_node_id},
+			#{user_basics_id}
+		)
+	</insert>
+	
+	
+	<!-- 根据节点课程ID查询报名人微信ID -->
+	<select id="getWxOpenIdByNodeId" parameterType="com.mrkb.dao.modle.nodes.ClassTimeEnroll" resultType="com.mrkb.dao.modle.nodes.ClassTimeEnroll">
+		select wx_openid,user_basics_id from class_time_enroll where class_node_id=#{class_node_id}
+	</select>
+	
+</mapper>

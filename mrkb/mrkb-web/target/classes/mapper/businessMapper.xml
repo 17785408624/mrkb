@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mrkb.dao.dao.BusinessMapper">
+ <!-- 新增商家 -->
+ <insert id="add" parameterType="com.mrkb.dao.modle.store.Business" useGeneratedKeys="true" keyProperty="business_id" >
+  insert into business
+		(user_basics_id,business_name,business_addr,business_picture,business_info,add_time,status_state)
+		value(
+		 #{user_basics_id,jdbcType=INTEGER}
+		,#{business_name,jdbcType=VARCHAR}
+		,#{business_addr,jdbcType=VARCHAR}
+		,#{business_picture,jdbcType=VARCHAR}
+		,#{business_info,jdbcType=VARCHAR}
+		,#{add_time,jdbcType=BIGINT}
+		,0
+		);
+ </insert>
+ <!-- 查询所有商家信息-->
+ <select id="findAll" resultType="com.mrkb.dao.modle.store.Business" parameterType="com.mrkb.dao.modle.store.Business">
+         select * from business where 1=1
+         <if test="user_basics_id!=null">
+            and user_basics_id = #{user_basics_id,jdbcType=INTEGER}
+         </if>
+         and status_state=0
+ </select>
+ <!-- 查询单个银行卡信息-->
+ <select id="findById" resultType="com.mrkb.dao.modle.store.Business" parameterType="com.mrkb.dao.modle.store.Business">
+         select * from business where 1=1
+          and business_id =#{business_id,jdbcType=INTEGER}
+ </select>
+ <!-- 修改单个商家信息-->
+ <update id="update" parameterType="com.mrkb.dao.modle.store.Business">
+	  update business set
+	  	 business_id=#{business_id}
+         <if test="business_name!=null">
+             and business_name=#{business_name}
+         </if>
+         <if test="business_addr!=null">
+             and business_addr=#{business_addr}
+         </if>
+         <if test="business_picture!=null">
+             and business_picture=#{business_picture}
+         </if>
+         <if test="business_info!=null">
+             and business_info=#{business_info}
+         </if>
+         <if test="status_state!=null">
+             and status_state=#{status_state}
+         </if>
+	  where 1=1
+	  and business_id=#{business_id,jdbcType=INTEGER}
+	</update>  
+ 
+ <!-- 删除银行卡信息-->
+ <delete id="delete" parameterType="com.mrkb.dao.modle.store.Business" >
+		delete from business where business_id=#{business_id,jdbcType=INTEGER}
+	</delete>
+ 
+	
+</mapper>

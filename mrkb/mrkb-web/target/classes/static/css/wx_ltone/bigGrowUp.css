@@ -1,0 +1,247 @@
+.top-img {
+	width: 100%;
+	height: 50px;
+}
+
+img {
+	width: 100%;
+	height:100%;
+	vertical-align: middle;
+}
+
+.swiper-slide {
+	width: 100%;
+	height: 100%;
+}
+
+
+.store-product-box {
+	position: relative;
+}
+
+.product-box {
+	position: relative;
+	width: calc(50% - 8px);
+	height: 120px;
+	margin: 30px 0;
+}
+
+.product-box:last-child{
+	margin-bottom:0;
+}
+.store-product-box>.product-box:first-child {
+	height: 60px;
+	margin-top: 0;
+}
+.product-box-left{
+	left: 0;
+	border-right: 2px solid #ddadff;
+}
+.product-box-right {
+	left: calc(50% - 8px);
+	border-left: 2px solid #ddadff;
+}
+
+.dot{
+	position: absolute;
+	bottom: -23px;
+	width: 16px;
+	height: 16px;
+	border-radius: 50%;
+	background-color: #ddadff;
+	z-index: 10;
+}
+.dot-div{
+	border:2px solid #fff;
+	border-radius: 50%;
+	z-index: 11;
+	position: absolute;
+	top:50%;
+	left:50%;
+	transform: translate(-50%,-50%);
+	width: 11px;
+	height: 11px;
+}
+.dot-left {
+	left: calc(100% - 7px);
+}
+
+.dot-right{
+	left: -10px;
+}
+
+.ledgement{
+	position: absolute;
+	bottom: -16px;
+	width: 30px;
+	height: 2px;
+	background-color: #ddadff;
+	border-radius: 2px;
+}
+.ledgement-left{
+	left: calc(99% - 40px - 4px);
+}
+.ledgement-right{
+	left: calc(1% + 8px);
+}
+
+.product{
+	position: absolute;
+	clear: both;
+	top: -60px;
+	z-index: 15;
+	border-radius: 50%;
+	width: 100px;
+}
+
+.product-left{
+	left: -80px;
+}
+.product-right{
+	left: 45px;
+}
+
+.circle-small{
+	position: absolute;
+	top: calc(50% - 35px);
+	clear: both;
+	overflow: hidden;
+	z-index: 14;
+	width: 50px;
+	height: 50px;
+	display: inline-block;
+	margin-left: -15px;
+	border-radius: 50%;
+	/* border: 5px solid #ddadff; */
+	border: 2px solid #fff;
+    background: #ddadff;
+    box-sizing:border-box;
+	padding:3px;
+	box-shadow: 1px 2px 3px #666;
+}
+.circle-small img{
+	border-radius: 50%;
+}
+.circle-small-left{
+	/*! left: 5px; */
+	margin-left: 20px;
+}
+
+.circle-small-right{
+	/*! right: 15px; */
+	margin-left: -10px;
+}
+
+.circle-big{
+	position: absolute;
+    top: calc(50% - 45px);
+    left: calc(50% - 45px);
+    clear: both;
+    overflow: hidden;
+    z-index: 14;
+    width: 70px;
+    height: 70px;
+    display: inline-block;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    background: #ddadff;
+    box-sizing:border-box;
+	padding:3px;
+	box-shadow: 1px 2px 3px #666;
+}
+.circle-big img{
+	border-radius: 50%;
+	/* width: 100%;
+	height: 100%; */
+}
+.product-circle-small-info{
+	margin-top: 100px;text-align: center;
+	width:90%;overflow: hidden;
+}
+
+.product-circle-big-info{
+	margin-top: 90px;text-align: center;
+}
+
+.product-circle-big-info h4,
+.product-circle-small-info h4{
+	white-space:nowrap;
+	overflow:hidden;
+    text-overflow : ellipsis;
+}
+
+.product-circle-small-info h4,
+.product-circle-small-info div,
+.product-circle-big-info h4,
+.product-circle-big-info div{
+	font-size: 13px;
+	color: #333333;
+	line-height:1.5;
+}
+
+.store-price .price-tip{
+	/* display:block; */
+	line-height:2.0;
+	font-size: 14px;
+	color: #333;
+}
+.store-price .price{
+	font-size: 14px;
+	color: #ffa954;
+}
+.store-kechen{
+	width:100%;
+	height:50px;
+	background: #ffffff;
+	z-index: 999;
+	display: flex;
+	justify-content:center;
+	align-items:center;
+	justify-content:space-around; 
+}
+.store-kechen-btn{
+	width:25%;
+	height:30px;
+	display: flex;
+	justify-content:center;
+	align-items:center;
+	font-size: 14px;
+	border-radius:5px;
+    border-image:-webkit-linear-gradient(to bottom,#ea87f6,#d487f9,#be86fc) 1 10;
+    border:2px solid #be86fc;
+    color:#be86fc;
+	background-image: -webkit-linear-gradient(bottom,#ea87f6,#d487f9,#be86fc);
+	-webkit-background-clip:text;
+	/* -webkit-text-fill-color:transparent;  */
+}
+
+.active-college{
+	color:#fff;
+	background: -webkit-linear-gradient(bottom,#ea87f6,#d487f9,#be86fc);
+}
+
+.store-kechen-btn:hover{
+	width:18%;
+	height:30px;
+	display: flex;
+	justify-content:center;
+	align-items:center;
+	border-radius:5px;
+    background: -webkit-linear-gradient(bottom,#ea87f6,#d487f9,#be86fc) !important;
+    color:#fff !important;
+}
+.customize-kechen-btn{
+	width:100%;
+	height:34px;
+	display: flex;
+	justify-content:center;
+	align-items:center;
+	font-size: 14px;
+	color: #282828;
+	background: #f7f7f7;
+}
+.active-course{
+	background: rgb(255, 255, 255);
+    color: rgb(190, 134, 252);
+}
+  

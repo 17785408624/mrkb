@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<title>提现</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/weui.min.css" th:href="@{/css/wx_ltone/weui.min.css}"/>
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/jquery-weui.css" th:href="@{/css/wx_ltone/jquery-weui.css}"/>
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/reset.css" th:href="@{/css/wx_ltone/reset.css}"/>
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/mainstyle.css" th:href="@{/css/wx_ltone/mainstyle.css}" />
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/public.css" th:href="@{/css/wx_ltone/public.css}" />
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/mine.css" th:href="@{/css/wx_ltone/mine.css}"/>
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/myWalletWithdraw.css" th:href="@{/css/wx_ltone/myWalletWithdraw.css}"/>
+		
+	</head>
+	<body>
+		<div class="search">
+			<div class="search-left">
+				<a  href="javascript:history.go(-1);">
+					<img th:src="@{/img/wx_ltone/icon/mine/fanhui.png}">
+				</a>
+			</div>
+		</div>
+		<div class="mdfd-content">
+			<div class="wallet-box">
+				<div class="tableview-box">
+					<ul class="tableview">
+						<li class="tableview-cell" >
+							<div class="select-type">
+								<!-- <div class="select-bank">
+									<input type="radio" name="walletwithdraw" value="2" onchange="selectPayType(this);">&nbsp;&nbsp;<label>提现到银行卡</label>
+								</div> -->
+								<!-- <div id="selectedBankCard" class="bank" onclick="selectBankCard();"></div> -->
+							</div>
+							<div class="select-type">
+								<input type="radio" checked="checked" name="walletwithdraw" value="1" onchange="selectPayType(this);">&nbsp;&nbsp;<label>提现到微信余额</label>
+							</div>
+						</li>
+						<li class="tableview-cell">
+							<span class="money-tip">提现金额</span>
+							<div class="money-box">
+								<div class="money-icon">￥</div>
+								<div class="money-input">
+									<input id="withdrawMoney" type="number" placeholder="提现金额"/>
+								</div>
+							</div>
+						</li>
+						<li class="tableview-cell">
+							<div class="btn-box">
+								<input id="withdrawMoneyBtn" onclick="applyForBtn();" type="button" value="提现">
+							</div>
+						</li>
+					</ul>
+				</div>
+				
+			</div>
+			<div id="bankCardList" class="bank-list-box">
+				<span class="bank-list-tip">选择银行卡</span>
+				<div class="bank-list">
+					<ul class="tableview">
+						<!-- <li class="tableview-cell" onclick="userBankCard(this);">
+							<div class="select-type">
+								工商银行(7401)
+							</div>
+						</li> -->
+						<li id="bankCard" class="tableview-cell">
+							<div onclick="addBankCard();" class="select-type">
+								<label>使用新卡充值</label>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<script src="../../static/js/wx_ltone/jquery-2.1.4.js" th:src="@{/js/wx_ltone/jquery-2.1.4.js}" ></script>
+		<script src="../../static/js/wx_ltone/fastclick.js" th:src="@{/js/wx_ltone/fastclick.js}" ></script>
+		<script src="../../static/js/wx_ltone/jquery-weui.js" th:src="@{/js/wx_ltone/jquery-weui.js}" ></script>
+		<script src="../../static/js/wx_ltone/common.js" th:src="@{/js/wx_ltone/common.js}" ></script>
+		<script src="../../static/js/basePathConfig.js" th:src="@{/js/basePathConfig.js}" ></script>
+		<script>
+			$(function() {
+				FastClick.attach(document.body);
+			});
+			var balance = getUrlParam('balance');
+			
+			// 申请提现操作
+			function applyForBtn(){
+				var withdrawMoney = $('#withdrawMoney').val();
+				if(withdrawMoney <=0 ){
+					$.alert('您的提现金额不正确，请重新输入...');
+					return;
+				}else if(parseInt(balance, 10) < withdrawMoney){
+					$.alert('您的余额不足...');
+					return;
+				}else if(withdrawMoney >= 5000){
+					$.alert('受微信支付功能限制，单次提现不能超过5000元！');
+					return;
+				}
+				
+				// 提现
+				$.ajax({ 
+			    	type : "GET", //提交方式 
+			    	url : basePath + '/maid/addWithdrawalApply',
+			    	data : { 
+			     		apply_value: withdrawMoney , // 提现金额
+			     		apply_receipt_type: 1 // 提现方式  1 微信余额   2银行卡
+			    	},//数据，这里使用的是Json格式进行传输 
+			    	success : function(result) {
+			     		//返回数据根据结果进行相应的处理 
+		      			window.location.href = basePath + '/maid/myWallet';
+			    	},
+		     		error: function (err){
+			     		$.toast('网络错误，请稍后重试...');
+			     		return;
+		     		}
+			    });
+	  	  	}
+		</script>
+	</body>
+</html>

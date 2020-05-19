@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<title>新增收货地址</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/weui.min.css" th:href="@{/css/wx_ltone/weui.min.css}"/>
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/jquery-weui.css" th:href="@{/css/wx_ltone/jquery-weui.css}"/>
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/reset.css" th:href="@{/css/wx_ltone/reset.css}"/>
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/mainstyle.css" th:href="@{/css/wx_ltone/mainstyle.css}" />
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/public.css" th:href="@{/css/wx_ltone/public.css}" />
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/addressNew.css" th:href="@{/css/wx_ltone/addressNew.css}"/>
+		
+	</head>
+	<body>
+		<div class="search">
+			<div class="search-left">
+				<a href="javascript:history.go(-1);">
+					<img th:src="@{/img/wx_ltone/icon/mine/fanhui.png}">
+				</a>
+			</div>
+		</div>
+		<div class="mdfd-content">
+			<input type="hidden" id="refreshed" value="yes">
+			<div class="newaddress">
+				<div class="newaddress-single">
+					<input type="text" id="name" placeholder="收货人">
+				</div>
+	
+				<div class="newaddress-single">
+					<input type="number" id="tel" placeholder="手机号码">
+				</div>
+				<div class="newaddress-single">
+					<input id="addre" type="text" value="贵州省 贵阳市 云岩区">
+				</div>
+				
+				<div class="newaddress-single">
+					<input id="addreDetail" type="text" placeholder="详细地址：如道路、门牌号、小区、楼栋号、单元室等">
+				</div>
+			</div>
+			<div class="submit-add-idinfo-box">
+				<div onclick="addNewAddre()" class="weui-btn weui-btn_primary btn">确定</div>
+			</div>
+		</div>
+		<script src="../../static/js/wx_ltone/jquery-2.1.4.js" th:src="@{/js/wx_ltone/jquery-2.1.4.js}" ></script>
+		<script src="../../static/js/wx_ltone/fastclick.js" th:src="@{/js/wx_ltone/fastclick.js}" ></script>
+		<script src="../../static/js/wx_ltone/jquery-weui.js" th:src="@{/js/wx_ltone/jquery-weui.js}" ></script>
+		<script src="../../static/js/wx_ltone/city-picker.js" th:src="@{/js/wx_ltone/city-picker.js}" ></script>
+		<script src="../../static/js/wx_ltone/common.js" th:src="@{/js/wx_ltone/common.js}" ></script>
+		<script src="../../static/js/basePathConfig.js" th:src="@{/js/basePathConfig.js}" ></script>
+		<script>
+			
+			// 获取地址栏参数
+			var store_id = getUrlParam('store_id');
+			
+			$(function() {
+				FastClick.attach(document.body);
+			});
+			
+			function addNewAddre(){
+				var name = $('#name').val();
+				if(!name || name == ''){
+					$.alert('收货人不能为空！');
+					return;
+				}
+				var telPhone = $('#tel').val();
+				if(!isMobilePhone(telPhone)){
+					return;
+				}
+				var addre = $('#addre').val();
+				// 拼接地址
+				if(!addre) {
+					$.alert("请选择地址重试...");
+					return;
+				}
+				var addreArr = addre.split(' ');
+				// 数组去空字符串
+				for(var i = 0;i<addreArr.length;i++){
+				    if(addreArr[i]==''||addreArr[i]==null||typeof(addreArr[i])==undefined){
+				        addreArr.splice(i,1);
+				        i=i-1;
+				    }
+				}
+				var addreDetail = $('#addreDetail').val();
+				if(!addreDetail || addreDetail == ' ') {
+					$.alert("您还未填写详细收货地址，请填写...");
+					return;
+				}
+				var address = addreArr[0] + ";" + addreArr[1] + ";" + addreArr[2] + ";" + addreDetail;
+				
+				$.ajax({ 
+			    	type : "POST", //提交方式 
+			     	url : basePath + '/order_weixin/addOrderAddr',// 查询收货地址列表
+			     	data : {
+			     		user_name: name,
+						tel_phone: telPhone,
+						order_addr: address
+			     	} ,//数据，这里使用的是Json格式进行传输 
+			     	success : function(result) {
+			     		//返回数据根据结果进行相应的处理 
+			      		console.log(JSON.stringify(result));
+			      		self.location = document.referrer; //返回上一页并刷新
+			     	},
+			     	error: function (err){
+			     		$.toast("添加失败，请稍后重试...");
+			     		return;
+			     	}
+			    });
+			}
+			
+			$("#addre").cityPicker({
+				title: "选择出发地",
+				onChange: function (picker, values, displayValues) {
+				  console.log(values, displayValues);
+				}
+			});
+		</script>
+	</body>
+</html>

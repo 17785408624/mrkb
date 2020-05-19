@@ -1,0 +1,70 @@
+img {
+	width: 100%;
+	vertical-align: middle;
+}
+
+.member-info-box {
+	position: relative;
+	clear: all;
+	overflow: hidden;
+}
+
+.member-info {
+	position: relative;
+	clear: all;
+	overflow: hidden;
+	background: url(../../img/wx_ltone/icon/myAdvisor/bjts.png) no-repeat;
+	background-size: 100% 100%;
+	/* height: 150px; */
+	text-align: center;
+	padding: 25px 0;
+}
+
+.member-info-portrait {
+	position: relative;
+	overflow: hidden;
+	left: 40%;
+	width: 20%;
+	height: auto;
+}
+
+.member-info-text {
+	position: relative;
+	clear: all;
+	overflow: hidden;
+	width: 100%;
+	vertical-align: middle;
+	text-align: center;
+	line-height: 2.5;
+	color: #8f25ff;
+}
+
+.member-info-text label {
+	display: block;
+}
+
+.member-mange-box {
+	position: relative;
+	clear: all;
+	overflow: hidden;
+}
+
+.member-single-box {
+	float: left;
+	width: 45%;
+	margin: 3px 8px;
+}
+
+.member-single {
+	margin: 5px;
+	background-color: #eee;
+	padding: 15px 10px;
+	text-align: center;
+	border-radius: 10px;
+	font-size: 16px;
+	color: #666;
+}
+
+.member-single>span:first-child {
+	display: block;
+}

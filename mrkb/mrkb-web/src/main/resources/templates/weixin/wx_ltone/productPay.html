@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<title>提交订单</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/weui.min.css" th:href="@{/css/wx_ltone/weui.min.css}"/>
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/jquery-weui.css" th:href="@{/css/wx_ltone/jquery-weui.css}"/>
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/reset.css" th:href="@{/css/wx_ltone/reset.css}"/>
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/productPay.css" th:href="@{/css/wx_ltone/productPay.css}" />
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/mainstyle.css" th:href="@{/css/wx_ltone/mainstyle.css}" />
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/public.css" th:href="@{/css/wx_ltone/public.css}" />
+		<link rel="stylesheet" type="text/css" href="../../js/pop/custom-pop.css" th:href="@{/js/pop/custom-pop.css}"/>
+		<script src="../../static/js/pop/custom-pop.js" th:src="@{/js/pop/custom-pop.js}" ></script>
+	</head>
+
+	<body>
+		<div class="search border-blue">
+			<div class="search-left">
+				<a href="javascript:history.go(-1);">
+					<img th:src="@{/img/wx_ltone/icon/mine/fanhui.png}">
+				</a>
+			</div>
+		</div>
+		<div class="mdfd-content">
+			<div class="order-form-box">
+				<ul class="mui-table-view" id="htmlli">
+					<li class="custom-table-view-cell">
+						<div class="default-text-color" id="productname">
+							<span id="productName"></span>
+							<span class="float-r">￥<span id="productPrice"></span></span>
+						</div>
+					</li>
+					<li class="custom-table-view-cell">
+						<div class="order-num">
+							<span class="default-text-color">购买套数</span>
+							<div class="float-r">
+								<div class="weui-count">
+									<a class="weui-count__btn weui-count__decrease"></a>
+									<input id="num" class="weui-count__number" type="number" value="1">
+									<a class="weui-count__btn weui-count__increase"></a>
+								</div>
+							</div>
+						</div>
+					</li>
+					<li class="custom-table-view-cell">
+						<div class="default-text-color">
+							<span>合计</span><span class="float-r">￥<span id="money"></span></span>
+						</div>
+					</li>
+				</ul>
+				<label class="weui-agree">
+				  <input id="weuiAgree" type="checkbox" class="weui-agree__checkbox">
+				  <span class="weui-agree__text">阅读并同意</span>
+				  <a href="javascript:void(0);">《相关条款》</a>
+				</label>
+				<div class="submit-add-idinfo-box">
+					<input id="button" class="weui-btn weui-btn_primary btn" type="button"  value="提交订单" onclick="submitOrder()">
+				</div>
+			</div>
+		</div>
+
+		<div id="addNewAddress" class="add-newaddress">
+			<div class="add-newaddress-pop">
+				<div class="tip-title">请先设置收货地址</div>
+				<div class="tip-content">您还没有收货地址，请点击设置！</div>
+				<div class="tip-btns">
+					<button onclick="cannel()">暂不设置</button>
+					<button onclick="goSettingAddr()">马上去设置</button>
+				</div>
+			</div>
+		</div>
+		<div class="box">
+			<div class="box-flex">
+				<p class="box-title">客户归属</p>
+				<div class="box-input">
+					<input id="recommend_superior" type="text" class="box-inputnum" placeholder="推荐人编号" />
+					<span class="box-span" id="determine" onclick="queding();">查询</span>
+				</div>
+				<div class="box-input" id="referenceNumber" style="display: none;">
+					<input type="text" id="information_compellation" placeholder="推荐人姓名" />
+				</div>
+				<div class="box-inputts">
+					<img th:src="@{/img/wx_ltone/icon/mine/guanyu.png}">
+					<span>首次购买, 可以更改自己的推荐人</span>
+				</div>
+				<div class="box-flextrue">
+					<div class="storeBtn" onclick="goDetermine()">确定</div>
+					<span class="storehuiBtn" onclick="goSkip()">跳过</span>
+				</div>
+			</div>
+		</div>
+		<div class="bgdiv"></div>
+		<script src="../../static/js/wx_ltone/jquery-2.1.4.js" th:src="@{/js/wx_ltone/jquery-2.1.4.js}"></script>
+		<script src="../../static/js/wx_ltone/fastclick.js" th:src="@{/js/wx_ltone/fastclick.js}"></script>
+		<script src="../../static/js/wx_ltone/jquery-weui.js" th:src="@{/js/wx_ltone/jquery-weui.js}"></script>
+		<script src="../../static/js/wx_ltone/common.js" th:src="@{/js/wx_ltone/common.js}"></script>
+		<script src="../../static/js/wx_ltone/banner.js" th:src="@{/js/wx_ltone/banner.js}"></script>
+		<script src="../../static/js/util/userCookie.js" th:src="@{/js/util/userCookie.js}" ></script>
+		<script src="../../static/js/basePathConfig.js" th:src="@{/js/basePathConfig.js}"></script>
+		
+		<script>
+			$('#determine').click(function(){
+				$('#referenceNumber').show();
+			});
+			// 获取地址栏参数
+			var store_id = getUrlParam('store_id');
+			
+			var MAX = 99, MIN = 1;
+			$('.weui-count__decrease').click(function (e) {
+			  var $input = $(e.currentTarget).parent().find('.weui-count__number');
+			  var number = parseInt($input.val() || "0") - 1
+			  if (number < MIN) number = MIN;
+			  $input.val(number)
+			  calculatetotlePrice(number);
+			})
+			$('.weui-count__increase').click(function (e) {
+			  var $input = $(e.currentTarget).parent().find('.weui-count__number');
+			  var number = parseInt($input.val() || "0") + 1
+			  if (number > MAX) number = MAX;
+			  $input.val(number);
+			  calculatetotlePrice(number);
+			});
+			
+			// 计算总价
+			function calculatetotlePrice(num){
+				var price = $('#productPrice').html();
+				price = parseFloat(price);
+				var money = price * num;
+				money = money.toFixed(2);
+				$('#money').html(money);
+			}
+			
+			// 监听协议复选框
+			document.getElementById('weuiAgree').addEventListener('change', function() {
+				if(this.checked) {
+					getProtocolData();
+					$("#button").attr('disabled',false);
+				}
+			}, false);
+			
+			// 获取协议
+			function getProtocolData() {
+				// 获取协议
+				$.ajax({ 
+			    	type : "GET", //提交方式 
+			     	url : basePath + '/weixin_protocol/findProtocolById',// 查询默认地址
+			     	data : {
+			     		protocol_id: 1
+			     	} ,//数据，这里使用的是Json格式进行传输 
+			     	success : function(result) {
+			     		//返回数据根据结果进行相应的处理 
+			      		// alert(JSON.stringify(result));
+		      			if(result.data){
+		      				pertocolData(result.data)
+		      			}else{
+		      				$.toast('暂未录入协议');
+		      				return;
+		      			}
+			     	},
+			     	error: function (err){
+			     		$.toast('网络错误，请稍后重试...');
+			     		return;
+			     	}
+			    });
+			}
+
+			// 协议返回数据
+			function pertocolData(data) {
+				var popInfoData = data;
+				var popInfo = {
+					title: popInfoData.protocol_title,
+					content: popInfoData.protocol_content
+				};
+				popShowAndHidden(popInfo);
+			}
+			
+			$(document).ready(function(){
+				// 查询是否有默认地址
+				$.ajax({ 
+			    	type : "GET", //提交方式 
+			     	url : basePath + '/order_weixin/findOrderAddrDef',// 查询默认地址
+			     	data : {} ,//数据，这里使用的是Json格式进行传输 
+			     	success : function(result) {
+			     		//返回数据根据结果进行相应的处理 
+			      		var orderAddr = result.data;
+			      		// console.log(JSON.stringify(orderAddr));
+			      		findOrderAddrDef(orderAddr);
+			     	},
+			     	error: function (err){
+			     		$.toast('网络错误，请稍后重试...');
+			     		return;
+			     	}
+			    });
+			    
+			    $.ajax({ 
+			    	type : "POST", //提交方式 
+			     	url : basePath + '/wenxin_store/findStore',// 查询单个商品
+			     	data : {
+			     		store_id: store_id
+			     	} ,//数据，这里使用的是Json格式进行传输 
+			     	success : function(result) {
+			     		//返回数据根据结果进行相应的处理 
+			      		// console.log(JSON.stringify(result));
+			      		fillStoreInfo(result.data);
+			     	},
+			     	error: function (err){
+			     		$.toast("添加失败，请稍后重试...");
+			     		return;
+			     	}
+			    });
+			});
+			
+			function findOrderAddrDef(data) {
+				var reg = new RegExp(";", "g"); //g,表示全部替换。
+				if(data != null) {
+					user_name = data.user_name;
+					tel_phone = data.tel_phone;
+					order_addr = data.order_addr.replace(reg, "");
+					var htmlli = '<li class="custom-table-view-cell">' + 
+								 '	<div class="address-info" onclick="window.location=\''+ basePath +'/maid/address?store_id='+ store_id +'&address_id='+ data.address_id +'&num='+ $("#num").val() +'\'">' +
+								 '		<div class="consignee-name">' +
+								 '			<span class="tip">收&nbsp;&nbsp;货&nbsp;&nbsp;人：</span>' +
+								 '			<span class="info">'+
+								 '				<span>'+ user_name +'</span>'+
+								 '				<span class="adr-tel" style="float:right">'+ tel_phone +'</span>'+
+								 '			</span>'+
+								 '		</div>' +
+								 '		<div class="consignee-addr">' +
+								 '			<span class="tip">收获地址：</span>' +
+								 '			<span class="address">'+ order_addr +'</span>' +
+								 '		</div>' +
+								 '	</div>' +
+								 '</li>';
+					$("#htmlli").append(htmlli);
+				} else {
+					states = 0;
+					$('#addNewAddress').css('display','block');
+				}
+			}
+			
+			// 点击取消按钮
+			function cannel(){
+				$.toast("您已经取消了操作！");
+				window.history.back();
+			}
+			
+			// 点击设置按钮
+			function goSettingAddr(){
+				var num = $("#num").val();
+				window.location.href = basePath + '/maid/addressNew?store_id='+store_id;
+			}
+			
+			function fillStoreInfo(data){
+				if(data != null || !data){
+					$('#productName').html(data.store_name);
+					$('#productPrice').html(data.store_price.toFixed(2));
+					$('#money').html(data.store_price.toFixed(2));
+				}
+			}
+			
+			function submitOrder(){
+
+                // 查询用户信息
+                $.ajax({
+                    type : "GET", //提交方式
+                    url : basePath + '/user_weixin/findUserWeixinOne',
+                    data : {
+                        weixin_id: getCookie('getOpenId')
+                    },//数据，这里使用的是Json格式进行传输
+                    success : function(result) {
+                        user_grade_id = result.data.user_grade_id;
+                        if(user_grade_id<2){
+							// 获取提交按钮是否被禁用
+							if($("#weuiAgree").is(':checked')) {
+								$("#button").attr('disabled',true);
+								$(".bgdiv,.box").fadeIn();
+								var tops = $(document).scrollTop();//当页面滚动时，把当前距离赋值给页面，这样保持页面滚动条不动
+								$(document).bind("scroll",function (){$(document).scrollTop(tops); });
+							}else {
+                                alert("请阅读和同意协议!");
+							}
+							//
+
+
+
+						}else{
+                            goSkip();
+						}
+                    },
+                    error: function (err){
+                        $.toast('用户信息网络错误，请稍后重试...');
+                        return;
+                    }
+                });
+
+			}
+			/* 确定 */
+			function goDetermine (){
+			    var recommend_superior=$("#recommend_superior").val();
+                $.ajax({
+                    type : "POST", //提交方式
+                    url : basePath + '/user_weixin/updateRecommend',// 提交订单
+                    data : {
+                        recommend_superior: recommend_superior
+                    } ,
+                    success : function(result) {
+                        //返回数据根据结果进行相应的处理
+                        // alert(JSON.stringify(result));
+						if(result.isSuccess){
+                            $.toast("修改推荐人成功！");
+						}else{
+                            $.toast("修改推荐人失败！");
+                            return;
+						}
+
+					},
+                    error: function (err){
+                        $.toast("修改推荐人失败！");
+                    }
+                });
+
+
+				var num = $("#num").val();
+				$.ajax({ 
+			    	type : "POST", //提交方式 
+			     	url : basePath + '/order_weixin/addOrder',// 提交订单
+			     	data : {
+			     		store_id: store_id,
+						order_addr: order_addr,
+						store_amount: num,
+						user_name: user_name,
+						tel_phone: tel_phone
+			     	} ,
+			     	success : function(result) {
+			     		//返回数据根据结果进行相应的处理 
+			      		// alert(JSON.stringify(result));
+						var orderBasics = result.data;
+						var weixin_id = getCookie('getOpenId'); //用户微信号
+						var price = $("#money").text();
+						window.location.href = basePath + "/payController/toPay?userId=" + orderBasics.user_basics_id + "&orderNo=" + orderBasics.order_id + "&money=" + price + "&openId=" + weixin_id + "&store_id=" + orderBasics.store_id;
+			     	},
+			     	error: function (err){
+			     		$.toast("下单失败，请稍后重试...");
+			     		return;
+			     	}
+			    });
+			}
+			/* 跳过 */
+			function goSkip(){
+				var num = $("#num").val();
+				$.ajax({ 
+			    	type : "POST", //提交方式 
+			     	url : basePath + '/order_weixin/addOrder',// 提交订单
+			     	data : {
+			     		store_id: store_id,
+						order_addr: order_addr,
+						store_amount: num,
+						user_name: user_name,
+						tel_phone: tel_phone
+			     	} ,
+			     	success : function(result) {
+			     		//返回数据根据结果进行相应的处理 
+			      		// alert(JSON.stringify(result));
+						var orderBasics = result.data;
+						var weixin_id = getCookie('getOpenId'); //用户微信号
+						var price = $("#money").text();
+						window.location.href = basePath + "/payController/toPay?userId=" + orderBasics.user_basics_id + "&orderNo=" + orderBasics.order_id + "&money=" + price + "&openId=" + weixin_id + "&store_id=" + orderBasics.store_id;
+			     	},
+			     	error: function (err){
+			     		$.toast("下单失败，请稍后重试...");
+			     		return;
+			     	}
+			    });
+			}
+			function queding() {
+                var recommend_superior=$("#recommend_superior").val();
+                $.ajax({
+                    type : "POST", //提交方式
+                    url : basePath + '/user_weixin/selectRecommend',// 提交订单
+                    data : {
+                        recommend_superior: recommend_superior
+                    } ,
+                    success : function(result) {
+                        //返回数据根据结果进行相应的处理
+                        //alert(JSON.stringify(result));
+                        //alert(result.data.information_compellation);
+                        var information_compellation = result.data.information_compellation;
+                        $("#information_compellation").val(information_compellation);
+                    },
+                    error: function (err){
+                        $.toast("查询失败！");
+                        $("#information_compellation").val("");
+                    }
+                });
+            }
+		</script>
+	</body>
+</html>

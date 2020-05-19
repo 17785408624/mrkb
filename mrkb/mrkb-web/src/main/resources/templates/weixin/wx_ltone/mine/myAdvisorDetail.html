@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<title>顾问详情</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/weui.min.css" th:href="@{/css/wx_ltone/weui.min.css}"/>
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/jquery-weui.css" th:href="@{/css/wx_ltone/jquery-weui.css}"/>
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/reset.css" th:href="@{/css/wx_ltone/reset.css}"/>
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/mainstyle.css" th:href="@{/css/wx_ltone/mainstyle.css}" />
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/public.css" th:href="@{/css/wx_ltone/public.css}" />
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/commentEvalution.css" th:href="@{/css/wx_ltone/commentEvalution.css}" />
+		
+	</head>
+	
+
+	<body>
+		<div class="search border-blue">
+			<div class="search-left">
+				<a href="javascript:history.go(-1);">
+					<img  th:src="@{/img/wx_ltone/icon/mine/fanhui.png}">
+				</a>
+			</div>
+		</div>
+		<div class="mdfd-content">
+			<div style="width:100%;height: 180px;" id="consult_view">
+				<video controls="controls" style="width:100%;height:180px;"><source src="" type="video/mp4"/></video>
+				
+			</div>
+			<div style="width:100%;height: 10px;background: #F0F0F0;"></div>
+			<div style="width:100%;height: auto;">
+				<img alt="" src="" id="consult_picture">
+				
+			</div>
+		</div>
+		<script src="../../static/js/wx_ltone/jquery-2.1.4.js" th:src="@{/js/wx_ltone/jquery-2.1.4.js}" ></script>
+		<script src="../../static/js/wx_ltone/fastclick.js" th:src="@{/js/wx_ltone/fastclick.js}" ></script>
+		<script src="../../static/js/wx_ltone/jquery-weui.js" th:src="@{/js/wx_ltone/jquery-weui.js}" ></script>
+		<script src="../../static/js/wx_ltone/common.js" th:src="@{/js/wx_ltone/common.js}" ></script>
+		<script src="../../static/js/wx_ltone/setCookie.js" th:src="@{/js/wx_ltone/setCookie.js}" ></script>
+		<script src="../../static/js/basePathConfig.js" th:src="@{/js/basePathConfig.js}" ></script>
+		<script>
+			$(function(){
+				var ddd="http://"+baseImgPath;
+				var consult_view=ddd+"[[${consult_view}]]";
+				var consult_picture="[[${consult_picture}]]";
+				consult_picture=consult_picture.split(";")[0];
+				var str='<video controls="controls" style="width:100%;height:180px;"><source src="'+consult_view+'" type="video/mp4"/></video>';
+				$("#consult_view").html(str);
+				document.getElementById("consult_picture").src=consult_picture;
+				
+			})
+		</script>
+	</body>
+</html>

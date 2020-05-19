@@ -1,0 +1,319 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<div th:replace="common/common :: common_resource"></div>
+<meta charset="utf-8">
+<title>首页知识评论审核管理</title>
+<style type="text/css">
+.uploader-list {
+	margin-left: -15px;
+}
+
+.uploader-list .info {
+	position: relative;
+	margin-top: -25px;
+	background-color: black;
+	color: white;
+	filter: alpha(Opacity = 80);
+	-moz-opacity: 0.5;
+	opacity: 0.5;
+	width: 100px;
+	height: 25px;
+	text-align: center;
+	display: none;
+}
+
+.uploader-list .handle {
+	position: relative;
+	background-color: black;
+	color: white;
+	filter: alpha(Opacity = 80);
+	-moz-opacity: 0.5;
+	opacity: 0.5;
+	width: 100px;
+	text-align: right;
+	height: 18px;
+	margin-bottom: -18px;
+	display: none;
+}
+
+.uploader-list .handle span {
+	margin-right: 5px;
+}
+
+.uploader-list .handle span:hover {
+	cursor: pointer;
+}
+
+.uploader-list .file-iteme {
+	margin: 12px 0 0 15px;
+	padding: 1px;
+	float: left;
+}
+</style>
+</head>
+<body>
+	<!--列表-->
+	<div id="vueContainer">
+		<div v-show="showList">
+			<fieldset class="layui-elem-field site-demo-button"
+				style="margin-top: 30px;">
+				<table class="layui-table" lay-filter="test">
+					<thead>
+						<tr>
+							<th>ID</th>
+							<th>评论人微信昵称</th>
+							<th>新闻类型</th>
+							<th>添加日期</th>
+							<th>操作</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr v-for="item in data">
+							<td>{{item.news_evaluation_id}}</td>
+							<td>{{item.weixin_nickname}}</td>
+							<td>{{getNewsType(item.news_type)}}</td>
+							<td>{{formatDateTimeStr(item.add_date,1)}}</td>
+							<td><a class="layui-btn layui-btn-xs" lay-event="serch"
+								@click='edit(item.news_evaluation_id)'>查看</a> <a
+								class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"
+								@click='del(item.news_evaluation_id)'>删除</a> <a
+								class="layui-btn layui-btn-xs" lay-event="examineNewsEvaluation"
+								@click='examineNewsEvaluation(item.news_evaluation_id,0)'>审核通过</a> <a
+								class="layui-btn layui-btn-xs" lay-event="examineNewsEvaluation"
+								@click='examineNewsEvaluation(item.news_evaluation_id,2)'>审核不通过</a></td>
+						</tr>
+					</tbody>
+				</table>
+				<!--分页容器-->
+				<div id="pagination"></div>
+		</div>
+		<!-- 新增面板 -->
+		<div v-show="!showList" class="layui-card">
+			<div class="layui-card-header">{{title}}</div>
+			<div class="layui-card-body">
+				<form class="layui-form">
+					<div class="layui-form-item">
+						<label class="layui-form-label">评论人微信昵称</label>
+						<div class="layui-input-block">
+							<input type="text" name="weixin_nickname" id="weixin_nickname"
+								v-model="news.weixin_nickname" placeholder="请输入微信昵称"
+								autocomplete="off" class="layui-input">
+						</div>
+					</div>
+					<div class="layui-form-item" id="">
+						<label class="layui-form-label">新闻类型</label>
+						<div class="layui-input-block" id="">
+							<select name="news_type" id="news_type"
+								v-model="news.news_type" lay-filter="news_type">
+								<option value=""></option>
+								<option value="1">知识</option>
+								<option value="2">动态</option>
+								<option value="3">基金</option>
+								<option value="4">视频</option>
+								<option value="5">基金视频</option>
+								<option value="6">首页轮播图</option>
+						        <option value="7">大丰收轮播图</option>
+						        <option value="8">大成长轮播图</option>
+						        <option value="9">公众号操作手册</option>
+						        <option value="10">公司介绍</option>
+							</select>
+						</div>
+					</div>
+					<textarea class="layui-textarea" id="editor" style="display: none"
+						lay-verify="content">  
+  						把编辑器的初始内容放在这textarea即可
+					</textarea>
+					<!-- <li class="clearfix"><label class="label_name col-xs-1"><i></i>内容介绍：&nbsp;&nbsp;</label>
+    					<div class="Add_content col-xs-11"><script id="editor" type="text/plain" style="width:100%;height:500px;"></script></div>
+     				</li>  -->
+
+					<div class="layui-form-item">
+						<div class="layui-input-block">
+							<button class="layui-btn layui-btn-primary" @click="reload">
+								<i class="layui-icon layui-icon-return"></i>返回
+							</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+		var active = {};
+		layui.use([ 'laydate', 'laypage', 'layer', 'table', 'carousel', 'upload', 'element', 'slider', 'form', 'layedit' ], function() {
+			var laydate = layui.laypage,
+				layer = layui.layer, //弹层
+				table = layui.table, //表格
+				carousel = layui.carousel, //轮播
+				upload = layui.upload, //上传
+				element = layui.element, //元素操作
+				slider = layui.slider, //滑块
+				form = layui.form,
+				laypage = layui.laypage,
+				layedit = layui.layedit,
+				$ = layui.jquery;
+			laypage.render({
+				elem : 'pagination',
+				count : totalCount,
+				layout : [ 'count', 'prev', 'page', 'next', 'limit', 'refresh', 'skip' ],
+				jump : function(obj, first) {
+					//点击非第一页页码时的处理逻辑。比如这里调用了ajax方法，异步获取分页数据
+					if (!first) {
+						pagination(obj.curr, obj.limit); //第二个参数不能用变量pageSize，因为当切换每页大小的时候会出问题
+					}
+				},
+			});
+			form.on('select(news_type)', function($event) { //绑定商品类型下拉框value的 值，判断下拉框是否显示
+				var val = $event.value;
+			}); 
+			layedit.set({
+				uploadImage : {
+					url : basePath+'/layuiupload/uploadStoreImg', //接口url
+					type : 'post' //默认post
+				}
+			});
+			// 			form.verify({
+			//             	content: function(value) {
+			//                 	return layedit.sync(index);
+			//             	}
+			//         	});
+			var index = layedit.build('editor');
+			//编辑器外部操作
+			active = {
+				content : function() {
+					return layedit.getContent(index);
+					alert(layedit.getContent(index)); //获取编辑器内容
+				},
+				text : function() {
+					alert(layedit.getText(index)); //获取编辑器纯文本内容
+				},
+				selection : function() {
+					alert(layedit.getSelection(index));
+				},
+	
+				setNews : function() {
+					layedit.setContent(index, vue.news.evaluation_value);
+				}
+			};
+			$('.site-demo-layedit').on('click', function() {
+				var type = $(this).data('type');
+				active[type] ? active[type].call(this) : '';
+			});
+	
+		});
+		var vue = new Vue({
+			el : "#vueContainer",
+			data : {
+				data : null,
+				showList : true,
+				title : null,
+				news : {},
+			},
+			methods : {
+				//修改查询数据
+				edit : function(id) {
+					vue.news = {};
+					vue.showList = false;
+					vue.title = "查看";
+					$.ajax({
+						type : "GET",
+						url : basePath + "/examine/getByNewsEvaluationId/" + id,
+						async : true,
+						success : function(r) {
+							//alert(JSON.stringify(r.data));
+							vue.news = r.data;
+							 active.setNews();//给富文本编辑框的赋值
+							/*商品类型下拉框禁用*/
+							$("#news_type").attr("disabled", "disabled");
+							var select0 = 'dd[lay-value=' + r.data.news_type + ']';
+							$('#news_type').siblings("div.layui-form-select").find('dl').find(select0).click();
+							layui.form.render('select');
+						},
+						error : function(r) {
+							layer.msg(r.data.message);
+						}
+					});
+				},
+				//删除商品
+				del : function(id) {
+							layer.confirm('确定删除该评论？', {
+								btn : [ '确定', '取消' ] //按钮
+							}, function() {
+								$.get(basePath + "/examine/deleteNewsEvaluation/" + id, function(data) {
+									layer.msg(data.message);
+								vue.reload();
+								});
+							}, function() {
+								layer.msg('取消操作', {
+									icon : 2
+								});
+					});
+				},
+				//审核新闻
+				examineNewsEvaluation : function(id, state) {
+					//alert(id)
+							layer.confirm('确认审核该评论？', {
+								btn : [ '确定', '取消' ] //按钮
+							}, function() {
+								$.get(basePath + "/examine/examineNewsEvaluation/" + id + "/" + state, function(data) {
+									layer.msg(data.message);
+								    vue.reload();
+								});
+							}, function() {
+								layer.msg('取消操作', {
+									icon : 2
+								});
+							});
+				},
+	
+				reload : function(event) {
+					vue.showList = true;
+					vue.serch();
+				}
+			}
+		});
+		//使用layui分页
+		var pageIndex = 1;
+		var pageSize = 10;
+		var totalCount = 0;
+		pagination(pageIndex, pageSize);
+		function pagination(pageIndex, pageSize, name) {
+			//查询条件
+			var param = {
+				pageIndex : pageIndex,
+				pageSize : pageSize,
+				name : name
+			//其它查询条件可在下面添加
+			};
+			$.ajax({
+				type : 'POST',
+				url : basePath + '/examine/newsEvaluationList/' + pageIndex + "/" + pageSize,
+				dataType : 'json',
+				data : param,
+				async : false, //这里设置为同步执行，目的是等数据加载完再调用layui分页组件，不然分页组件拿不到totalCount的值
+				success : function(data) {
+					vue.data = data.data.list;
+					totalCount = data.data.total;
+				}
+			});
+		}
+		;
+		//新闻类型转换1 知识，2 动态，3 基金，4 视频 5 基金视频
+		function getNewsType(type) {
+			if (type == 1) {
+				return "知识";
+			} else if (type == 2) {
+				return "动态";
+			} else if (type == 3) {
+				return "基金";
+			} else if (type == 4) {
+				return "视频";
+			} else if (type == 5) {
+				return "基金视频";
+			}
+	
+	
+		}
+	</script>
+</body>
+</html>

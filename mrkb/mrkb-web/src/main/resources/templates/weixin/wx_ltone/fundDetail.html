@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<title>公益详情</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/weui.min.css" th:href="@{/css/wx_ltone/weui.min.css}"/>
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/jquery-weui.css" th:href="@{/css/wx_ltone/jquery-weui.css}"/>
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/reset.css" th:href="@{/css/wx_ltone/reset.css}"/>
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/mainstyle.css" th:href="@{/css/wx_ltone/mainstyle.css}" />
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/public.css" th:href="@{/css/wx_ltone/public.css}" />
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/fund.css" th:href="@{/css/wx_ltone/fund.css}" />
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/commentEvalution.css" th:href="@{/css/wx_ltone/commentEvalution.css}" />
+	</head>
+
+	<body>
+		<div class="search border-blue">
+			<div class="search-left">
+				<a href="javascript:void(0);" onclick="toBack('/HomeController/fund');">
+					<img th:src="@{/img/wx_ltone/icon/mine/fanhui.png}">
+				</a>
+			</div>
+		</div>
+		<div class="mencent">
+			<div class="detail" id="contentDetail"></div>
+			<div class="comment-box" id="evationList">
+				<p class="text-align-c">——评论——</p>
+			</div>
+			<div class="comment-submit-box">
+				<div class="comment-submit">
+					<input type="text" id="evaluation_value" placeholder="说说你的看法...">
+				</div>
+				<div class="comment-submit-btn">
+					<input type="button" onclick="upLoadEvaluation()" value="发表">
+				</div>
+			</div>
+		</div>
+		<script src="../../static/js/wx_ltone/jquery-2.1.4.js" th:src="@{/js/wx_ltone/jquery-2.1.4.js}" ></script>
+		<script src="../../static/js/wx_ltone/fastclick.js" th:src="@{/js/wx_ltone/fastclick.js}" ></script>
+		<script src="../../static/js/wx_ltone/jquery-weui.js" th:src="@{/js/wx_ltone/jquery-weui.js}" ></script>
+		<script src="../../static/js/wx_ltone/common.js" th:src="@{/js/wx_ltone/common.js}" ></script>
+		<script src="../../static/js/wx_ltone/setCookie.js" th:src="@{/js/wx_ltone/setCookie.js}" ></script>
+		<script src="../../static/js/basePathConfig.js" th:src="@{/js/basePathConfig.js}" ></script>
+		<script>
+			
+			//返回上级
+			function toBack(path){
+				if (window.history && window.history.pushState) {
+			   		$(window).on('popstate', function () {
+			      		window.history.pushState('forward', window.location = basePath + path, '#');
+			        });
+			    }
+			    window.history.pushState('forward', window.location = basePath + path, '#'); 
+			}
+		
+			// 获取地址栏参数
+			var news_id = getUrlParam('news_id');
+			var news_type = getUrlParam('news_type');
+			
+			$(function() {
+				FastClick.attach(document.body);
+				
+				// 获取公益详情
+				$.ajax({ 
+			    	type : "GET", //提交方式 
+			    	url : basePath + '/weixin_news/findNewsOne',
+			    	data : { 
+			     		news_type: news_type,
+						news_id: news_id
+			    	},//数据，这里使用的是Json格式进行传输 
+			    	success : function(result) {
+		      			filteFundDetail(result.data);
+			    	},
+		     		error: function (err){
+			     		$.toast('网络错误，请稍后重试...');
+			     		return;
+		     		}
+			    });
+			    
+			    // 获取评论
+				$.ajax({ 
+			    	type : "GET", //提交方式 
+			    	url : basePath + '/weixin_news/findEssenceEvaluation',
+			    	data : { 
+			     		news_type: news_type,
+						news_id: news_id
+			    	},//数据，这里使用的是Json格式进行传输 
+			    	success : function(result) {
+			     		//返回数据根据结果进行相应的处理 
+			     		// alert(JSON.stringify(result));
+		      			fillCommentData(result.data);
+			    	},
+		     		error: function (err){
+			     		$.toast('网络错误，请稍后重试...');
+			     		return;
+		     		}
+			    });
+			    
+			    // 增加浏览量
+				$.ajax({ 
+			    	type : "GET", //提交方式 
+			    	url : basePath + '/weixin_news/browseNum',
+			    	data : {
+			    		news_type: news_type,
+			    		news_id: news_id 
+			    	},//数据，这里使用的是Json格式进行传输 
+			    	success : function(result) {},
+		     		error: function (err){
+			     		$.toast('网络错误，请稍后重试...');
+			     		return;
+		     		}
+			    });
+			});
+			
+			function filteFundDetail(data) {
+				var Ahtml = '<div class="title">' +
+					        '	<video src="'+ baseImgPath + data.view_road +'"  width="100%" controls="controls">Your browser does not support the video tag.</video>' +
+					        '	<div style="position: relative;padding: 5px 10px;">' +
+					        '		<div class="data">' + formatDateTimeStr(data.update_date,0) + '</div>' +
+					        '		<div class="interact">' +
+					        '			<div class="yueduliang">' +
+					        '				<img class="icon-yueduliang" src="/morekaba/img/wx_ltone/icon/mine/chakan.png" />&nbsp;&nbsp;'+
+					        '				<span>' + data.read_num + '</span>' +
+					        '			</div>' +
+					        '			<div class="dianzan" onclick="addStar('+ data.news_id +','+ data.thumbs_up +')">' +
+					        '				<img class="icon-zan" src="/morekaba/img/wx_ltone/icon/mine/dianzan.png"/>&nbsp;&nbsp;'+
+					        '				<span id="zan">' + data.thumbs_up + '</span>' +
+					        '			</div>' +
+					        '		</div>' +
+					        '	</div>' +
+					        '	<h4>' + data.news_title + '</h4>' +
+					        '</div>' +
+					        '<div class="detail-content">' + data.detail_content + '</div>';
+				$("#contentDetail").append(Ahtml);
+			}
+			
+			/*
+			* 实现点赞功能
+			* @param    资源id
+			* */
+			function addStar(news_id,thumbs_up){
+			    var videoNewsId = getCookieById('fundNewsId',news_id);
+			    if(videoNewsId == ''){
+			        addCookieById('fundNewsId',news_id,365);
+					$.ajax({ 
+				    	type : "GET", //提交方式 
+				    	url : basePath + '/weixin_news/thumbsUp',
+				    	data : {
+				    		news_type: news_type,
+				    		news_id: news_id 
+				    	},//数据，这里使用的是Json格式进行传输 
+				    	success : function(result) {
+			      			thumbs_up=parseInt($('#zan').html())+1;
+							$("#zan").html(thumbs_up);
+				    	},
+			     		error: function (err){
+				     		$.toast('网络错误，请稍后重试...');
+				     		return;
+			     		}
+				    });
+			    }else{
+			        $.alert('您已经点赞过啦！');
+			        return;
+			    }
+			}
+		
+			//查询精华评论信息
+			function fillCommentData(data){
+				if(data != [] || data != null || data != ''){
+					for(var i = 0;i < data.length; i++){
+						var htmlStr = '<div class="comment-list">'+
+									  '	<h5>'+ data[i].weixin_nickname +'</h5>'+
+									  '	<div class="comment-user-portrait">'+
+									  '		<img src="'+ data[i].weixin_portrait +'" style="width: 100%;height: 100%;" onerror="javascript:this.src=\'http://via.placeholder.com/50X50\'">'+
+									  '	</div>'+
+									  '	<p class="comment-content">'+ data[i].evaluation_value +'</p>'+
+									  '	<p class="text-align-r comment-content">' + formatDateTimeStr(data[i].add_date,0) + '</p>'+
+									  '</div>';
+							$('#evationList').append(htmlStr);
+					}
+				}
+			}
+			
+			//添加评论
+			function upLoadEvaluation(){
+				if($("#evaluation_value").val()==null || $("#evaluation_value").val() == ''){
+					$.alert('请输入您的看法或意见...');
+					return;
+				}else if(isEmojiCharacter($("#evaluation_value").val())){
+					$.alert('包含非法字符，请重新输入...');
+					$("#evaluation_value").val('');
+					return false;
+				}
+				var evaluation_value=$("#evaluation_value").val();
+				var super_evaluation_id=53;
+				
+				$.ajax({ 
+			    	type : "POST", //提交方式 
+			    	url : basePath + '/weixin_news/addEssenceEvaluation',
+			    	data : { 
+			     		evaluation_value:　evaluation_value,
+						news_type:　news_type,
+						super_evaluation_id:　super_evaluation_id,
+						news_id:　news_id
+			    	},//数据，这里使用的是Json格式进行传输 
+			    	success : function(result) {
+		      			$.toast('您的评论已提交！');
+		      			setTimeout(function() {
+		      				location.reload();
+		      			}, 2000);
+			    	},
+		     		error: function (err){
+			     		$.toast('网络错误，请稍后重试...');
+			     		return;
+		     		}
+			    });
+			}
+		</script>
+	</body>
+</html>

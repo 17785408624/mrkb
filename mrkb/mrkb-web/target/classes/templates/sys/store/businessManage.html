@@ -1,0 +1,605 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<div th:replace="common/common :: common_resource"></div>
+	<meta charset="utf-8">
+	<title>商家管理</title>
+	<style type="text/css">
+		.uploader-list {
+			margin-left: -15px;
+		}
+
+		.uploader-list .info {
+			position: relative;
+			margin-top: -25px;
+			background-color: black;
+			color: white;
+			filter: alpha(Opacity = 80);
+			-moz-opacity: 0.5;
+			opacity: 0.5;
+			width: 100px;
+			height: 25px;
+			text-align: center;
+			display: none;
+		}
+
+		.uploader-list .handle {
+			position: relative;
+			background-color: black;
+			color: white;
+			filter: alpha(Opacity = 80);
+			-moz-opacity: 0.5;
+			opacity: 0.5;
+			width: 100px;
+			text-align: right;
+			height: 18px;
+			margin-bottom: -18px;
+			display: none;
+		}
+
+		.uploader-list .handle span {
+			margin-right: 5px;
+		}
+
+		.uploader-list .handle span:hover {
+			cursor: pointer;
+		}
+
+		.uploader-list .file-iteme {
+			margin: 12px 0 0 15px;
+			padding: 1px;
+			float: left;
+		}
+	</style>
+</head>
+<body>
+<!--列表-->
+<div id="vueContainer">
+	<div v-show="showList">
+		<fieldset class="layui-elem-field site-demo-button"
+				  style="margin-top: 30px;">
+			<div class="layui-input-inline">
+				<button class="layui-btn" @click="add">
+					<i class="layui-icon layui-icon-add-1"></i>新增
+				</button>
+			</div>
+			<div class="layui-input-inline" style="width:200px;">
+				<input type="text" id="search_store_name" placeholder="请输入商品名搜索"
+					   autocomplete="off" class="layui-input">
+			</div>
+			<div id="search_btn" class="layui-input-inline" style="width:200px;">
+				<button class="layui-btn layui-btn-primary" @click="serch">
+					<i class="layui-icon layui-icon-search"></i>搜索
+				</button>
+			</div>
+
+			<div class="layui-input-inline" style="width:200px; ">
+				<form class="layui-form">
+					<label class="layui-form-label">类型</label>
+					<div class="layui-input-block" style="width:190px;">
+						<select name="shelf_state" lay-filter="shelf_state"
+								id="shelf_state">
+							<option value="0">全部</option>
+							<option value="1">上架</option>
+							<option value="2">下架</option>
+						</select>
+					</div>
+				</form>
+			</div>
+		</fieldset>
+		<table class="layui-hide" lay-filter="test" id="data_export">
+
+		</table>
+		<!--分页容器-->
+		<div id="pagination"></div>
+	</div>
+	<!-- 新增面板 -->
+	<div v-show="!showList" class="layui-card">
+		<div class="layui-card-header">{{title}}</div>
+		<div class="layui-card-body">
+			<form class="layui-form">
+				<div class="layui-form-item">
+					<label class="layui-form-label">用户编号</label>
+					<div class="layui-input-block">
+						<input type="text" name="user_basics_id" id="user_basics_id"
+							   v-model="store.user_basics_id" placeholder="请输入用户编号"
+							   autocomplete="off" class="layui-input">
+					</div>
+				</div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">商家名称</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="business_name" id="business_name"
+                               v-model="store.business_name" placeholder="请输入商家名称"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">商家地址</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="business_addr" id="business_addr"
+                               v-model="store.business_addr" placeholder="请输入商家地址"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+
+				<div class="layui-form-item" id="all_ids">
+
+					 
+				</div>
+
+				<div class="layui-form-item">
+					<!-- 				    <label class="layui-form-label">图片</label>
+-->
+					<div class="layui-input-block">
+						<input type="hidden" name="business_picture"
+							   v-model="store.business_picture" placeholder="请上传图片"
+							   autocomplete="off" class="layui-input">
+					</div>
+					<div class="layui-upload">
+						<button type="button" class="layui-btn" id="upload">图片上传</button>
+						<blockquote class="layui-elem-quote layui-quote-nm"
+									style="margin-top: 10px;width: 88%">
+							预览图：
+							<div class="layui-upload-list uploader-list"
+								 style="overflow: auto;" id="uploader-list"></div>
+						</blockquote>
+					</div>
+				</div>
+				<textarea class="layui-textarea" id="editor" style="display: none"
+						  lay-verify="content"> </textarea>
+				<!-- <li class="clearfix"><label class="label_name col-xs-1"><i></i>内容介绍：&nbsp;&nbsp;</label>
+                    <div class="Add_content col-xs-11"><script id="editor" type="text/plain" style="width:100%;height:500px;"></script></div>
+                 </li>  -->
+
+				<div class="layui-form-item">
+					<div class="layui-input-block">
+						<button type="button" class="layui-btn layui-btn-primary"
+								@click="save">
+							<i class="layui-icon layui-icon-ok"></i>提交
+						</button>
+						<button type="reset" class="layui-btn layui-btn-primary">
+							<i class="layui-icon layui-icon-refresh-3"></i>重置
+						</button>
+						<button class="layui-btn layui-btn-primary" @click="reload">
+							<i class="layui-icon layui-icon-return"></i>返回
+						</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<script type="text/javascript" th:inline="none">
+    var active = {};
+    //var storeId ="";
+    layui.use([ 'laydate', 'laypage', 'layer', 'table', 'carousel', 'upload', 'element', 'slider', 'form', 'layedit' ], function() {
+        var laydate = layui.laypage,
+            layer = layui.layer, //弹层
+            table = layui.table, //表格
+            carousel = layui.carousel, //轮播
+            upload = layui.upload, //上传
+            element = layui.element, //元素操作
+            slider = layui.slider, //滑块
+            form = layui.form,
+            laypage = layui.laypage,
+            layedit = layui.layedit,
+            $ = layui.jquery;
+
+
+
+        layedit.set({
+            uploadImage : {
+                url : basePath + '/layuiupload/uploadStoreImg', //接口url
+                type : 'post' //默认post
+            }
+        });
+        var index = layedit.build('editor');
+        //编辑器外部操作
+        active = {
+            content : function() {
+                return layedit.getContent(index);
+                //alert(layedit.getContent(index)); //获取编辑器内容
+            },
+            text : function() {
+                alert(layedit.getText(index)); //获取编辑器纯文本内容
+            },
+            selection : function() {
+                alert(layedit.getSelection(index));
+            },
+            setStore : function() {
+                alert(JSON.stringify(vue.store));
+                layedit.setContent(index, vue.store.business_info);
+            }
+        };
+        $('.site-demo-layedit').on('click', function() {
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+
+    });
+    var vue = new Vue({
+        el : "#vueContainer",
+        data : {
+            data : null,
+            showList : true,
+            title : null,
+            store : {},
+        },
+        methods : {
+            add : function() {
+                vue.store = {};
+                vue.showList = false;
+                vue.title = "新增";
+                //初始化输入框或者选择框
+                vue.store = {
+                    //例如
+                    /* course_type : 0, //将value值初始化
+                    academic_type : 0, //将value值初始化
+                    user_grade_id : 0, //将value值初始化
+                    store_type : 0 //将value值初始化 */
+                };
+            },
+            save : function() {
+                var business_info = active.content();
+                var user_basics_id = $("#user_basics_id").val(); //会员
+                var business_name = $("#business_name").val(); //名称
+                vue.store.user_basics_id = user_basics_id; //设置会员等级类型初始值
+                vue.store.business_info = business_info; //编辑器内容
+                vue.store.business_name = business_name;
+
+                var url = vue.store.business_id == null ? "/admin_business/businessAdd" : "/admin_business/update";
+                $.ajax({
+                    type : "POST",
+                    url : basePath + url,
+                    contentType : 'application/json',
+                    async : true,
+                    data : JSON.stringify(vue.store),
+                    success : function(r) {
+                        if (r.errorCode == 200) {
+                            layer.msg(r.message);
+                            //vue.reload();
+                            //window.history.back(-1);
+                            window.location.href = basePath + "/admin_business/businessManage";
+                        } else {
+                            layer.msg(r.message);
+                        }
+                    }
+                });
+            },
+            //修改查询数据
+            edit : function(id) {
+                //alert(11);
+                vue.store = {};
+                vue.showList = false;
+                vue.title = "编辑";
+                //下拉框查询
+                //this.getselectoptions();
+                $.ajax({
+                    type : "GET",
+                    url : basePath + "/admin_business/getById/" + id,
+                    async : true,
+                    success : function(r) {
+                        vue.store = r.data;
+                        if (vue.store.store_type == 1) { //判断商品类型不是定制商品类型
+                            $("#courseDiv").show();
+                            $("#academicDiv").show();
+                            $("#userGradeDiv").show();
+                            $("#isLetangDiv").show();
+                            $("#isCourseBeanDiv").show();
+
+
+                        } else {
+                            $("#courseDiv").hide();
+                            $("#academicDiv").hide();
+                            $("#userGradeDiv").hide();
+                            $("#isLetangDiv").hide();
+                            $("#isCourseBeanDiv").hide();
+
+                        }
+
+                        /*回显图片pictures*/
+                        var pictures = vue.store.business_picture.split(";");
+                        for (var i = 0; i < pictures.length - 1; i++) {
+                            $('#uploader-list').append(
+                                '<div id="" class="file-iteme">' +
+                                '<div class="handle"><span class="glyphicon glyphicon-trash"></span></div>' +
+                                '<img style="width: 100px;height: 100px;" src=' + basePicturePath + pictures[i] + '>' +
+                                '<div class="info">' + 'lll' + '</div>' +
+                                '</div>');
+                        }
+                        active.setStore(); //给富文本编辑器赋值
+
+
+                    },
+                    error : function(r) {
+                        layer.msg(r.data.message);
+                    }
+                });
+            },
+            //删除商品
+            del : function(id) {
+                layer.confirm('该商品已经上线，确定删除该商品？', {
+                    btn : [ '确定', '取消' ] //按钮
+                }, function() {
+                    $.get(basePath + "/admin_business/delete/" + id, function(data) {
+                        window.location.reload();
+                       // layer.msg(data.message);
+                       // vue.reload();
+                    });
+                }, function() {
+                    layer.msg('取消操作', {
+                        icon : 2
+                    });
+                });
+            },
+            //搜索
+            serch : function() {
+                var store_name = $("#search_store_name").val();
+
+                pagination(1, 10, store_name);
+            },
+
+            reload : function() {
+                //vue.showList = true;
+                vue.serch();
+                vue.showList = true;
+            },
+
+        }
+    });
+    //使用layui分页
+    var pageIndex = 1;
+    var pageSize = 10;
+    var totalCount = 0;
+    //pagination(pageIndex, pageSize);
+    function pagination(pageIndex, pageSize, name) {
+        //查询条件
+        var param = {
+            pageIndex : pageIndex,
+            pageSize : pageSize,
+            name : name
+            //其它查询条件可在下面添加
+        };
+        $.ajax({
+            type : 'POST',
+            url : basePath + '/admin_business/findAll/' + pageIndex + "/" + pageSize,
+            dataType : 'json',
+            data : param,
+            async : true, //这里设置为同步执行，目的是等数据加载完再调用layui分页组件，不然分页组件拿不到totalCount的值
+            success : function(data) {
+               console.log(data);
+                vue.data = data.data.list;
+                totalCount = data.data.total;
+                //getPage();
+            }
+        });
+    }
+    ;
+
+
+    var path = ""; //图片路径保存
+    /*图片上传*/
+    layui.use('upload', function() {
+        var upload = layui.upload;
+        //执行实例
+        var uploadInst = upload.render({
+            elem : '#upload', //绑定元素
+            multiple : true,
+            exts : 'jpg|png|jpeg',
+            size : 10240, //限制文件大小，单位 KB
+            url : basePath + '/layuiupload/uploadStoreImg', //上传接口
+            before : function(obj) {
+                /*layer.close(layer.msg());//关闭上传提示窗口
+                 */ //预读本地文件示例，不支持ie8
+                obj.preview(function(index, file, result) {
+                    $('#uploader-list').append(
+                        '<div id="" class="file-iteme">' +
+                        '<div class="handle"><span class="glyphicon glyphicon-trash"></span></div>' +
+                        '<img style="width: 100px;height: 100px;" src=' + result + '>' +
+                        '<div class="info">' + file.name + '</div>' +
+                        '</div>'
+                    );
+
+                    //$('#uploader-list').append('<img  src="' + result + '" alt="' + file.name + 'style="width: 10px;height: 10px;"' + '" class="layui-upload-img">')
+                });
+
+                //layer.close(layer.msg()); //关闭上传提示窗口
+                layer.msg('图片上传中...', {
+                    icon : 16,
+                    shade : 0.01,
+                    time : 30
+                })
+            },
+
+            done : function(res) {
+                layer.close(layer.msg()); //关闭上传提示窗口
+                //上传完毕回调
+                path += res.data.url + ";";
+                vue.store.business_picture = path;
+                //alert("上传成功！");
+            },
+            error : function() {
+                layer.msg('上传错误！');
+                //请求异常回调
+            }
+        });
+    });
+    //鼠标悬浮提示
+    $(document).on("mouseenter mouseleave", ".file-iteme", function(event) {
+        if (event.type === "mouseenter") {
+            //鼠标悬浮
+            $(this).children(".info").fadeIn("fast");
+            $(this).children(".handle").fadeIn("fast");
+        } else if (event.type === "mouseleave") {
+            //鼠标离开
+            $(this).children(".info").hide();
+            $(this).children(".handle").hide();
+        }
+    });
+
+    // 删除图片
+    $(document).on("click", ".file-iteme .handle", function(event) {
+        $(this).parent().remove();
+    });
+    //数据渲染
+    layui.use([ 'table', 'layer', 'form', 'layer' ], function() {
+        var isShelfState = 0;
+        var name = "";
+        var table = layui.table; //表格
+        var form = layui.form; //表单
+        var layer = layui.layer; //弹层
+        var $ = layui.jquery;
+        var exportData = " "; //定义全局导出数据变量
+        table.render({ //数据渲染
+            elem : '#data_export',
+            url : basePath + '/admin_business/findAll',
+            limit : 10,
+            //toolbar : true,
+            loading : true,
+            page : true,
+            title : '商品数据表',
+            where : {
+                store_name : name,
+                shelf_state : isShelfState,
+            },
+            cols : [ [
+                {
+                    field : 'user_basics_id',
+                    title : '用户编号',
+                    sort : true
+                },
+                {
+                    field : 'business_name',
+                    title : '商家名称'
+                },
+                {
+                    field : 'business_addr',
+                    title : '商家地址'
+                },
+                {
+                    field : 'add_time',
+                    title : '添加时间'
+                },
+
+
+                {
+                    fixed : 'right',
+                    title : '操作',
+                    //toolbar : '#barDemo',
+                    width : 240,
+                    templet:function(row){
+                        return   '<a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a>'+
+                            '<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>';
+
+                    }
+                }
+            ] ],
+            request : { //修改默认参数limit及page名称
+                pageName : 'pageIndex',
+                limitName : 'pageSize'
+            },
+            parseData : function(res) {
+                var data = res.data.list;
+                for (index in data) { //解决导出时间格式问题
+                    var date = data[index].add_time;
+                    var time = new Date(date);
+                    data[index].add_time = formatDateTimeStr(data[index].add_time,1);
+                    //data[index].add_date = time.getFullYear() + "-" + (time.getMonth() + 1) + "-" + time.getDate() + " " + time.getHours() + ":" + time.getMinutes() + ":" + time.getSeconds();
+                }
+
+
+                return { //返回数据
+                    "code" : res.errorCode == 200 ? 0 : -1,
+                    "msg" : res.message,
+                    "count" : res.data.total,
+                    data : res.data.list
+                }
+
+            },
+            done : function(res, curr, count) {
+                // console.log(res.data);
+                exportData = res.data; //获取表格中的数据集合。
+            }
+        });
+        //关键字搜索数据
+        var $ = layui.$,
+            active = {
+                getCheckData : function() { //获取选中数据
+                    var checkStatus = table.checkStatus('idTest'),
+                        data = checkStatus.data;
+                    layer.alert(JSON.stringify(data));
+                },
+                getCheckLength : function() { //获取选中数目
+                    var checkStatus = table.checkStatus('idTest'),
+                        data = checkStatus.data;
+                    layer.msg('选中了：' + data.length + ' 个');
+                },
+                isAll : function() { //验证是否全选
+                    var checkStatus = table.checkStatus('idTest');
+                    layer.msg(checkStatus.isAll ? '全选' : '未全选')
+                },
+                reload : function() {
+                    name = $("#search_store_name").val();
+
+                    if (1) {
+                        //console.log(1);
+                        table.reload('data_export',
+                            {
+                                page : {
+                                    curr : 1 //重新从第 1 页开始
+                                },
+                                where : {
+                                    store_name : name,
+                                    shelf_state : isShelfState,
+                                }, //这里传参  向后台
+                                url : basePath + '/admin_business/findAll', //后台做模糊搜索接口路径
+                                method : 'get'
+                            });
+                    }
+                },
+                selectReload : function() {
+                    //var name =$("#shelf_state option:selected").val();
+                    if (1) {
+                        //console.log(isShelfState);
+                        table.reload('data_export',
+                            {
+                                page : {
+                                    curr : 1 //重新从第 1 页开始
+                                },
+                                where : {
+                                    shelf_state : isShelfState,
+                                    store_name :name,
+                                }, //这里传参  向后台
+                                url : basePath + '/admin_business/findAll', //后台做模糊搜索接口路径
+                                method : 'get'
+                            });
+                    }
+                }
+            };
+
+        $('#search_btn').on('click', function() { //触发搜索事件，根据商品名称查询
+            var type = 'reload';
+            active[type] ? active[type].call(this) : '';
+        });
+        form.on('select(shelf_state)', function(data) { //根据下拉框状态值（shelf_state 是否下架（1上架，2下架）） 展示不同状态数据
+            isShelfState = data.value;
+            var type = 'selectReload';
+            active[type] ? active[type].call(this) : '';
+
+        });
+        table.on('tool(test)', function(obj){//根据table监听编辑，删除操作
+            var data = obj.data;
+            if(obj.event === 'detail'){
+                layer.msg('ID：'+ data.business_id + ' 的查看操作');
+            } else if(obj.event === 'del'){
+                vue.del(data.business_id);////跳转至vue的删除方法
+            } else if(obj.event === 'edit'){
+                vue.edit(data.business_id);//跳转至vue的编辑方法
+                // layer.alert('编辑行：<br>'+ JSON.stringify(data))
+            }
+        });
+
+    });
+</script>
+</body>
+</html>

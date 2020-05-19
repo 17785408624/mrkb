@@ -1,0 +1,112 @@
+textarea {
+	line-height: none !important;
+	margin-top: none !important;
+	margin-bottom: 0;
+	padding: 5px 10px !important;
+	border: none;
+	border-radius: none !important;
+	width: calc(100% - 20px);
+}
+
+.outset-border {
+	position: relative;
+	clear: all;
+	overflow: hidden;
+	border-bottom: 5px solid #D5D5D3;
+}
+
+.evaluate {
+	position: relative;
+	clear: all;
+	overflow: hidden;
+}
+
+.border-b-8F8F94 {
+	border-bottom: 1px solid #8F8F94;
+}
+
+p {
+	margin: 0;
+}
+
+img {
+	width: 100%;
+	vertical-align: middle;
+}
+/*评价内容*/
+
+.order-detail {
+	padding: 5px;
+	position: relative;
+	clear: all;
+	overflow: hidden;
+}
+
+.order-img {
+	width: 60px;
+	height: 60px;
+	padding: 5px;
+	float: left;
+	position: absolute;
+}
+
+.order-info {
+	position: relative;
+	clear: all;
+	overflow: hidden;
+	line-height: 1.8;
+	padding: 5px 5px 5px 65px;
+	margin-left: 10px;
+}
+
+.order-info h5 {
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+	font-size: 16px;
+}
+
+.order-info p {
+	position: relative;
+	overflow: hidden;
+	clear: all;
+}
+/*评价图片*/
+
+.evaluate-img-box {
+	position: relative;
+	clear: all;
+	overflow: hidden;
+	line-height: 80px;
+	padding: 5px;
+}
+
+.img-box {
+	width: 33.3%;
+	float: left;
+	position: relative;
+	clear: all;
+	overflow: hidden;
+	padding: 20px;
+}
+
+.img-box input[type=file] {
+	position: absolute;
+	top: 50px;
+	filter: alpha(opacity=0);
+	opacity: 0;
+	width: 0;
+	height: 0;
+}
+/*提交数据*/
+.submit-box {
+	margin-top: 50px;
+	text-align: center;
+	margin-bottom: 50px;
+}
+
+input[type=button] {
+	background: linear-gradient(to bottom, #FEADBA, #BF9ADD);
+	color: white;
+	border: none;
+}

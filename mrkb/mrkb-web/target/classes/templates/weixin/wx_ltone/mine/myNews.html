@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<title>我的消息</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/weui.min.css" th:href="@{/css/wx_ltone/weui.min.css}"/>
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/jquery-weui.css" th:href="@{/css/wx_ltone/jquery-weui.css}"/>
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/reset.css" th:href="@{/css/wx_ltone/reset.css}"/>
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/mainstyle.css" th:href="@{/css/wx_ltone/mainstyle.css}" />
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/public.css" th:href="@{/css/wx_ltone/public.css}" />
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/myNews.css" th:href="@{/css/wx_ltone/myNews.css}"/>
+
+	</head>
+
+	<body>
+		<div class="search">
+			<div class="search-left">
+				<a href="javascript:history.go(-1);">
+					<img th:src="@{/img/wx_ltone/icon/mine/fanhui.png}">
+				</a>
+			</div>
+		</div>
+		<div class="mdfd-content">
+			<div id="user_message">
+				<!-- <div style="margin-top:20px;">
+					<div class="center_div">
+						<div class="center_div_img"><img alt="" th:src="@{/img/wx_ltone/icon/mine/ltimg.jpg}"></div>
+						<div class="center_div_name">
+							<p style="font-size: 14px;color: #333333;">摩尔卡巴公众号</p>
+							<p style="font-size: 12px;color: #666666;">2018-08-22</p>
+						</div>
+					</div>
+					<div class="demo center_div_name_js">您好，您的间推会员"徐应林"已完成订单,交纳年费:36000.0元。</div>
+				</div> -->
+			</div>
+		</div>
+		<script src="../../static/js/wx_ltone/jquery-2.1.4.js" th:src="@{/js/wx_ltone/jquery-2.1.4.js}" ></script>
+		<script src="../../static/js/wx_ltone/fastclick.js" th:src="@{/js/wx_ltone/fastclick.js}" ></script>
+		<script src="../../static/js/wx_ltone/jquery-weui.js" th:src="@{/js/wx_ltone/jquery-weui.js}" ></script>
+		<script src="../../static/js/basePathConfig.js" th:src="@{/js/basePathConfig.js}" ></script>
+		<script>
+			$(function() {
+				FastClick.attach(document.body);
+			});
+			
+			$(document).ready(function() {
+				// 查询消息
+				$.ajax({ 
+			    	type : "GET", //提交方式 
+			     	url : basePath + '/UserMessage/findUserMessage',
+			     	contentType:"application/json",
+			     	data : {
+			     		
+			     	} ,//数据，这里使用的是Json格式进行传输 
+			     	success : function(result) {
+			     	//返回数据根据结果进行相应的处理 
+			     		var data=result.data;
+			     		var str="";
+			     		for(var i=0;i<data.length;i++){
+			     			str+=data[i].message_content;
+			     		}
+			      		$("#user_message").html(str);
+			     	},
+			     	error: function (err){
+			     		$.toast('网络错误，请稍后重试...');
+			     		return;
+			     	}
+			    });
+			})
+			
+		</script>
+		
+	</body>
+</html>

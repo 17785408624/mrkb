@@ -1,0 +1,112 @@
+.address {
+	position: relative;
+	clear: all;
+	overflow: hidden;
+	background-color: white;
+	line-height: 40px;
+	padding-left: 10px;
+	margin-top: 20px;
+	text-align: center;
+}
+
+.address div {
+	padding: 10px 15px
+}
+
+.address>div>span {
+	border-radius: 5px;
+	background:#5db8e1;
+	color: white;
+	border: none;
+	padding: 15px 20px;
+	line-height: 1.5;
+}
+
+p {
+	margin: 0;
+}
+
+a {
+	color: #3A2453;
+}
+
+.address-list {
+	position: relative;
+	clear: all;
+	overflow: hidden;
+	padding: 10px;
+}
+
+.address-box {
+	background-color: #F6F8F7;
+	position: relative;
+	clear: all;
+	overflow: hidden;
+	margin-bottom: 5px;
+	border-radius: 5px;
+}
+
+.address-info {
+	position: relative;
+	clear: all;
+	overflow: hidden;
+	padding: 10px;
+	border-bottom: 1px solid #D5D6D6;
+}
+
+.address-info h4,
+.address-info p {
+	position: relative;
+	clear: all;
+	overflow: hidden;
+	line-height: 1.5;
+}
+
+.address-btn {
+	font-size: 16px;
+	padding: 10px;
+	width: 100%;
+	position: relative;
+	clear: all;
+	overflow: hidden;
+}
+
+.address-default {
+	width: 50%;
+	float: left;
+}
+
+.address-editor {
+	width: 25%;
+	float: left;
+}
+
+.address-delet {
+	width: 25%;
+	float: left;
+}
+
+.user-order {
+	position: relative;
+	margin-top:5px;
+	clear: all;
+	overflow: hidden;
+	text-align: center;
+}
+
+.order {
+	float: left;
+	width: 25%;
+	font-size: 12px;
+}
+
+.order i,
+.order span {
+	display: block;
+}
+
+div input,
+div span,
+div i {
+	vertical-align: middle;
+}

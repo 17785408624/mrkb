@@ -1,0 +1,349 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mrkb.dao.dao.BasicUserMapper">
+	<select id="selectUidMax" resultType="int">
+		SELECT Max(user_basics_id)
+		From user_basics
+	</select>
+	<select id="findUserWeixin" resultType="com.mrkb.dao.modle.user.BasicsUser"
+		parameterType="com.mrkb.dao.modle.user.UserWeixin">
+		select * from user_basics where user_basics_id=(select
+		user_basics_id from
+		user_weixin where
+		weixin_id=#{weixin_id,jdbcType=VARCHAR});
+	</select>
+
+	<select id="finduserWeixinone" resultType="com.mrkb.dao.modle.user.UserWeixin"
+		parameterType="hashmap">
+		select * from user_weixin WHERE
+		weixin_id=${weixin_id,jdbcType=VARCHAR};
+	</select>
+
+	<insert id="addBasicsUser" parameterType="com.mrkb.dao.modle.user.BasicsUser"
+		useGeneratedKeys="true" keyProperty="user_basics_id">
+		insert into user_basics
+		(user_nickname,user_password,user_register_data,user_register_address,user_grade_id)
+		value (#{user_nickname,jdbcType=VARCHAR}
+		,#{user_password,jdbcType=VARCHAR}
+		,#{user_register_data,jdbcType=BIGINT}
+		,#{user_register_address,jdbcType=VARCHAR}
+		,#{user_grade_id,jdbcType=VARCHAR}
+		);
+	</insert>
+
+	<insert id="addUserWeixin" parameterType="com.mrkb.dao.modle.user.UserWeixin"
+		useGeneratedKeys="true" keyProperty="user_weixin_id">
+		insert into user_weixin
+		(weixin_id,weixin_portrait,weixin_nickname,weixin_gender,weixin_follow_choice,weixin_follow_data_yes
+		,weixin_follow_data_no,user_basics_id)
+		value
+		(#{weixin_id,jdbcType=VARCHAR}
+		,#{weixin_portrait,jdbcType=VARCHAR}
+		,#{weixin_nickname,jdbcType=VARCHAR}
+		,#{weixin_gender,jdbcType=INTEGER}
+		,#{weixin_follow_choice,jdbcType=INTEGER}
+		,#{weixin_follow_data_yes,jdbcType=BIGINT}
+		,#{weixin_follow_data_no,jdbcType=BIGINT}
+		,#{user_basics_id,jdbcType=INTEGER}
+		);
+	</insert>
+	<select id="selectAllUserBasicsAndGrade" resultType="com.mrkb.dao.modle.user.BasicsAndGradeEntity">
+		SELECT
+		b.user_basics_id,b.user_nickname,b.user_password,b.user_register_data,b.user_register_address,g.grade_name,g.grade_nickname
+		FROM user_basics b left Join user_grade g
+		ON (b.user_grade_id =
+		g.user_grade_id)
+	</select>
+	<select id="selectUserBasicsAndGradeId" resultType="com.mrkb.dao.modle.user.BasicsAndGradeEntity"
+		parameterType="int">
+		<!-- SELECT b.user_nickname,b.user_register_data,b.user_register_address, 
+			g.grade_name,g.grade_benefit,g.grade_describe,g.grade_describe,g.grade_nickname,g.grade_introduce,g.upgrade_order 
+			FROM user_basics b left Join user_grade g ON (b.user_grade_id = g.user_grade_id) 
+			WHERE user_basics_id=#{user_basics_id,jdbcType=INTEGER} -->
+		SELECT
+		b.user_nickname,c.information_compellation,g.grade_name,
+		g.grade_describe,g.grade_nickname,g.grade_introduce,g.upgrade_order,u.weixin_nickname,
+		u.weixin_follow_data_yes as user_register_data,
+		c.information_card,c.information_phone,c.information_sex,c.co_founder,
+		c.co_user_basics_id,ui.user_basics_id as user_basics_id2,
+		ui.information_compellation as information_compellation2,
+		uw.weixin_nickname as weixin_nickname2,uin.information_compellation as information_compellation3,
+		c.user_resources
+		FROM user_grade g
+		RIGHT JOIN
+		user_basics b ON (g.user_grade_id = b.user_grade_id)
+		LEFT JOIN
+		user_information c ON (c.user_basics_id = b.user_basics_id)
+		left join
+		user_weixin u on b.user_basics_id=u.user_basics_id
+		left join
+		user_recommend ur on ur.user_basics_id=b.user_basics_id
+		left join
+		user_information ui on ui.user_basics_id=ur.recommend_superior
+		left join 
+		user_weixin uw on uw.user_basics_id=ur.recommend_superior
+		left join 
+		user_information uin on uin.user_basics_id=ui.co_user_basics_id
+		WHERE
+		1=1
+		and c.user_basics_id = #{user_basics_id,jdbcType=INTEGER}
+	</select>
+	<select id="findGrade" resultType="com.mrkb.dao.modle.user.BasicsUser"
+		parameterType="java.util.HashMap">
+		select a.* from user_basics a right JOIN
+		user_information b
+		on
+		a.user_basics_id=b.user_basics_id
+		left join user_integral c
+		on
+		c.user_basics_id=b.user_basics_id
+		where 1=1
+		<!-- and b.company_id=#{company_id,jdbcType=INTEGER} -->
+		<if test="user_grade_id!=null">
+			and a.user_grade_id=#{user_grade_id,jdbcType=INTEGER}
+		</if>
+		<if test="integral_basics!=null">
+			and
+			c.integral_basics&gt;=#{integral_basics,jdbcType=INTEGER}
+		</if>
+	</select>
+
+	<update id="updateUserBasics" parameterType="com.mrkb.dao.modle.user.BasicsUser">
+		UPDATE user_basics
+		<trim prefix="set" suffixOverrides=",">
+			<if test="user_password!=null">user_password=#{user_password,jdbcType=VARCHAR},</if>
+			<if test="user_nickname!=null">user_nickname=#{user_nickname,jdbcType=VARCHAR},</if>
+			<if test="low_vip_time!=null">low_vip_time=#{low_vip_time,jdbcType=BIGINT},</if>
+			<if test="vip_time!=null">vip_time=#{vip_time,jdbcType=BIGINT},</if>
+			<if test="user_grade_id!=null">user_grade_id=#{user_grade_id,jdbcType=INTEGER},</if>
+			<if test="health_time!=null">health_time=#{health_time,jdbcType=BIGINT}</if>
+		</trim>
+		WHERE 1=1 and user_basics_id=#{user_basics_id,jdbcType=INTEGER}
+	</update>
+	<select id="selectAllUserBasics" resultType="com.mrkb.dao.modle.user.BasicsUser">
+		SELECT
+		b.user_basics_id,b.user_nickname,b.user_password,b.user_register_data,b.user_register_address,b.user_grade_id
+		FROM user_basics b
+
+	</select>
+	<select id="selectUserBasicsToGrade" resultType="com.mrkb.dao.modle.user.BasicsUser"
+		parameterType="int">
+		SELECT
+		*
+		FROM user_basics WHERE
+		user_grade_id=#{grade,jdbcType=INTEGER}
+	</select>
+	<select id="findUserBasics" resultType="com.mrkb.dao.modle.user.BasicsUser"
+		parameterType="int">
+		SELECT
+		*
+		FROM user_basics WHERE
+		user_basics_id=#{user_basics_id,jdbcType=INTEGER}
+	</select>
+	<select id="findTeamInformationByPage" resultType="com.mrkb.dao.modle.user.TeamInformation">
+		SELECT
+		b.user_basics_id,m.information_compellation,m.information_card,g.grade_name,g.grade_nickname,
+		i.integral_basics,i.integral_travel,i.integral_bonus,w.weixin_nickname,
+		m.co_user_basics_id,ui.information_compellation as information_compellation3,
+		m.user_resources,uin.information_compellation as superior_information_compellation,
+		r.recommend_superior,b.user_grade_id
+		FROM user_basics b
+		LEFT JOIN user_integral i
+		ON(b.user_basics_id=i.user_basics_id)
+		LEFT JOIN
+		user_grade g
+		ON(b.user_grade_id=g.user_grade_id)
+		LEFT JOIN
+		user_information m
+		ON(b.user_basics_id=m.user_basics_id)
+		LEFT JOIN
+		user_weixin w
+		ON(b.user_basics_id=w.user_basics_id)
+		LEFT JOIN
+		user_information ui ON(ui.user_basics_id=m.co_user_basics_id)
+		
+		LEFT JOIN user_recommend r
+		ON(b.user_basics_id=r.user_basics_id)
+		LEFT JOIN user_information uin
+		on(r.recommend_superior=uin.user_basics_id)
+		where 1=1
+
+				<if
+					test="information_compellation!=null and information_compellation!='' ">
+					or m.information_compellation LIKE concat('%',#{information_compellation,jdbcType=VARCHAR},'%')
+				</if>
+				<if test="information_card!=null and information_card!= '' ">
+					or m.information_card =#{information_card,jdbcType=VARCHAR}
+				</if>
+				<if
+					test="user_basics_id!=null and user_basics_id!= '' and user_basics_id!=0">
+					OR m.user_basics_id = #{user_basics_id,jdbcType=INTEGER}
+				</if>
+				<if
+					test="co_user_basics_id!=null and co_user_basics_id!= '' and co_user_basics_id!=0">
+					OR m.co_user_basics_id = #{co_user_basics_id,jdbcType=INTEGER}
+				</if>
+				order by m.user_basics_id desc
+
+
+	</select>
+	<select id="findTeamInformationRecord" resultType="com.mrkb.dao.modle.user.TeamInformation"
+		parameterType="int">
+		SELECT
+		b.user_basics_id,a.team_num,a.direct_team_num,a.records_integral,
+		a.records_bonus,a.team_consume,a.direct_team_consume,r.recommend_superior,
+		ui.information_compellation as superior_information_compellation,
+		r.recommend_type,uw.weixin_nickname,uif.information_compellation
+		FROM
+		user_basics b LEFT JOIN user_information i
+		ON(b.user_basics_id=i.user_basics_id)
+		LEFT JOIN user_achievement a
+		ON(b.user_basics_id=a.user_basics_id)
+		LEFT JOIN user_recommend r
+		ON(b.user_basics_id=r.user_basics_id)
+		LEFT JOIN user_information ui
+		on(r.recommend_superior=ui.user_basics_id)
+		LEFT JOIN user_weixin uw on
+		(uw.user_basics_id=a.user_basics_id)
+		LEFT JOIN user_information uif
+		on(uif.user_basics_id=a.user_basics_id)
+		WHERE 1=1
+		and
+		b.user_basics_id=#{user_basics_id,jdbcType=INTEGER}
+	</select>
+	<select id="findTeamRecordId" resultType="com.mrkb.dao.modle.user.TeamInformation"
+		parameterType="int">
+		SELECT
+		r.user_basics_id,i.information_compellation,a.team_num,
+		a.direct_team_num,a.records_integral,a.records_bonus,r.recommend_superior,
+		ui.information_compellation
+		as
+		superior_information_compellation,r.recommend_type
+		,w.weixin_nickname
+		FROM user_basics b LEFT JOIN user_information i
+		ON(b.user_basics_id=i.user_basics_id)
+		LEFT JOIN user_achievement a
+		ON(b.user_basics_id=a.user_basics_id)
+		LEFT JOIN user_recommend r
+		ON(b.user_basics_id=r.user_basics_id)
+		LEFT JOIN user_information ui
+		on(r.recommend_superior=ui.user_basics_id)
+		LEFT JOIN user_weixin w
+		ON(b.user_basics_id=w.user_basics_id)
+		WHERE
+		r.recommend_superior=#{user_basics_id,jdbcType=INTEGER}
+	</select>
+	<select id="selectUserBasicsToAccountNum" resultType="com.mrkb.dao.modle.user.BasicsUser"
+		parameterType="string">
+		SELECT
+		user_basics_id,user_nickname,user_password,user_register_data,user_register_address,user_grade_id,user_account_num
+		FROM user_basics
+		WHERE user_account_num
+		=#{user_account_num,jdbcType=VARCHAR};
+	</select>
+	<select id="selectUserBasicsToAccountNumUserPassword"
+		resultType="com.mrkb.dao.modle.user.BasicsUser" parameterType="string">
+		SELECT
+		user_basics_id,user_nickname,user_password,user_register_data,user_register_address,user_grade_id,user_account_num
+		FROM user_basics
+		WHERE user_account_num
+		=#{user_account_num,jdbcType=VARCHAR}
+		AND
+		user_password=#{user_password,jdbcType=VARCHAR}
+	</select>
+	<select id="selectUserBasicsToAccountNumOne" resultType="com.mrkb.dao.modle.user.BasicsUser"
+		parameterType="string">
+		SELECT
+		user_basics_id,user_nickname,user_password,user_register_data,user_register_address,user_grade_id,user_account_num
+		FROM user_basics
+		WHERE user_account_num
+		=#{user_account_num,jdbcType=VARCHAR};
+	</select>
+	<select id="selectUserBToUid" parameterType="int"
+		resultType="com.mrkb.dao.modle.user.BasicsUser">
+		SELECT
+		user_basics_id,user_nickname,user_password,user_register_data,user_register_address,
+		user_grade_id,user_account_num,low_vip_time,vip_time
+		FROM user_basics
+		WHERE user_basics_id=#{user_basics_id,jdbcType=INTEGER}
+	</select>
+
+	<select id="selectUserGradeIdCount" parameterType="INTEGER"
+		resultType="int">
+		select count(*) from user_basics u1 left join user_integral u2 on
+		u1.user_basics_id =u2.user_basics_id
+		where 1=1
+		<if test="user_grade_id!=null">
+			and u1.user_grade_id=#{user_grade_id,jdbcType=INTEGER}
+		</if>
+		<if test="integral_basics!=null">
+			and
+			u2.integral_basics&gt;=#{integral_basics,jdbcType=INTEGER}
+		</if>
+	</select>
+	<update id="updateUserMoneyPlus">
+		UPDATE user_basics SET
+		user_money=(IFNULL(user_money,0)+#{num,jdbcType=DOUBLE})
+		WHERE
+		user_basics_id=#{user_basics_id,jdbcType=INTEGER}
+	</update>
+	<update id="updateUserMoneyReduce">
+		UPDATE user_basics SET
+		user_money=(user_money-#{num,jdbcType=DOUBLE})
+		WHERE
+		user_basics_id=#{user_basics_id,jdbcType=INTEGER}
+	</update>
+	<update id="updateUserMoneyPlusToUid_Bid">
+		UPDATE user_basics SET user_money=
+		(IFNULL(user_money,0)+(SELECT apply_sum FROM bonus_extract_apply WHERE
+		bonus_extract_apply_id=#{bonus_extract_apply_id,jdbcType=INTEGER}))
+		WHERE user_basics_id=(SELECT user_basics_id FROM bonus_extract_apply
+		WHERE
+		bonus_extract_apply_id=#{bonus_extract_apply_id,jdbcType=INTEGER})
+	</update>
+	<select id="selectUserMoneyToUid" parameterType="int"
+		resultType="Double">
+		SELECT user_money FROM user_basics WHERE
+		user_basics_id=#{user_baiscs_id,jdbcType=INTEGER}
+	</select>
+
+	<update id="updateAdminUser">
+		UPDATE user_basics SET
+		user_password =
+		#{user_password,jdbcType=VARCHAR} , user_account_num =
+		#{user_account_num, jdbcType=VARCHAR}
+		where user_basics_id =
+		#{user_basics_id,jdbcType=INTEGER}
+	</update>
+
+	<select id="findTeamInformationById" resultType="com.mrkb.dao.modle.user.TeamInformation">
+		SELECT
+		b.user_basics_id,m.information_compellation,m.information_card,g.grade_name,g.grade_nickname,i.integral_basics,i.integral_travel,i.integral_bonus,w.weixin_nickname
+		FROM user_basics b
+		LEFT JOIN user_integral i
+		ON(b.user_basics_id=i.user_basics_id)
+		LEFT JOIN
+		user_grade g
+		ON(b.user_grade_id=g.user_grade_id)
+		LEFT JOIN
+		user_information m
+		ON(b.user_basics_id=m.user_basics_id)
+		LEFT JOIN
+		user_weixin w
+		ON(b.user_basics_id=w.user_basics_id)
+
+		where 1=1 and m.user_basics_id =
+		#{user_basics_id,jdbcType=INTEGER}
+
+
+	</select>
+	<select id="findUserInfo" resultType="com.mrkb.dao.modle.user.UserInformationEntity"
+			parameterType="com.mrkb.dao.modle.user.UserWeixin">
+		select * from user_information where user_basics_id=(select
+		user_basics_id from
+		user_weixin where
+		weixin_id=#{weixin_id,jdbcType=VARCHAR});
+	</select>
+</mapper>

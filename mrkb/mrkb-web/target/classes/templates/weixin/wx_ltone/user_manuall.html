@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<base href="<%=basePath%>">
+		<meta charset="UTF-8">
+		<title>操作手册</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<script src="../../static/js/wx_ltone/jquery-2.1.4.js" th:src="@{/js/wx_ltone/jquery-2.1.4.js}" ></script>
+		<script src="../../static/js/wx_ltone/fastclick.js" th:src="@{/js/wx_ltone/fastclick.js}" ></script>
+		<script src="../../static/js/wx_ltone/jquery-weui.js" th:src="@{/js/wx_ltone/jquery-weui.js}" ></script>
+		<script src="../../static/js/basePathConfig.js" th:src="@{/js/basePathConfig.js}" ></script>
+		<script src="../../static/js/util/userCookie.js" th:src="@{/js/util/userCookie.js}" ></script>
+		<style type="text/css">
+			.detail-content img{
+				width:100%;
+				height:100%;
+			}
+		</style>
+	</head>
+
+	<body>
+		<!--主体-->
+		<div class="mui-content">
+			<div class="detail" id="contentDetail"></div>
+		</div>
+		<script type="text/javascript">
+			$(function(){
+				// 查询操作手册
+			    $.ajax({ 
+			    	type : "GET", //提交方式 
+			    	url : basePath + '/weixin_news/findNewsOne',
+			    	data : { 
+			     		news_type: 9
+			    	},//数据，这里使用的是Json格式进行传输 
+			    	success : function(result) {
+			    		var listGoods = result.data;
+						var pictures = listGoods.news_picture;
+						pictures = pictures.split(";");
+						var picture1 = pictures[0];
+						var audioHtml = '';
+						if(listGoods.news_mp3){
+					       	audioHtml = '	<div class="audio-box">'+
+								        '		<div class="audio-btn" audio-src="'+ listGoods.news_mp3 +'" onclick="playMusic(this)"></div>'+
+								        '		<div class="audio-prosses">'+
+								        '			<div class="audio-prosses-bg">'+
+								        '				<div id="audioActive" class="audio-prosses-bg-active"></div>'+
+								        '			</div>'+
+								        '		</div>'+
+								        '	</div>';
+					    }
+						var	Ahtml = '<div class="title">' +
+							        '	<h4>' + listGoods.news_title + '</h4>' +
+							        '</div>' +
+							        '<div class="detail-content">'+ audioHtml +
+							        '	<div>'+listGoods.detail_content + '</div>'+
+							        '</div>';
+						$("#contentDetail").append(Ahtml);
+						
+				    	},
+		     		error: function (err){
+			     		$.toast('网络错误，请稍后重试...');
+			     		return;
+		     		}
+			    });
+			});
+			
+			    
+		</script>
+	</body>
+
+</html>

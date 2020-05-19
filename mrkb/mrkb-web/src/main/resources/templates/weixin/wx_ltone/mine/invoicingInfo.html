@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>发票信息</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+	<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/weui.min.css" th:href="@{/css/wx_ltone/weui.min.css}"/>
+	<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/jquery-weui.css" th:href="@{/css/wx_ltone/jquery-weui.css}"/>
+	<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/reset.css" th:href="@{/css/wx_ltone/reset.css}"/>
+	<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/mainstyle.css" th:href="@{/css/wx_ltone/mainstyle.css}" />
+	<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/public.css" th:href="@{/css/wx_ltone/public.css}" />
+	<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/invoicingInfo.css" th:href="@{/css/wx_ltone/invoicingInfo.css}"/>
+
+</head>
+
+<body>
+<div class="search">
+	<div class="search-left">
+		<a href="javascript:history.go(-1);">
+			<img th:src="@{/img/wx_ltone/icon/mine/fanhui.png}">
+		</a>
+	</div>
+</div>
+<div class="mdfd-content">
+	<div id="invoicingList"></div>
+	<!-- <div style="background: #f0f0f0;height: 5px;margin-top:15px;"></div>
+    <div class="submit-add-idinfo-box" style="margin-bottom: 20px;">
+        <div onclick="window.location = basePath + '/maid/toInvoicing'" class="weui-btn weui-btn_primary btn">新增发票信息</div>
+    </div> -->
+</div>
+
+<script src="../../static/js/wx_ltone/jquery-2.1.4.js" th:src="@{/js/wx_ltone/jquery-2.1.4.js}" ></script>
+<script src="../../static/js/wx_ltone/fastclick.js" th:src="@{/js/wx_ltone/fastclick.js}" ></script>
+<script src="../../static/js/wx_ltone/jquery-weui.js" th:src="@{/js/wx_ltone/jquery-weui.js}" ></script>
+<script src="../../static/js/basePathConfig.js" th:src="@{/js/basePathConfig.js}" ></script>
+<script>
+    $(function() {
+        FastClick.attach(document.body);
+
+        // 获取发票列表
+        $.ajax({
+            type : "GET", //提交方式
+            url : basePath + '/maid/findInvoiceToUid',
+            data : { },//数据，这里使用的是Json格式进行传输
+            success : function(result) {
+                //返回数据根据结果进行相应的处理
+                // alert(JSON.stringify(result));
+                if(result.data){
+                    callbankInvoicingList(result.data);
+                }
+            },
+            error: function (err){
+                $.toast('网络错误，请稍后重试...');
+                return;
+            }
+        });
+    });
+
+
+    // 发票列表数据处理
+    function callbankInvoicingList(data){
+        var invoicingListData = data;
+        if(invoicingListData.length != 0){
+            var html = '';
+            for(var i = 0; i < invoicingListData.length; i ++){
+                html += '<div class="address-list" invoice_id="'+ invoicingListData[i].invoice_id +'">'+
+                    '	<div class="address-box">'+
+                    '		<div class="address-info">';
+                if(invoicingListData[i].invoice_type==1){
+                    html += '<p class="default-text"><span>类型：</span><span>个人</span></p>'+
+                        '<p class="default-suihao"><span>身份证号：</span><span>'+ invoicingListData[i].invoice_num +'</span></p>';
+                }else if(invoicingListData[i].invoice_type==2){
+                    html += '<p class="default-text"><span>类型：</span><span>单位</span></p>'+
+                        '<p class="default-suihao"><span>税号：</span><span>'+ invoicingListData[i].invoice_num +'</span></p>';
+                }
+                if(invoicingListData[i].invoice_status==1){
+                    html +=	'		</div>'+
+                        '		<div class="address-mcdz">'+
+                        '			<p class="default-text-color">'+
+                        '				<span>名称：</span><span>'+ invoicingListData[i].invoice_name +'</span>'+
+                        '			</p>'+
+                        '			<p class="default-text-color">'+
+                        '				<span>地址：</span><span>'+ invoicingListData[i].invoice_address +'</span>'+
+                        '			</p>'+
+                        '		</div>'+
+                        '		<div class="address-btn">'+
+                        // 								'			<div class="address-default" onclick="getInvoicing(this)"><span>索取发票</span></div>'+
+                        '			<a class="address-delet" onclick="deletInvoicingInfo(this)"><i class="iconfont icon-shanchuguanbicha shade"></i>&nbsp;&nbsp;<span>删除</span></a>'+
+                        '		</div>'+
+                        '	</div>'+
+                        '</div>';
+                }else if(invoicingListData[i].invoice_status==2){
+                    html +=	'		</div>'+
+                        '		<div class="address-mcdz">'+
+                        '			<p class="default-text-color">'+
+                        '				<span>名称：</span><span>'+ invoicingListData[i].invoice_name +'</span>'+
+                        '			</p>'+
+                        '			<p class="default-text-color">'+
+                        '				<span>地址：</span><span>'+ invoicingListData[i].invoice_address +'</span>'+
+                        '			</p>'+
+                        '			<p class="default-text-color">'+
+                        '				<span>快递公司：</span><span>'+ invoicingListData[i].courier_services_company +'</span>'+
+                        '			</p>'+
+                        '			<p class="default-text-color">'+
+                        '				<span>运单号：</span><span>'+ invoicingListData[i].waybill_number +'</span>'+
+                        '			</p>'+
+                        '		</div>'+
+                        '		<div class="address-btn">'+
+                        // 								'			<div class="address-default" onclick="getInvoicing(this)"><span>索取发票</span></div>'+
+                        '			<a class="address-delet" onclick="deletInvoicingInfo(this)"><i class="iconfont icon-shanchuguanbicha shade"></i>&nbsp;&nbsp;<span>删除</span></a>'+
+                        '		</div>'+
+                        '	</div>'+
+                        '</div>';
+                }
+
+            }
+            $('#invoicingList').html(html);
+        }else{
+            $.toast('暂无数据...');
+        }
+
+    }
+
+    // 索取发票按钮
+    function getInvoicing(ele){
+        // 索取发票
+        $.ajax({
+            type : "GET", //提交方式
+            url : basePath + '/maid/addInvoiceGain',
+            data : {
+                invoice_id:ele.parentElement.parentElement.parentElement.getAttribute('invoice_id')
+            },//数据，这里使用的是Json格式进行传输
+            success : function(result) {
+                $.alert(result.message);
+            },
+            error: function (err){
+                $.toast('网络错误，请稍后重试...');
+                return;
+            }
+        });
+
+    }
+
+    // 删除发票信息按钮
+    function deletInvoicingInfo(ele){
+        $.confirm('确定要删除吗？','提示',function(){
+            // 删除发票
+            $.ajax({
+                type : "GET", //提交方式
+                url : basePath + '/maid/delInvoiceToInvoice_id',
+                data : {
+                    invoice_id:ele.parentElement.parentElement.parentElement.getAttribute('invoice_id')
+                },//数据，这里使用的是Json格式进行传输
+                success : function(result) {
+                    $.alert(result.message);
+                    location.reload();
+                    ele.parentElement.parentElement.parentElement.remove();
+                },
+                error: function (err){
+                    $.toast('网络错误，请稍后重试...');
+                    return;
+                }
+            });
+        },function(){
+            $.toast('您已取消操作');
+        });
+    }
+
+</script>
+
+</body>
+</html>

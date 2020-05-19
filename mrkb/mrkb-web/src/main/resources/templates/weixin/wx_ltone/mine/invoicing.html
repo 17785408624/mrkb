@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>新增收取发票信息</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+	<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/weui.min.css" th:href="@{/css/wx_ltone/weui.min.css}"/>
+	<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/jquery-weui.css" th:href="@{/css/wx_ltone/jquery-weui.css}"/>
+	<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/reset.css" th:href="@{/css/wx_ltone/reset.css}"/>
+	<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/mainstyle.css" th:href="@{/css/wx_ltone/mainstyle.css}" />
+	<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/public.css" th:href="@{/css/wx_ltone/public.css}" />
+	<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/invoicing.css" th:href="@{/css/wx_ltone/invoicing.css}"/>
+	<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/mine.css" th:href="@{/css/wx_ltone/mine.css}"/>
+</head>
+
+<body>
+<div class="search">
+	<div class="search-left">
+		<a href="javascript:history.go(-1);">
+			<img th:src="@{/img/wx_ltone/icon/mine/fanhui.png}">
+		</a>
+	</div>
+</div>
+<div class="mdfd-content">
+	<ul class="mui-table-view" style="margin-bottom: 0 !important;">
+		<li class="custom-table-view-cell" style="border-bottom: none;">
+			<div class="mui-input-row">
+				<label>名&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;称：</label>
+				<input id="invoice_name" type="text" value="" style="width:45%;">
+				<select id="invoiceType" onchange="invoiceTypeAlter(this)">
+					<option>-请选择-</option>
+					<option value="1">个人</option>
+					<option value="2">单位</option>
+				</select>
+			</div>
+		</li>
+	</ul>
+	<div style="height: 5px;background: #f5f5f5;"></div>
+	<ul class="mui-table-view">
+		<li class="custom-table-view-cell">
+			<div class="mui-input-row" >
+				<label>订单编号： </label>
+				<input id="orderId" type="text" value="64578532332" disabled="disabled">
+			</div>
+		</li>
+		<li class="custom-table-view-cell">
+			<div class="mui-input-row" id="">
+				<label>价&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;格： </label>
+				<input id="allPrice" type="text" value="" disabled="disabled">
+			</div>
+		</li>
+		<li class="custom-table-view-cell">
+			<div class="mui-input-row" id="invoiceNum">
+				<label id="dutyNum">税&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;号： </label>
+				<input id="invoice_num" type="text" value="">
+			</div>
+		</li>
+		<li class="custom-table-view-cell">
+			<div class="mui-input-row">
+				<label>地&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;址：</label>
+				<input id="invoice_address" type="text" value="">
+			</div>
+		</li>
+		<li class="custom-table-view-cell">
+			<div class="mui-input-row">
+				<label>电话号码：</label>
+				<input id="invoice_mobile" type="text" value="">
+			</div>
+		</li>
+		<li class="custom-table-view-cell">
+			<div class="mui-input-row">
+				<label>开户银行：</label>
+				<input id="invoice_openbank" type="text" value="">
+			</div>
+		</li>
+		<li class="custom-table-view-cell">
+			<div class="mui-input-row">
+				<label>银行账号：</label>
+				<input id="invoice_banknum" type="text" value="">
+			</div>
+		</li>
+		<li class="custom-table-view-cell">
+			<div class="mui-input-row">
+				<label>发票领取：</label>
+				<input type="radio" id="female" name="mode" />
+				<label for="female"  id="getOptain">自取</label>
+				<input type="radio" id="male" name="mode" />
+				<label for="male" id="byEmail">邮件（货到付款）</label>
+			</div>
+		</li>
+	</ul>
+	<p>建议全部填写，以便开具增值税专用发票</p>
+	<div class="submit-add-idinfo-box">
+		<input type="button" class="weui-btn weui-btn_primary btn" onclick="addInvoicing()" value="索取发票">
+	</div>
+</div>
+
+<script src="../../static/js/wx_ltone/jquery-2.1.4.js" th:src="@{/js/wx_ltone/jquery-2.1.4.js}" ></script>
+<script src="../../static/js/wx_ltone/fastclick.js" th:src="@{/js/wx_ltone/fastclick.js}" ></script>
+<script src="../../static/js/wx_ltone/jquery-weui.js" th:src="@{/js/wx_ltone/jquery-weui.js}" ></script>
+<script src="../../static/js/basePathConfig.js" th:src="@{/js/basePathConfig.js}" ></script>
+<script src="../../static/js/wx_ltone/common.js" th:src="@{/js/wx_ltone/common.js}" ></script>
+<script>
+    var  allPrice="";//获取总价
+    var  orderId="";//获取订单号
+    var invoiceWayType ="" ;//获取发票方式
+    $(function() {
+        FastClick.attach(document.body);
+        allPrice = getUrlParam('all_price');//获取总价
+        orderId = getUrlParam('order_id');//获取订单号
+        $("#orderId").val(orderId);
+        $("#allPrice").val("￥"+allPrice);
+        $("#getOptain").click(function(){
+            invoiceWayType=1;
+        });
+        $("#byEmail").click(function(){
+            invoiceWayType=2;
+        });
+    });
+
+    function invoiceTypeAlter(selcet) { //发票类型发生改变
+        selcetedIndex = selcet.selectedIndex;
+        selcetedValue = selcet[selcetedIndex].value;
+        /*当选择发票类型为个人的时候，没有税号这一选项*/
+        if(selcetedValue == 1) {
+            ///$('#invoiceNum').parent().css('display','none');
+            $("#dutyNum").html("身份证号:");
+        } else if(selcetedValue == 2) {
+            $('#invoiceNum').parent().css('display','block');
+            $("#dutyNum").html("税&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;号:");
+        }
+        switch(parseInt(selcetedIndex)) {
+            case 1: //个人
+                $('#invoice_name').val('');
+                $('#invoice_name').attr('placeholder', '请填写收票人姓名');
+                $('#invoice_num').attr('placeholder', '选填');
+                $('#invoice_address').attr('placeholder', '必填');
+                $('#invoice_mobile').attr('placeholder', '必填');
+                $('#invoice_openbank').attr('placeholder', '选填');
+                //$('#invoice_openbank').attr('placeholder', '选填');
+                $('#invoice_banknum').attr('placeholder', '选填');
+                break;
+            case 2: //公司
+                $('#invoice_name').val('');
+                $('#invoice_name').attr('placeholder', '请填写公司/企业名称');
+                $('#invoice_num').attr('placeholder', '必填');
+                $('#invoice_address').attr('placeholder', '必填');
+                $('#invoice_mobile').attr('placeholder', '必填');
+                $('#invoice_openbank').attr('placeholder', '必填');
+                $('#invoice_banknum').attr('placeholder', '必填');
+                break;
+        }
+    }
+
+    function addInvoicing() { //添加用户
+        selcet = document.getElementById("invoiceType");
+        selcetedIndex = selcet.selectedIndex;
+        if(!checkout(selcetedIndex)) {
+            return;
+        }
+        var invoice_type = selcetedIndex; //发票类型
+        var invoice_name = $('#invoice_name').val(); //名称
+        var invoice_num = $('#invoice_num').val(); //税号
+        var invoice_address = $('#invoice_address').val(); //地址
+        var invoice_mobile = $('#invoice_mobile').val(); //电话
+        var invoice_openbank = $('#invoice_openbank').val(); //开户行
+        var invoice_banknum = $('#invoice_banknum').val(); //银行卡号
+        /*校验发票类型*/
+        if(invoice_type == "" || invoice_type == null) {
+            $.alert("请选择发票类型");
+            return;
+        } else {
+            invoice_type = selcetedIndex;
+        }
+        /*校验名称*/
+        if(invoice_name == null || invoice_name.length == 0) {
+            $.alert("请输入名称");
+            return;
+        } else {
+            invoice_name = $('#invoice_name').val();
+        }
+        /*判断发票是个人还是公司所有*/
+        if(invoice_type == 2) {
+            /*校验税号*/
+            if((invoice_num == null || invoice_num.length == 0)) {
+                $.alert("请输入税号");
+                return;
+            } else {
+                var reg = /^[a-zA-Z0-9]{15,20}$/;
+                if(!reg.test(invoice_num)) {
+                    $.alert("税号有误，请输入15-20位数字或字母,且字母区分大小写!");
+                    return;
+                }
+                invoice_num = $('#invoice_num').val();
+            }
+        }
+        /*校验地址*/
+        if(invoice_address == null || invoice_address.length == 0) {
+            $.alert("请输入地址");
+            return;
+        } else {
+            invoice_address = $('#invoice_address').val();
+        }
+        /*校验电话*/
+        if(invoice_mobile == null || invoice_mobile.length == 0) {
+            $.alert("请输入电话");
+            return;
+        }
+        invoice_mobile = $('#invoice_mobile').val();
+
+        /*校验开户行*/
+        if(document.getElementById("invoiceType").value == 2) {
+            if(invoice_openbank == null || invoice_openbank.length == 0) {
+                $.alert("请输入开户行");
+                return;
+            } else {
+                invoice_openbank = $('#invoice_openbank').val();
+            }
+        }
+
+        /*校验银行卡号*/
+        if(document.getElementById("invoiceType").value == 2) {
+            if(invoice_banknum == null || invoice_banknum.length == 0) {
+                $.alert("请输入银行卡号");
+                return;
+            } else {
+                var reg = /^[0-9]*$/;
+                if(!reg.test(invoice_banknum)) {
+                    $.alert("银行账号有误，请填写正确的银行账号!");
+                    return;
+                }
+                invoice_banknum = $('#invoice_banknum').val();
+            }
+        }
+
+        // 提交发票信息
+        $.ajax({
+            type : "GET", //提交方式
+            url : basePath + '/maid/addInvoice',
+            data : {
+                invoice_name: invoice_name,
+                invoice_num: invoice_num,
+                invoice_address: invoice_address,
+                invoice_mobile: invoice_mobile,
+                invoice_openbank: invoice_openbank,
+                invoice_banknum: invoice_banknum,
+                invoice_type: invoice_type,
+                all_price:allPrice,
+                order_id:orderId,
+                invoice_way_type:invoiceWayType
+            },//数据，这里使用的是Json格式进行传输
+            success : function(result) {
+                if(result.isSuccess ==false){
+                    $.alert(result.message);
+                    return;
+                }else{
+                    var  invoice_id = result.data;
+                    $.ajax({
+                        type : "GET", //提交方式
+                        url : basePath + '/maid/addInvoiceGain',
+                        data : {
+                            invoice_id:result.data
+                        },//数据，这里使用的是Json格式进行传输
+                        success : function(result) {
+                            //$.alert(1111);
+                            $.alert(result.message);
+                            window.location = basePath + '/maid/invoicingInfo';
+                        },
+                        error: function (err){
+                            $.toast('网络错误，请稍后重试...');
+                            return;
+                        }
+                    });
+                }
+
+            },
+            error: function (err){
+                $.toast('网络错误，请稍后重试...');
+                return;
+            }
+        });
+    };
+
+    function checkout(invoiceType) { //验证用户输入保存的发票信息
+        return true;
+    };
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<title>我的后院</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/weui.min.css" th:href="@{/css/wx_ltone/weui.min.css}"/>
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/jquery-weui.css" th:href="@{/css/wx_ltone/jquery-weui.css}"/>
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/mine.css" th:href="@{/css/wx_ltone/mine.css}"/>
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/reset.css" th:href="@{/css/wx_ltone/reset.css}"/>
+		
+	</head>
+
+	<body style="background: #ffffff;">
+		<div class="weui_content">
+			<ul class="mui-table-view">
+				<li class="user-box">
+					<div class="user">
+						<div class="user-div">
+							<div class="user-portrait">
+								<img id="headImgUrl">
+							</div>
+						</div>
+						<div class="user-info">
+							<div style="width:90%;">
+								<div id="nickname" class="user-mc"></div>
+								<div id="userWeixin" class="user-Weixin"></div>
+								<div>会员编号：<span id="memberNum"></span></div>
+							</div>
+							<div>快乐值：<span id="reward"></span></div>
+						</div>
+						<div>
+							<span class="user-member" onclick="goMemberInfo()">
+								<span id="grade_nickname"></span>
+							</span>
+						</div>
+					</div>
+					<div class="user-manage">
+						<div class="manage manage-border" onclick="window.location = basePath + '/maid/myCourse'">
+							我的课程
+						</div>
+						<div class="manage manage-border" onclick="window.location = basePath + '/maid/myAccount'">
+							我的账房
+						</div>
+						<div class="manage manage-border" onclick="window.location = basePath + '/maid/myAdvisor'">
+							我的顾问
+						</div>
+					</div>
+				</li>
+				<li>
+					<div class="weui-cells">
+						<div class="weui-cell weui-cell_access" onclick="window.location = basePath + '/maid/personInfo'">
+							<div class="weui-cell__hd">
+								<img th:src="@{/img/wx_ltone/icon/mine/gerenxx.png}" style="width:20px;margin-right:5px;display:block">
+							</div>
+							<div class="weui-cell__bd weui-cell_primary">
+							  <p>个人信息</p>
+							</div>
+							<span class="weui-cell__ft"></span>
+						</div>
+						<div class="weui-cell weui-cell_access" onclick="window.location = basePath + '/maid/myOrder'">
+							<div class="weui-cell__hd">
+								<img th:src="@{/img/wx_ltone/icon/mine/dingdan.png}" style="width:20px;margin-right:5px;display:block">
+							</div>
+							<div class="weui-cell__bd weui-cell_primary">
+							  <p>我的订单</p>
+							</div>
+							<span class="weui-cell__ft"></span>
+						</div>
+						<div class="weui-cell weui-cell_access"  onclick="window.location = basePath + '/maid/address'">
+							<div class="weui-cell__hd">
+								<img th:src="@{/img/wx_ltone/icon/mine/zengping.png}" style="width:20px;margin-right:5px;display:block">
+							</div>
+							<div class="weui-cell__bd weui-cell_primary">
+							  <p>地址管理</p>
+							</div>
+							<span class="weui-cell__ft"></span>
+						</div>
+						<div class="weui-cell weui-cell_access" onclick="window.location = basePath + '/maid/myTeam'">
+							<div class="weui-cell__hd">
+								<img th:src="@{/img/wx_ltone/icon/mine/td.png}" style="width:20px;margin-right:5px;display:block">
+							</div>
+							<div class="weui-cell__bd weui-cell_primary">
+							  <p>我的社区</p>
+							</div>
+							<span class="weui-cell__ft"></span>
+						</div>
+						<!--<div class="weui-cell weui-cell_access" onclick="zllfy();">
+							<div class="weui-cell__hd">
+								<img th:src="@{/img/wx_ltone/icon/mine/association.png}" style="width:20px;margin-right:5px;display:block">
+							</div>
+							<div class="weui-cell__bd weui-cell_primary">
+							  <p>紫罗兰分院</p>
+							</div>
+							<span class="weui-cell__ft"></span>
+						</div>-->
+						<div class="weui-cell weui-cell_access" onclick="window.location = basePath + '/maid/myNews'" style="position: relative;">
+							<div class="weui-cell__hd">
+								<img th:src="@{/img/wx_ltone/icon/mine/xiaoxi.png}" style="width:20px;margin-right:5px;display:block">
+							</div>
+							<div class="weui-cell__bd weui-cell_primary" >
+							  <p>我的消息</p>
+							  <p style="width:15px;height:15px;border-radius:50%;background: red;position: absolute;top:10px;left:120px;text-align: center;line-height: 15px;color:#fff;font-size: 12px;display:none" id="if_read">1</p>
+							</div>
+							<span class="weui-cell__ft"></span>
+						</div>
+						<div class="weui-cell weui-cell_access" onclick="window.location = basePath + '/maid/myWallet'">
+							<div class="weui-cell__hd">
+								<img th:src="@{/img/wx_ltone/icon/mine/qianbao.png}" style="width:20px;margin-right:5px;display:block">
+							</div>
+							<div class="weui-cell__bd weui-cell_primary">
+							  <p>我的钱包</p>
+							</div>
+							<span class="weui-cell__ft"></span>
+						</div>
+						<!-- <div class="weui-cell weui-cell_access" onclick="window.location = basePath + '/maid/historyGift'">
+							<div class="weui-cell__hd">
+								<img th:src="@{/img/wx_ltone/icon/mine/zsjl.png}" style="width:20px;margin-right:5px;display:block">
+							</div>
+							<div class="weui-cell__bd weui-cell_primary">
+							  <p>历史赠送</p>
+							</div>
+							<span class="weui-cell__ft"></span>
+						</div> -->
+						<div class="weui-cell weui-cell_access" onclick="window.location = basePath + '/maid/invoicingInfo'">
+							<div class="weui-cell__hd">
+								<img th:src="@{/img/wx_ltone/icon/mine/zsjl.png}" style="width:20px;margin-right:5px;display:block">
+							</div>
+							<div class="weui-cell__bd weui-cell_primary">
+							  <p>发票信息</p>
+							</div>
+							<span class="weui-cell__ft"></span>
+						</div>
+					</div>
+				</li>
+			</ul>
+		</div>
+		<div class="weui-tabbar">
+			<div onclick="window.location = basePath + '/HomeController/home'" class="weui-tabbar__item">
+				<div class="weui-tabbar__icon">
+					<img th:src="@{/img/wx_ltone/icon/tabbar/icon-home.png}">
+				</div>
+				<p class="weui-tabbar__label">首页</p>
+			</div>
+			<div onclick="window.location = basePath + '/HomeController/bigFoison'" class="weui-tabbar__item">
+				<div class="weui-tabbar__icon">
+					<img th:src="@{/img/wx_ltone/icon/tabbar/icon-big-foison.png}">
+				</div>
+				<p class="weui-tabbar__label">商城</p>
+			</div>
+			<div onclick="window.location = basePath + '/HomeController/bigGrowUp'" class="weui-tabbar__item">
+				<div class="weui-tabbar__icon">
+					<img th:src="@{/img/wx_ltone/icon/tabbar/icon-big-grow-up.png}">
+				</div>
+				<p class="weui-tabbar__label">成长课程</p>
+			</div>
+			<div class="weui-tabbar__item weui-bar__item--on">
+				<div class="weui-tabbar__icon">
+					<img th:src="@{/img/wx_ltone/icon/tabbar/icon-mine-active.png}">
+				</div>
+				<p class="weui-tabbar__label">我的后院</p>
+			</div>
+		</div>
+		<script src="../../static/js/wx_ltone/jquery-2.1.4.js" th:src="@{/js/wx_ltone/jquery-2.1.4.js}" ></script>
+		<script src="../../static/js/wx_ltone/fastclick.js" th:src="@{/js/wx_ltone/fastclick.js}" ></script>
+		<script src="../../static/js/wx_ltone/jquery-weui.js" th:src="@{/js/wx_ltone/jquery-weui.js}" ></script>
+		<script src="../../static/js/basePathConfig.js" th:src="@{/js/basePathConfig.js}" ></script>
+		<script src="../../static/js/util/userCookie.js" th:src="@{/js/util/userCookie.js}" ></script>
+		<script>
+			$(function() {
+				FastClick.attach(document.body);
+			});
+			var user_basics_id,user_grade_id;
+			$(document).ready(function() {
+				var weixin_id = getCookie('getOpenId'); //用户微信号
+				var headImgUrl = getCookie('getHeadImgUrl'); //用户微信头像
+				$('#headImgUrl').attr('src', headImgUrl);
+				var getNickname = getCookie("getNickname"); //用户微信昵称
+				$('#nickname').html(getNickname);
+
+				// 查询用户信息
+				$.ajax({ 
+			    	type : "GET", //提交方式 
+			    	url : basePath + '/user_weixin/findUserWeixinOne',
+			    	data : { 
+			     		weixin_id: weixin_id
+			    	},//数据，这里使用的是Json格式进行传输 
+			    	success : function(result) {
+		      			user_basics_id = result.data.user_basics_id;
+		      			user_grade_id = result.data.user_grade_id;
+                        var grade_nickname = gradelist(user_grade_id);
+                        $("#grade_nickname").html(grade_nickname);
+                        find111(user_basics_id);
+			    	},
+		     		error: function (err){
+
+		     		}
+			    });
+
+
+			    
+
+			});
+			
+			function goMemberInfo(){
+			   window.location.href=basePath + '/maid/memberInfo?user_grade_id=' + user_grade_id;	
+		    }
+			function zllfy(){
+			    alert("您尚未建立分院！");
+			    //window.location = basePath + '/maid/brandAmbassador'
+			}
+			function find111(user_basics_id){
+                // 查询推荐人
+                $.ajax({
+                    type : "GET", //提交方式
+                    url : basePath + '/user_weixin/findUserSuperioruserUserBasics',
+                    data : {
+                        user_basics_id: user_basics_id,
+                        round: 1  // 级数
+                    },//数据，这里使用的是Json格式进行传输
+                    success : function(result) {
+                        $('#userWeixin').html('推荐人：'+ result.data.weixin_nickname);
+                        $('#memberNum').html(user_basics_id);
+                        find2222();
+                    },
+                    error: function (err){
+
+                    }
+                });
+			}
+			function find2222(){
+                // 查询快乐值
+                $.ajax({
+                    type : "GET", //提交方式
+                    url : basePath + '/maid/findIntegralBasics',
+                    data : {
+
+                    },//数据，这里使用的是Json格式进行传输
+                    success : function(result) {
+                        $('#reward').html(result.data);
+                    },
+                    error: function (err){
+
+                    }
+                });
+			}
+			function gradelist(user_grade_id){
+			    if(user_grade_id==1){
+			        return "紫罗兰";
+           	 	}
+           	 	else if(user_grade_id==2){
+                    return "三星紫罗兰";
+				}
+                else if(user_grade_id==3){
+                    return "五星紫罗兰";
+                }
+                else if(user_grade_id==5){
+                    return "钻石紫罗兰";
+                }
+                else if(user_grade_id==7){
+                    return "员工";
+                }
+			}
+		</script>
+	</body>
+</html>

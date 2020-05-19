@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<title>地址管理</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/weui.min.css" th:href="@{/css/wx_ltone/weui.min.css}"/>
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/jquery-weui.css" th:href="@{/css/wx_ltone/jquery-weui.css}"/>
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/reset.css" th:href="@{/css/wx_ltone/reset.css}"/>
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/mainstyle.css" th:href="@{/css/wx_ltone/mainstyle.css}" />
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/public.css" th:href="@{/css/wx_ltone/public.css}" />
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/address.css" th:href="@{/css/wx_ltone/address.css}"/>
+		
+	</head>
+	<body>
+		<div class="search">
+			<div class="search-left">
+				<a href="javascript:history.go(-1);">
+					<img th:src="@{/img/wx_ltone/icon/mine/fanhui.png}">
+				</a>
+			</div>
+		</div>
+		<div class="mdfd-content">
+			<div class="address-list" id="addressList"></div>
+			<div class="submit-add-idinfo-box">
+				<div  onclick="window.location = basePath + '/maid/addressNew'" class="weui-btn weui-btn_primary btn">添加收货地址</div>
+			</div>
+		</div>
+		<script src="../../static/js/wx_ltone/jquery-2.1.4.js" th:src="@{/js/wx_ltone/jquery-2.1.4.js}" ></script>
+		<script src="../../static/js/wx_ltone/fastclick.js" th:src="@{/js/wx_ltone/fastclick.js}" ></script>
+		<script src="../../static/js/wx_ltone/jquery-weui.js" th:src="@{/js/wx_ltone/jquery-weui.js}" ></script>
+		<script src="../../static/js/basePathConfig.js" th:src="@{/js/basePathConfig.js}" ></script>
+		<script>
+			
+			$(document).ready(function(){
+				$.ajax({ 
+			    	type : "GET", //提交方式 
+			     	url : basePath + '/order_weixin/findOrderAddr',// 查询收货地址列表
+			     	data : { },//数据，这里使用的是Json格式进行传输 
+			     	success : function(result) {
+			     		//返回数据根据结果进行相应的处理 
+			      		appendAddressList(result.data)
+			     	}
+			    });
+			});
+			
+			function appendAddressList(data){
+				if(data != null){
+					var reg = new RegExp(";", "g");
+					var htmlStr = '';
+					for(var i = 0; i < data.length; i++){
+						htmlStr += '<div class="address-box">'+
+								   '	<div class="address-info">'+
+								   '		<h4 class="default-text-color"><span class="float-l">'+ data[i].user_name +'</span><span class="float-r">'+ data[i].tel_phone +'</span></h4>'+
+								   '		<p class="default-text-color">'+ (data[i].order_addr).replace(reg, "") +'</p>'+
+								   '	</div>'+
+								   '	<div class="address-btn">'+
+								   '		<div class="address-default default-text-color"> ';
+					if(i==0) {
+						htmlStr += '			<input type="radio" name="address"  checked="checked" onclick="updateLevel('+ data[i].address_id +',this)">';
+					}else{
+						htmlStr += '			<input type="radio" name="address"  onclick="updateLevel(104,this)">';  	
+					}
+								   
+						htmlStr += '			<span>设为默认地址</span>'+
+								   '		</div> '+
+								   '		<div class="address-editor default-text-color" onclick="window.location =\''+ basePath + '/maid/addressEdit?address_id='+ data[i].address_id +'\'">'+
+								   '			<img style="width: 15px;float: left;margin: 8px 5px 0 0;" src="/morekaba/img/wx_ltone/icon/mine/bj.png">'+
+								   '			<span>编辑</span>'+
+								   '		</div>'+
+								   '		<div class="address-delet default-text-color" onclick="delecteAddre('+ data[i].address_id +')"> '+
+								   '			<img style="width: 15px;float: left;margin: 6px 5px 0 0;" src="/morekaba/img/wx_ltone/icon/mine/sc.png" >'+
+								   '			<span>删除</span>'+
+								   '		</div>'+
+								   '	</div>'+
+								   '</div>';
+					}
+					$('#addressList').append(htmlStr);
+				}
+			}
+			
+			//默认
+			function updateLevel(address_id, idhtml) {
+				$.ajax({ 
+			    	type : "POST", //提交方式 
+			     	url : basePath + '/order_weixin/updateLevel',// 修改地址
+			     	data : {
+			     		address_id: address_id
+			     	},//数据，这里使用的是Json格式进行传输 
+			     	success : function(result) {
+						$.alert("默认地址设置成功");
+			     	}
+			    });
+			}
+			
+			$(function() {
+				FastClick.attach(document.body);
+			});
+			
+			function delecteAddre(address_id){
+				$.confirm("您确定要删除文件吗?", "确认删除?", function() {
+					$.ajax({ 
+				    	type : "POST", //提交方式 
+				     	url : basePath + '/order_weixin/deleteOrderAddr',// 删除地址
+				     	data : {
+				     		address_id: address_id
+				     	},//数据，这里使用的是Json格式进行传输 
+				     	success : function(result) {
+				     		//返回数据根据结果进行相应的处理
+							$.toast("删除成功");
+							location.reload();
+				     	}
+				    });
+				}, function() {
+				  $.toast("取消删除");
+				});
+			}
+			
+		</script>
+		
+	</body>
+</html>

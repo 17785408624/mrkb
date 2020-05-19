@@ -1,0 +1,247 @@
+ul{
+	list-style: none;
+}
+.mdfd-content_huiyuan {
+    height: 35px;
+    padding: 5px 0;
+    line-height: 35px;
+    border-bottom: 1px solid rgba(0,0,0,0.13);
+	background: #fff;
+}
+.mdfd-content_huiyuanli{
+	width: calc(50% - 1px);
+	float: left;
+    text-align: center;
+    font-size: 18px;
+    color: #333;
+}
+.yijihuodiv {
+    width: 95%;
+    background: #fff;
+    margin: 0 auto;
+    margin-top: 20px;
+    border-radius: 3px;
+    box-shadow: 0px 0px 8px rgba(111, 110, 110, 0.36 );
+	padding-bottom: 5px;
+}
+.yijihuodiv_tit{
+	padding: 10px;
+	line-height: 18px;
+	border-bottom: 1px solid #DCDCDC;
+}
+.yijihuodiv_titxian{
+	width: 3px;
+	height: 18px;
+	background: #9F46FD;
+	float: left;
+	margin-right: 10px;
+}
+.yijihuodiv_tit span{
+	color: #313131;
+	font-size: 14px;
+}
+.yijihuodiv_kuailedou{
+	width: 88%;
+	height: 30px;
+	margin: 0 auto;
+	margin-top: 5px;
+}
+.yijihuodiv_kuailedou_left{
+	width: 50%;
+	height: 30px;
+	line-height: 30px;
+	float: left;
+	color: #FF7E00;
+	font-size: 13px;
+}
+.yijihuodiv_kuailedou_left img{
+	width: 21px;
+	height: 18px;
+	margin: 10px 0;
+	float: right;
+}
+.yijihuodiv_kuailedou_right{
+	width: 50%;
+	height: 30px;
+	line-height: 30px;
+	float: left;
+	color: #FF7E00;
+	font-size: 13px;
+}
+.yijihuodiv_kuailedou_right img{
+	width: 18px;
+	height: 9px;
+	margin: 10px 0;
+	float: right;
+}
+.mdfd-content_huiyuanli_active{
+	color: #9F46FD;
+	padding-bottom: 6px;
+	border-bottom: 2px solid #9F46FD;
+}
+/* .weijihuodiv li{
+	padding: 0 20px;
+	height: 40px;
+	line-height: 40px;
+	margin: 0 auto;
+	background: #fff;
+	color: #7D7D7D;
+	font-size: 13px;
+	border-bottom: 1px solid #BFBFBF;
+}
+.weijihuodiv{
+	margin-top: 20px;
+} */
+.weijihuodiv li{
+	width:98%;
+	height: 43px;
+	line-height:43px;
+	margin:0 auto;
+	margin-top:10px;
+	border:1px solid rgba(0,0,0,0.21);
+	border-radius:6px;
+	background:#fff;
+	color: #313131;
+	font-size:13px;
+	display: flex;
+	align-items:center;
+}
+.weijihuodiv1 li{
+	width:98%;
+	height: 43px;
+	line-height:43px;
+	margin:0 auto;
+	margin-top:10px;
+	border:1px solid rgba(0,0,0,0.21);
+	border-radius:6px;
+	background:#fff;
+	color: #313131;
+	font-size:13px;
+	display: flex;
+	align-items:center;
+}
+.weijihuodiv_fuxun{
+	width:68%;
+	overflow: hidden;
+	text-overflow:ellipsis;
+	white-space: nowrap;
+}
+.weijihuodiv img{
+	width: 29px;
+	height: 29px;
+	margin:0 5px;
+}
+.weijihuodiv1 img{
+	width: 29px;
+	height: 29px;
+	margin:0 5px;
+}
+.weijihuodiv1_div{
+	width:60px;
+	height: 28px;
+	text-align:center;
+	line-height:28px;
+	border:1px solid rgba(0,0,0,0.21);
+	border-radius:14px;
+	background: #9F46FD;
+	color: #ffffff;
+	font-size:16px;
+	margin-left:10px;
+}
+.reward-img{
+	line-height: 20px;
+	font-size: 10px;
+	color: #1B1B1B;
+}
+.not-active{
+	width: 173px;
+	height: 50px;
+	margin: 20px auto;
+	background: rgba(138,49,221,0.4);
+	color: #FFFFFF;
+	font-size: 20px;
+	text-align: center;
+	padding-top: 10px;
+}
+.not-active span {
+	display: block;
+	line-height: 20px;
+}
+.not-active-mine{
+	width:96%;
+	margin:0 auto;
+	margin-top: 10px;
+	display: flex;
+	justify-content:space-around;
+}
+.not-active-mineli{
+	width: 47%;
+}
+.mine{
+	border: none;
+	padding: 0;
+}
+.mine span{
+	color: #1B1B1B;
+	font-size: 17px;
+}
+.mine-div{
+	width: 100%;
+	height: 87px;
+	line-height: 35px;
+	background: #fff;
+	margin-top: 10px;
+	border-radius: 3px;
+	box-shadow: 0px 0px 8px rgba(111, 110, 110, 0.36 );
+	display: flex;
+	flex-direction:column;
+	justify-content:center;
+}
+.mine-div-sum{
+	padding-left: 8px;
+}
+.mine-div-sum span{
+	color: #434343;
+	font-size: 11px;
+}
+.mine-divimg{
+	width: 15px;
+	height: 15px;
+}
+.mine-divimgren{
+	width: 18px;
+	height: 16px;
+}
+.mine-divimgs{
+	width: 21px;
+	height: 18px;
+}
+.yijihuodiv_flexa{
+	display: flex;
+}
+.yijihuodiv_flex{
+	width:50%;
+	display: flex;
+	justify-content:flex-start;
+}
+.yijihuodiv_flexnum{
+	width:50%;
+	display: flex;
+	justify-content:flex-end;
+	align-items:center;
+}
+.yijihuodiv_flexnumimg{
+	width: 21px;
+	height: 14px;
+	margin: 0 10px;
+}
+.yijihuodiv-nr{
+	width: 90%;
+}
+
+
+
+
+
+
+

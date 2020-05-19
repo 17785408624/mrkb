@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>私人二维码</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <meta http-equiv="keywords" content="分享获取福利啦,分享越多，获取的福利就越多,关键词2">
+    <meta name="description" content="分享获取福利哈" />
+	<script src="../../static/js/wx_ltone/jquery-2.1.4.js" th:src="@{/js/wx_ltone/jquery-2.1.4.js}" ></script>
+	<script src="../../static/js/basePathConfig.js" th:src="@{/js/basePathConfig.js}" ></script>
+  </head>
+  <script th:inline="javascript">
+  	var openid=[[${QRcodeModel.openid}]];
+  	$(document).ready(function() {
+  	
+	// 查询消息
+	$.ajax({ 
+    	type : "GET", //提交方式 
+     	url : basePath + '/user_weixin/findUserWeixinWinxinId',
+     	contentType:"application/json",
+     	data : {
+     		weixin_id:openid
+     	} ,//数据，这里使用的是Json格式进行传输 
+     	success : function(result) {
+     	
+	     	showUserWeixin(result);
+     	},
+     	error: function (err){
+     		$.toast('网络错误，请稍后重试...');
+     		return;
+     	}
+	 });
+	 })
+	// ajaxPost("<%=basePath%>user_weixin/findUserWeixinWinxinId",object,"json","json",showUserWeixin);
+	function showUserWeixin(data){
+	
+		var weixin=data.data;
+		$("#nicheng").html(weixin.weixin_nickname);
+		//document.getElementById("nicheng").innerHTML=weixin.weixin_nickname;
+		//alert(weixin.weixin_nickname);
+		var user_grade_id=weixin.user_grade_id;
+		var grade_name;
+		var grade_nickname;
+		switch (user_grade_id){
+				case 1:
+					grade_nickname = "游客";
+					grade_name = "紫罗兰";
+					break;
+				case 2:
+					grade_nickname = "新进会员";
+					grade_name = "三星紫罗兰";
+					break;
+				case 3:
+					grade_nickname = "初级会员";
+					grade_name = "五星紫罗兰";
+					break;
+				case 4:
+					grade_nickname = "中级会员";
+					grade_name = "紫罗兰之家";
+					break;
+				case 5:
+					grade_nickname = "高级会员";
+					grade_name = "紫罗兰联盟";
+					break;
+				case 6:
+					grade_nickname = "顶级会员";
+					grade_name = "紫罗兰分院";
+					break;
+				case 7:
+					grade_nickname = "顶级会员";
+					grade_name = "员工";
+					break;
+				
+			}
+			//alert(grade_name);
+		document.getElementById("grade_name").innerHTML=grade_name;
+		document.getElementById("touxiang").src=weixin.weixin_portrait;
+	}
+  	
+  </script>
+  <body>
+  	<img  th:src="@{/img/wx_ltone/icon/mine/ewmbjt.jpg}" style="width:100%;height:100%;position: fixed;top:0;left: 0;z-index: -100;">
+  	<div style="width:220px;height:180px;position: absolute;left: 50%;top: 65%;transform: translate(-50%,-65%);-webkit-transform: translate(-50%,-65%);-moz-transform: translate(-50%,-65%);background-image: url(../../morekaba/img/wx_ltone/icon/mine/bsbj.png);background-size:100% 100%;">
+  		<img id="touxiang" src="" style="width:50px;height: 50px;border-radius:100%;position: absolute;left: 50%;top: -15%;transform: translate(-50%,-15%);-webkit-transform: translate(-50%,-15%);-moz-transform: translate(-50%,-15%);-webkit-box-shadow: 0 1px 4px rgba(0,0,0,0.3);-moz-box-shadow: 0 1px 4px rgba(0,0,0,0.5);box-shadow: 0 1px 4px rgba(0,0,0,0.5);" onerror="javascript:this.src='http://via.placeholder.com/80x80'">
+  		<img th:src="${QRcodeModel.imageUrl}" style="width:65%;height: 75%;position: absolute;left: 49%;bottom: 0;transform: translate(-50%,0);-webkit-transform: translate(-50%,0);-moz-transform: translate(-50%,0);">
+  		<div style="width:65%;color:#595959;font-size: 14px;position: absolute;left: 50%;top: 12%;transform: translate(-50%,-12%);-webkit-transform: translate(-50%,-12%);-moz-transform: translate(-50%,-12%);text-align: center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" id="nicheng"><!-- 昵称昵称昵称 --></div>
+  		<div style="width:65%;color:#595959;font-size: 12px;position: absolute;left: 50%;top: 22%;transform: translate(-50%,-22%);-webkit-transform: translate(-50%,-22%);-moz-transform: translate(-50%,-22%);text-align: center;" id="grade_name"><!-- 丽天使 --></div>
+  	</div>
+  </body>
+</html>

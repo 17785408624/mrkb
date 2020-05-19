@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 用户完整信息 -->
+<mapper namespace="com.mrkb.dao.dao.UserInformationMapper">
+ <insert id="insertUserInformationEntity" useGeneratedKeys="true" keyProperty="user_information_id">
+     INSERT INTO user_information (user_basics_id,information_phone,information_qq,
+     information_Email,information_compellation,information_card,company_id,co_founder,co_user_basics_id,
+     user_resources,age_subsection,user_job,marital_status,know_more)
+     VALUE(
+     #{user_basics_id,jdbcType=INTEGER},
+     #{information_phone,jdbcType=VARCHAR},
+     #{information_qq,jdbcType=BIGINT},
+     #{information_Email,jdbcType=VARCHAR},
+     #{information_compellation,jdbcType=VARCHAR},
+     #{information_card,jdbcType=VARCHAR},
+     #{company_id,jdbcType=INTEGER},
+     #{co_founder,jdbcType=INTEGER},
+     #{co_user_basics_id,jdbcType=INTEGER},
+     1,
+     #{age_subsection,jdbcType=VARCHAR},
+     #{user_job,jdbcType=VARCHAR},
+     #{marital_status,jdbcType=INTEGER},
+     #{know_more,jdbcType=VARCHAR}
+     );
+ </insert>
+ <select id="selectUserInformationEntityToUserId" resultType="com.mrkb.dao.modle.user.UserInformationEntity" parameterType="int">
+  SELECT a.*,b.weixin_portrait,c.user_grade_id
+   FROM user_information a left join user_weixin b
+   on a.user_basics_id=b.user_basics_id
+   left join user_basics c
+   on a.user_basics_id=c.user_basics_id
+  WHERE 1=1 
+  and a.user_basics_id=#{user_basics_id,jdbcType=INTEGER};
+ </select>
+  <select id="findUserInformationByPage" resultType="com.mrkb.dao.modle.user.UserInformationEntity">
+  SELECT a.user_information_id,a.user_basics_id,a.information_phone,a.information_qq,a.information_Email,
+  a.information_compellation,a.information_card,a.company_id,a.card_end,a.information_sex,a.nick_name,
+  a.live_address,a.registered_address,a.information_weixin,a.card_picture,a.information_age,a.co_founder,
+  a.co_user_basics_id,b.user_grade_id,b.low_vip_time,b.health_time,b.vip_time,b.user_money,a.user_resources 
+   FROM user_information a
+   left join user_basics b
+   on a.user_basics_id=b.user_basics_id
+   where 1=1;
+ </select>
+ <update id="updateUserInformation" parameterType="com.mrkb.dao.modle.user.UserInformationEntity">
+ 	update user_information set 
+ 	user_basics_id=#{user_basics_id,jdbcType=INTEGER}
+ 	<trim suffixOverrides=",">
+ 	<if test="information_phone!=null">
+ 	,information_phone=#{information_phone,jdbcType=VARCHAR}
+ 	</if>
+ 	<if test="company_id!=null">
+ 	,company_id=#{company_id,jdbcType=INTEGER}
+ 	</if>
+ 	<if test="information_qq!=null">
+ 	,information_qq=#{information_qq,jdbcType=BIGINT}
+ 	</if>
+ 	<if test="information_Email!=null">
+ 	,information_Email=#{information_Email,jdbcType=VARCHAR}
+ 	</if>
+ 	<if test="information_compellation!=null">
+ 	,information_compellation=#{information_compellation,jdbcType=VARCHAR}
+ 	</if>
+ 	<if test="information_card!=null">
+ 	,information_card=#{information_card,jdbcType=VARCHAR}
+ 	</if>
+ 	<if test="card_end!=null">
+ 	,card_end=#{card_end,jdbcType=BIGINT}
+ 	</if>
+ 	<if test="information_sex!=null">
+ 	,information_sex=#{information_sex,jdbcType=INTEGER}
+ 	</if>
+ 	<if test="nick_name!=null">
+ 	,nick_name=#{nick_name,jdbcType=VARCHAR}
+ 	</if>
+ 	<if test="live_address!=null">
+ 	,live_address=#{live_address,jdbcType=VARCHAR}
+ 	</if>
+ 	<if test="registered_address!=null">
+ 	,registered_address=#{registered_address,jdbcType=VARCHAR}
+ 	</if>
+ 	<if test="information_weixin!=null">
+ 	,information_weixin=#{information_weixin,jdbcType=VARCHAR}
+ 	</if>
+ 	<if test="card_picture!=null">
+ 	,card_picture=#{card_picture,jdbcType=VARCHAR}
+ 	</if>
+ 	<if test="information_age!=null">
+ 	,information_age=#{information_age,jdbcType=INTEGER}
+ 	</if>
+ 	<if test="co_founder!=null">
+ 	,co_founder=#{co_founder,jdbcType=INTEGER}
+ 	</if>
+ 	<if test="co_user_basics_id!=null">
+ 	,co_user_basics_id=#{co_user_basics_id,jdbcType=INTEGER}
+ 	</if>
+ 	<if test="identityCard_img1!=null">
+ 	,identityCard_img1=#{identityCard_img1,jdbcType=VARCHAR}
+ 	</if>
+ 	<if test="identityCard_img2!=null">
+ 	,identityCard_img2=#{identityCard_img2,jdbcType=VARCHAR}
+ 	</if>
+ 	<if test="is_employee!=null">
+ 	,is_employee=#{is_employee,jdbcType=INTEGER}
+ 	</if>
+ 	<if test="seniorManager_user_basics_id!=null">
+ 	,seniorManager_user_basics_id=#{seniorManager_user_basics_id,jdbcType=INTEGER}
+ 	</if>
+ 	<if test="advisor_user_basics_id!=null">
+ 	,advisor_user_basics_id=#{advisor_user_basics_id,jdbcType=INTEGER}
+ 	</if>
+ 	<if test="user_resources!=null">
+ 	,user_resources=#{user_resources,jdbcType=INTEGER}
+ 	</if>
+ 	<if test="age_subsection!=null">
+ 	,age_subsection=#{age_subsection,jdbcType=INTEGER}
+ 	</if>
+ 	<if test="user_job!=null">
+ 	,user_job=#{user_job,jdbcType=INTEGER}
+ 	</if>
+ 	<if test="marital_status!=null">
+ 	,marital_status=#{marital_status,jdbcType=INTEGER}
+ 	</if>
+ 	<if test="know_more!=null">
+ 	,know_more=#{know_more,jdbcType=INTEGER}
+ 	</if>
+    <if test="consult_picture!=null">
+        ,consult_picture=#{consult_picture,jdbcType=VARCHAR}
+    </if>
+    <if test="consult_view!=null">
+        ,consult_view=#{consult_view,jdbcType=VARCHAR}
+    </if>
+ 	</trim>
+ 	where 1=1 and user_basics_id=#{user_basics_id,jdbcType=INTEGER};
+ </update>
+ <select id="selectUidToCard" resultType="int" parameterType="String">
+ SELECT user_basics_id FROM user_information WHERE information_card=#{information_card,jdbcType=VARCHAR} 
+ </select>
+  <select id="selectUidToCoFounder" resultType="int" parameterType="String">
+ SELECT co_founder FROM user_information WHERE user_basics_id=#{user_basics_id,jdbcType=INTEGER} 
+ </select>
+ <select id="findCoFounds" resultType="com.mrkb.dao.modle.user.UserInformationEntity" parameterType="com.mrkb.dao.modle.user.UserInformationEntity">
+  SELECT user_information_id,user_basics_id,information_phone,information_qq,information_Email,
+  information_compellation,information_card,company_id,card_end,information_sex,nick_name,
+  live_address,registered_address,information_weixin,card_picture,information_age,co_founder
+  ,co_user_basics_id,information_age,identityCard_img1,identityCard_img2,user_resources
+   FROM user_information
+  WHERE 1=1 
+  <if test="user_basics_id!=null">
+  and user_basics_id=#{user_basics_id,jdbcType=INTEGER};
+  </if>
+  <if test="co_founder!=null">
+  and co_founder=#{co_founder,jdbcType=INTEGER};
+  </if>
+  
+ </select>
+ <select id="selectUserById" resultType="com.mrkb.dao.modle.user.UserInformationEntity" parameterType="com.mrkb.dao.modle.user.UserInformationEntity">
+     SELECT * FROM user_information WHERE user_basics_id=#{user_basics_id,jdbcType=VARCHAR} 
+ </select>
+ <update id="adminUpdateCoFounder" parameterType="com.mrkb.dao.modle.user.UserInformationEntity">
+ 	update user_information set 
+ 	co_user_basics_id=#{user_basics_id,jdbcType=INTEGER}
+ 	where 1=1
+ 	and co_user_basics_id=#{old_user_basics_id,jdbcType=INTEGER}
+ </update>
+ <!-- 用户当班数据导出 -->
+ 	<select id="selectExportDuty" resultType="com.mrkb.dao.modle.user.UserInformationEntity" parameterType="com.mrkb.dao.modle.user.UserInformationEntity">
+       SELECT
+			ud.user_basics_id,
+			ud.order_id,
+			ob.payment_date,
+			ob.all_price,
+			ib. USER_RESOURCES,
+			ib.information_compellation,
+			ib.information_phone,
+			ib.information_sex,
+			ud.duty_date,
+			ud.if_duty,
+			ud.source_type,
+			ud.add_date,
+			ui.information_compellation AS employees,
+			us.information_compellation AS recommend_name,
+			sb.store_name
+		FROM
+			user_duty ud
+		LEFT JOIN user_information ib ON (
+			ud.user_basics_id = ib.user_basics_id
+		)
+		LEFT JOIN order_basics ob ON (ob.order_id = ud.order_id)
+		LEFT JOIN user_information ui ON (
+			ui.user_basics_id = ib.co_user_basics_id
+		)
+		LEFT JOIN user_recommend ur ON (
+			ur.user_basics_id = ib.user_basics_id
+		)
+		LEFT JOIN user_information us ON (
+			ur.recommend_superior = us.user_basics_id
+		)
+		LEFT JOIN store_basics sb ON (sb.store_id = ud.store_id) 
+		 where 1=1
+		  <if test="user_basics_id!=null and user_basics_id!= '' and user_basics_id!=0">
+		     and ib.co_user_basics_id = #{user_basics_id,jdbcType=INTEGER}
+		  </if>
+		   <if test="if_duty!=null">
+		     and ud.if_duty = #{if_duty,jdbcType=INTEGER}
+		  </if>
+		   <if test="source_type!=null and source_type!=''">
+		     and ud.source_type = #{source_type,jdbcType=INTEGER}
+		  </if>
+		  <if test="begin_time!=0">
+		     and ud.add_date &gt;= #{begin_time,jdbcType=BIGINT}
+		  </if>
+		  <if test="end_time!=0">
+		     and ud.add_date &lt;#{end_time,jdbcType=BIGINT}
+		  </if>
+ </select>
+</mapper>

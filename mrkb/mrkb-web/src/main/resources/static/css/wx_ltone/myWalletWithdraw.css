@@ -1,0 +1,135 @@
+body,
+.mui-content {
+	background-color: #f0f0f0;
+}
+
+.wallet-box {
+	position: relative;
+	clear: both;
+	/* width: 100%; */
+	height: auto;
+	padding: 20px 10%;
+}
+
+/* 自定义 TableView */
+.tableview-box {
+	position: relative;
+	clear: both;
+	/* width: 100%; */
+	height: 300px;
+	padding: 10px;
+	background-color: #fff;
+	border-radius: 10px;
+}
+
+.tableview {
+	list-style: none;
+	margin: 0px;
+	padding: 5px;
+}
+
+.tableview-cell {
+	line-height: 50px;
+	height: auto;
+	border-bottom: 1px solid #f0f0f0;
+}
+
+.tableview>.tableview-cell:last-child {
+	border-bottom: none;
+}
+
+.select-type {
+	position: relative;
+	overflow: hidden;
+	clear: both;
+	color: #333;
+	font-size: 16px;
+}
+
+.select-bank {
+	display: inline-block;
+	font-weight: 500;
+	margin-left: 0px;
+}
+
+.bank {
+	display: inline-block;
+	width: 50%;
+	margin-left: -6px;
+	font-size: 14px;
+	color: #999;
+	display: none;
+}
+
+.money-tip {
+	line-height: 40px;
+	display: block;
+	color: #333;
+	font-size: 16px;
+}
+
+.money-box {
+	position: relative;
+	border-bottom: 1px solid #ccc;
+}
+
+.money-box div {
+	display: inline-block;margin-left:-3px;
+}
+
+.money-box>div:first-child {
+	font-weight: 500;width:10%;
+}
+
+.money-box>div:last-child {
+	font-weight: 500;width:90%;
+}
+input[id=withdrawMoney] {
+	border: none;
+	padding: 5px;
+	margin-bottom: 0;
+	outline: 0;
+}
+
+.btn-box {
+	position: relative;
+	text-align: center;
+	padding: 20px 0px;
+}
+
+.btn-box input[id=withdrawMoneyBtn] {
+	height: 40px;
+	width: 80%;
+	/* background-color: #5db8e1; */
+	background: -webkit-linear-gradient(bottom,#ea87f6,#d487f9,#be86fc);
+	border: none;
+	color: #fff;
+	font-size: 17px;
+}
+
+/* 选择银行卡列表 */
+.bank-list-box {
+	position: fixed;
+	overflow: hidden;
+	clear: both;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	height: 40%;
+	background-color: #fff;
+	padding: 0 20px;
+	display: none;
+}
+
+.bank-list-tip {
+	display: block;
+	line-height: 50px;
+}
+
+.bank-list {
+	position: relative;
+	overflow-x: hidden;
+	overflow-y: scroll;
+	clear: both;
+	height: calc(100% - 50px);
+}

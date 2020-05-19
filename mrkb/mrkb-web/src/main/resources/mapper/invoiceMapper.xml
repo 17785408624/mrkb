@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mrkb.dao.dao.InvoiceMapper">
+  <insert id="insertInvoice" parameterType="com.mrkb.dao.modle.invoice.InvoiceEntity" useGeneratedKeys="true" keyProperty="invoice_id" >
+   INSERT INTO invoice (
+   invoice_type,invoice_num,invoice_name,invoice_address,invoice_mobile,
+   invoice_openbank,invoice_banknum,user_basics_id,invoice_status,all_price,order_id,invoice_way_type)
+   VALUE(
+   #{invoice_type,jdbcType=INTEGER},
+   #{invoice_num,jdbcType=INTEGER},
+   #{invoice_name,jdbcType=VARCHAR},
+   #{invoice_address,jdbcType=VARCHAR},
+   #{invoice_mobile,jdbcType=INTEGER},
+   #{invoice_openbank,jdbcType=VARCHAR},
+   #{invoice_banknum,jdbcType=INTEGER},
+   #{user_basics_id,jdbcType=INTEGER},
+   #{invoice_status,jdbcType=INTEGER},
+   #{all_price,jdbcType=DOUBLE},
+   #{order_id,jdbcType=INTEGER},
+   #{invoice_way_type,jdbcType=INTEGER}
+   )
+  </insert>
+  <select id="selectInvoiceTostatus" parameterType="int" resultType="com.mrkb.dao.modle.invoice.InvoiceEntity">
+   SELECT  invoice_type,invoice_num,invoice_name,invoice_address,invoice_mobile,
+   invoice_openbank,invoice_banknum,user_basics_id,invoice_status,invoice_id
+   FROM invoice WHERE invoice_status=#{invoice_status,jdbcType=INTEGER}
+  </select>
+  <select id="selectInvoiceToUid" resultType="com.mrkb.dao.modle.invoice.InvoiceEntity">
+  SELECT  invoice_type,invoice_num,invoice_name,invoice_address,invoice_mobile,
+   invoice_openbank,invoice_banknum,user_basics_id,invoice_status,invoice_id,courier_services_company,waybill_number
+  FROM invoice
+  WHERE user_basics_id=#{user_basics_id,jdbcType=INTEGER}
+  AND
+  invoice_status!=#{invoice_status,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteInvoiceToInvoice_id" parameterType="int">
+  delete from invoice WHERE invoice_id=#{invoice_id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insertInvoiceGain" parameterType="com.mrkb.dao.modle.invoice.InvoiceGainEntity" useGeneratedKeys="true" keyProperty="invoice_gain_id">
+  INSERT INTO invoice_gain (gain_status,add_date,edit_date,edit_user_id,invoice_id) 
+  VALUE
+  (
+  #{gain_status,jdbcType=INTEGER},
+  #{add_date,jdbcType=INTEGER},
+  #{edit_date,jdbcType=INTEGER},
+  #{edit_user_id,jdbcType=INTEGER},
+  #{invoice_id,jdbcType=INTEGER}
+  )
+  </insert>
+  
+  
+  <!-- 发票分页查询 -->
+  <select id="pageListInfo" parameterType="java.util.HashMap" resultType="com.mrkb.dao.modle.invoice.InvoiceEntity">
+   SELECT  invoice_type,invoice_num,invoice_name,invoice_address,invoice_mobile,
+   invoice_openbank,invoice_banknum,user_basics_id,invoice_status,invoice_id,order_id
+   FROM invoice
+   <if test="invoice_status !=null">
+   	<where>
+   		invoice_status=#{invoice_status,jdbcType=INTEGER}
+   	</where>
+   </if>
+  </select>
+    <update id="updateInvoice" parameterType="com.mrkb.dao.modle.invoice.InvoiceEntity">
+        update invoice set
+        invoice_status=#{invoice_status,jdbcType=INTEGER},
+        waybill_number=#{waybill_number,jdbcType=VARCHAR},
+        courier_services_company=#{courier_services_company,jdbcType=VARCHAR}
+        where  1=1 and invoice_id=#{invoice_id,jdbcType=INTEGER}
+    </update>
+    <update id="updateInvoiceGain" parameterType="com.mrkb.dao.modle.invoice.InvoiceGainEntity">
+        update invoice_gain set
+        gain_status=#{gain_status,jdbcType=INTEGER}
+        where  1=1 and invoice_id=#{invoice_id,jdbcType=INTEGER}
+    </update>
+</mapper>

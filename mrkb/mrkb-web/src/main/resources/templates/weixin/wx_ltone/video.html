@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<title>紫罗兰发布</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/weui.min.css" th:href="@{/css/wx_ltone/weui.min.css}"/>
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/jquery-weui.css" th:href="@{/css/wx_ltone/jquery-weui.css}"/>
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/reset.css" th:href="@{/css/wx_ltone/reset.css}"/>
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/mainstyle.css" th:href="@{/css/wx_ltone/mainstyle.css}" />
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/public.css" th:href="@{/css/wx_ltone/public.css}" />
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/video.css" th:href="@{/css/wx_ltone/video.css}" />
+	</head>
+
+	<body>
+		<div class="search">
+			<div class="search-left">
+				<a href="javascript:void(0);" onclick="toBack('/HomeController/home');">
+					<img th:src="@{/img/wx_ltone/icon/mine/fanhui.png}">
+				</a>
+			</div>
+			<div class="title_div">
+				<div class="title_div_li" onclick="clickShowDiv(this,'shipin');">
+					<span style="border-bottom:2px solid #fff;padding-bottom:3px;">官方发布</span>
+				</div>
+				<div class="title_div_li" onclick="alert('敬请期待！');">
+					<span>紫罗兰发布</span>
+				</div>
+			</div>
+		</div>
+		<div id="videoList" class="list white kbsj_div_ul"></div>
+		<div id="pinglun_div" class="list white kbsj_div_ul" style="display: none;">
+				<div class="default-text-color list-box" onclick="">
+					<div style="height: 30px;line-height:30px;">
+						<img style="width:30px;height:30px;border-radius:100%;float: left;margin-right:5px;" src="http://via.placeholder.com/30X30" onerror="javascript:this.src='http://via.placeholder.com/30X30'">	
+						<p style="font-size: 14px;color:666666;">微信名称</p>
+					</div>
+					<h4>生命诠释1</h4>	
+					<img style="margin-top:5px;" src="http://via.placeholder.com/360X150" onerror="javascript:this.src='http://via.placeholder.com/360X150'">	
+					<div class="position-relative intro-box">		
+						<label class="intro-data">2018-04-20</label>		
+						<label class="intro-options">			
+						<span class="intro"><img class="icon-yueduliang" th:src="@{/img/wx_ltone/icon/mine/chakan.png}" />&nbsp;&nbsp;<span>0</span></span>			
+						<span class="intro"><img class="icon-zan" th:src="@{/img/wx_ltone/icon/mine/dianzan.png}" />&nbsp;&nbsp;<span>0</span></span>		
+						</label>	
+					</div>
+				</div>
+			</div>
+		<script src="../../static/js/wx_ltone/jquery-2.1.4.js" th:src="@{/js/wx_ltone/jquery-2.1.4.js}" ></script>
+		<script src="../../static/js/wx_ltone/fastclick.js" th:src="@{/js/wx_ltone/fastclick.js}" ></script>
+		<script src="../../static/js/wx_ltone/jquery-weui.js" th:src="@{/js/wx_ltone/jquery-weui.js}" ></script>
+		<script src="../../static/js/wx_ltone/common.js" th:src="@{/js/wx_ltone/common.js}" ></script>
+		<script src="../../static/js/basePathConfig.js" th:src="@{/js/basePathConfig.js}" ></script>
+		<script>
+			
+			//返回上级
+			function toBack(path){
+				if (window.history && window.history.pushState) {
+			   		$(window).on('popstate', function () {
+			      		window.history.pushState('forward', window.location = basePath + path, '#');
+			        });
+			    }
+			    window.history.pushState('forward', window.location = basePath + path, '#'); 
+			}
+			
+			$(function() {
+				FastClick.attach(document.body);
+				
+				// 获取视频列表
+				$.ajax({ 
+			    	type : "GET", //提交方式 
+			    	url : basePath + '/weixin_news/findNews',
+			    	data : { 
+			     		news_type: 4
+			    	},//数据，这里使用的是Json格式进行传输 
+			    	success : function(result) {
+		      			fillVideoList(result.data);
+			    	},
+		     		error: function (err){
+			     		$.toast('网络错误，请稍后重试...');
+			     		return;
+		     		}
+			    });
+				
+			});
+			
+			// 填充视频列表
+			function fillVideoList(data){
+				if(data != ''){
+					var htmlStr = '';
+					for(var i = 0; i < data.length; i++){
+						htmlStr = '<div class="default-text-color list-box" onclick="window.location =\''+ basePath + '/HomeController/videoDetail?news_id='+ data[i].news_id +'&news_type='+ data[i].news_type +'\'">'+
+								  '	<h4 style="text-align: center;">'+ data[i].news_title +'</h4>'+
+								  '	<img src="'+ data[i].news_picture.split(";")[0] +'" onerror="javascript:this.src=\'http://via.placeholder.com/360X150\'">'+
+								  '	<div class="position-relative intro-box">'+
+								  '		<label class="intro-data">'+ formatDateTimeStr(data[i].add_date,0) +'</label>'+
+								  '		<label class="intro-options">'+
+								  '			<span class="intro">'+
+								  '				<img class="icon-yueduliang" src="/morekaba/img/wx_ltone/icon/mine/chakan.png"/>&nbsp;&nbsp;'+
+								  '				<span>'+ data[i].read_num +'</span>'+
+								  '			</span>'+
+								  '			<span class="intro">'+
+								  '				<img class="icon-zan" src="/morekaba/img/wx_ltone/icon/mine/dianzan.png"/>&nbsp;&nbsp;'+
+								  '				<span>'+ data[i].thumbs_up +'</span>'+
+								  '			</span>'+
+								  '		</label>'+
+								  '	</div>'+
+								  '</div>';
+						$('#videoList').append(htmlStr);
+					}
+				}else{
+					$.alert('暂无数据');
+					return;
+				}
+			}
+			
+			function clickShowDiv(e,id){
+				//菜单切换
+				$(".kbsj_div_ul").each(function(){
+					if($(this).attr("id")==id){
+						$(this).show();
+					}else{
+						$(this).hide();
+					}
+				});
+				$(e).children("span").css({
+					"border-bottom":"2px solid #fff",
+					"padding-bottom":"3px"
+					});
+				$(e).siblings().each(function(){
+					if($(this).attr("class")=="title_div_li"){
+						$(this).children("span").css({
+						"border-bottom":"none",
+						"padding-bottom":"3px"
+					});
+					}
+				});
+			}
+		</script>
+		
+	</body>
+</html>

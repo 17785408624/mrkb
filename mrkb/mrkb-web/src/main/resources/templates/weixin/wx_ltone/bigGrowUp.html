@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<title>成长课程</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/weui.min.css" th:href="@{/css/wx_ltone/weui.min.css}"/>
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/jquery-weui.css" th:href="@{/css/wx_ltone/jquery-weui.css}"/>
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/jquery-weui.min.css" th:href="@{/css/wx_ltone/jquery-weui.min.css}"/>
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/reset.css" th:href="@{/css/wx_ltone/reset.css}"/>
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/swiper.min.css" th:href="@{/css/wx_ltone/swiper.min.css}"/>
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/bigGrowUp.css" th:href="@{/css/wx_ltone/bigGrowUp.css}"/>
+	</head>
+
+	<body style="background: #ffffff;">
+		<div class="weui_content">
+			<div id="bigGrowUpBanner"></div>
+			<div>
+				<div class="store-kechen">
+					<div class="store-kechen-btn active-college" data-college-id="1" onclick="changeCollegeBtn(this)">智慧学院</div>
+					<div class="store-kechen-btn" data-college-id="2" onclick="changeCollegeBtn(this)">女子学院</div>
+					<!--<div class="store-kechen-btn" data-college-id="3" onclick="changeCollegeBtn(this)">国学院</div>
+					<div class="store-kechen-btn" data-college-id="4" onclick="changeCollegeBtn(this)">生命学院</div>
+					<div class="store-kechen-btn" data-college-id="5" onclick="changeCollegeBtn(this)">商学院</div>-->
+					<div class="store-kechen-btn" data-college-id="6" onclick="changeCollegeBtn(this)">少年学院</div>
+				</div>
+				<!--学院列表-->
+				<div id="xueyuanlist" class="customize-product-box">
+					<div style="width: 20%;float: left;padding-top:30px;">
+						<div class="customize-kechen-btn active-course" data-course-id="1" onclick="changeCoursetBtn(this)">公开课</div>
+						<div class="customize-kechen-btn" data-course-id="2" onclick="changeCoursetBtn(this)">品牌课</div>
+						<div class="customize-kechen-btn" data-course-id="3" onclick="changeCoursetBtn(this)">精品课</div>
+						<div class="customize-kechen-btn" data-course-id="4" onclick="changeCoursetBtn(this)">专业课</div>
+						<!-- <div class="customize-kechen-btn" data-course-id="5" onclick="changeCoursetBtn(this)">套餐</div> -->
+					</div>
+					<div style="width: 80%;float: right;">
+						<div id="shangpingList" class="store-product-box"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="weui-tabbar">
+			<div onclick="window.location = basePath + '/HomeController/home'" class="weui-tabbar__item">
+				<div class="weui-tabbar__icon">
+					<img th:src="@{/img/wx_ltone/icon/tabbar/icon-home.png}">
+				</div>
+				<p class="weui-tabbar__label">首页</p>
+			</div>
+			<div onclick="window.location = basePath + '/HomeController/bigFoison'" class="weui-tabbar__item">
+				<div class="weui-tabbar__icon">
+					<img th:src="@{/img/wx_ltone/icon/tabbar/icon-big-foison.png}">
+				</div>
+				<p class="weui-tabbar__label">商城</p>
+			</div>
+			<div class="weui-tabbar__item weui-bar__item--on">
+				<div class="weui-tabbar__icon">
+					<img th:src="@{/img/wx_ltone/icon/tabbar/icon-big-grow-up-active.png}">
+				</div>
+				<p class="weui-tabbar__label">成长课程</p>
+			</div>
+			<div onclick="window.location = basePath + '/HomeController/mine'" class="weui-tabbar__item">
+				<div class="weui-tabbar__icon">
+					<img th:src="@{/img/wx_ltone/icon/tabbar/icon-mine.png}">
+				</div>
+				<p class="weui-tabbar__label">我的后院</p>
+			</div>
+		</div>
+		
+		<script src="../../static/js/wx_ltone/jquery-2.1.4.js" th:src="@{/js/wx_ltone/jquery-2.1.4.js}" ></script>
+		<script src="../../static/js/wx_ltone/fastclick.js" th:src="@{/js/wx_ltone/fastclick.js}" ></script>
+		<script src="../../static/js/wx_ltone/jquery-weui.js" th:src="@{/js/wx_ltone/jquery-weui.js}" ></script>
+		<script src="../../static/js/wx_ltone/swiper.min.js" th:src="@{/js/wx_ltone/swiper.min.js}" ></script>
+		<script src="../../static/js/basePathConfig.js" th:src="@{/js/basePathConfig.js}" ></script>
+		<script>
+			
+			$(document).ready(function(){
+			  $.ajax({ 
+			     type : "GET", //提交方式 
+			     url : basePath + '/wenxin_store/findAllStoreByStoreType',//路径 
+			     data : { 
+			     	store_type: 1, // 0 积分商城  1 成长课程
+			      	status_state: 0, // 默认值为1
+			      	academic_type: 1, // 学院类型
+			      	course_type: 1,// 商品类型
+			      	shelf_state:1
+			     },//数据，这里使用的是Json格式进行传输 
+			     success : function(result) {
+			     	//返回数据根据结果进行相应的处理 
+// 			     	console.log(JSON.stringify(result));
+			      	initData (result.data);
+			     } 
+			    });
+			   
+				//加载动态轮播图
+				$.ajax({ 
+			    	type : "GET", //提交方式 
+			    	url : basePath + '/weixin_news/findNews',
+			    	contentType:'application/json',
+			    	data : { 
+			     		news_type: 8
+			    	},//数据，这里使用的是Json格式进行传输 
+			    	success : function(result) {
+		      			var dataArr = [];
+		      			for(var i = 0; i < result.data.length; i++){
+		      				var bannerData = { news_id: result.data[i].news_id, news_picture: result.data[i].news_picture.split(';')[0] }
+		      				dataArr.push(bannerData);
+		      			}
+		      			
+		      			bannerClick(document.getElementById('bigGrowUpBanner'),dataArr,true);
+			    	},
+		     		error: function (err){
+			     		$.toast('网络错误，请稍后重试...');
+			     		return;
+		     		}
+			    });
+			     
+			});
+			// 学院类型(1.智慧学院,2.女子学院,3.国学院,4.生命学院,5.商学院)  课程类型(1.前端课，2.品牌课，3.精品课，4专业课，5.乐唐大学) 
+		   
+		   /**
+			 * 动态加载点击的轮播图
+			 */
+			function bannerClick(elementObj,data,indicator){
+				var sliderDiv = document.createElement('div');
+					sliderDiv.className = 'swiper-container swiper-container-horizontal';
+					elementObj.appendChild(sliderDiv);
+				
+				// 图片层
+				var sliderGroup = document.createElement('div');
+					sliderGroup.className = 'swiper-wrapper';
+					sliderDiv.appendChild(sliderGroup);
+				
+				var html = '';
+				for (var i = 0; i < data.length + 2; i++) {
+					if (i == 0) {
+						html += '<div class="swiper-slide swiper-slide-duplicate">' +
+								'	<a href="javascript:void(0);" onclick="showPage('+ data[data.length - 1].news_id +');">' +
+								'		<img src="' + data[data.length - 1].news_picture + '" onerror="javascript:this.src=\'http://via.placeholder.com/216X120\'">' +
+								'	</a>' +
+								'</div>';
+					} else if (i == data.length + 1) {
+						html += '<div class="swiper-slide swiper-slide-duplicate">' +
+								'	<a href="javascript:void(0);" onclick="showPage('+ data[0].news_id +');">' +
+								'		<img src="'+ data[0].news_picture +'" onerror="javascript:this.src=\'http://via.placeholder.com/216X120\'">' +
+								'	</a>' +
+								'</div>';
+					} else {
+						var k = i - 1;
+						html += '<div class="swiper-slide">' +
+								'	<a href="javascript:void(0);" onclick="showPage('+ data[k].news_id +');">' +
+								'		<img src="' + data[k].news_picture + '" onerror="javascript:this.src=\'http://via.placeholder.com/216X120\'">' +
+								'	</a>' +
+								'</div>';
+					}
+				}
+				sliderGroup.innerHTML = html;
+				// 判断是否需要加载小圆点
+				if(indicator){
+					// 图片下面的圆点
+					var sliderIndicator = document.createElement('div');
+					sliderIndicator.className = 'swiper-pagination swiper-pagination-bullets';
+					sliderDiv.appendChild(sliderIndicator);
+					var indicatorHTML = '';
+					for (var j = 0; j < data.length; j++) {
+						if (j == 0) {
+							indicatorHTML += '<span class="swiper-pagination-bullet swiper-pagination-bullet-active"></span>';
+						} else {
+							indicatorHTML += '<span class="swiper-pagination-bullet"></span>';
+						}
+					}
+					sliderIndicator.innerHTML = indicatorHTML;
+				}
+				$(".swiper-container").swiper({
+					loop: true,
+					autoplay: 3000
+				});
+			} 
+			
+			function showPage(news_id){
+				window.location = basePath+"/HomeController/indexRollImgDetail?news_id="+news_id
+			}
+		   
+		   // 默认数据加载
+		   function initData (data) {
+		     $('#shangpingList').html('');
+		     if (data != null){
+		     	for(var i = 1; i < data.length + 1; i++){
+		     	 	var htmlStr = '';
+		     	 	var storePictureArr = data[i-1].store_picture.split(';');
+		     		if (i % 2 !== 0){
+		     		 htmlStr += '<div class="product-box product-box-left">'+
+			     				'	<div class="dot dot-left">'+
+			     				'		<div class="dot-div"></div>'+
+			     				'	</div>'+
+			     				'	<div class="ledgement ledgement-left">'+
+			     				'		<div class="product product-left" onclick="window.location =\'' + basePath + '/HomeController/productDetails?store_id=' + data[i-1]["store_id"] + '\'">';
+			     		if (data[i-1].tutor_num == 1){
+			     	 htmlStr += '			<div class="circle-big">'+
+			     	 			'				<img src="'+ baseImgPath + storePictureArr[0] +'" onerror="javascript:this.src=\'http://via.placeholder.com/100X100\'">'+
+			     	 			'			</div>';
+			     		}else {
+			     	 htmlStr += '			<div class="circle-small circle-small-left">'+
+			     				'				<img src="'+ baseImgPath + storePictureArr[0] +'" onerror="javascript:this.src=\'http://via.placeholder.com/100X100\'">'+
+			     				'			</div>'+
+			     				'			<div class="circle-small circle-small-right">'+
+			     				'				<img src="'+ baseImgPath + storePictureArr[1] +'" onerror="javascript:this.src=\'http://via.placeholder.com/100X100\'">'+
+			     				'			</div>';
+			     		}
+			     	 htmlStr +=	'			<div class="product-circle-small-info">'+
+			     				'			<h4>'+ data[i-1].store_name +'</h4>'+
+			     				'			<div class="store-price"><span class="price">'+ data[i-1].store_price.toFixed(2)+'</span></div>'+
+			     				'		</div>'+
+			     				'	</div>'+
+			     				'</div> ';
+		     		}else {
+		     		 htmlStr += '<div class="product-box product-box-right">'+
+			     				'	<div class="dot dot-right">'+
+			     				'		<div class="dot-div"></div>'+
+			     				'	</div>'+
+			     				'	<div class="ledgement ledgement-right">'+
+			     				'		<div class="product product-right" onclick="window.location =\'' + basePath + '/HomeController/productDetails?store_id=' + data[i-1]["store_id"] + '\'">';
+			     		if (data[i-1].tutor_num == 1){
+			     	 htmlStr += '			<div class="circle-big">'+
+			     	 			'				<img src="'+ baseImgPath + storePictureArr[0] +'" onerror="javascript:this.src=\'http://via.placeholder.com/100X100\'">'+
+			     	 			'			</div>';		
+			     		}else {
+			     	 htmlStr += '			<div class="circle-small circle-small-left">'+
+			     				'				<img src="'+ baseImgPath + storePictureArr[0] +'" onerror="javascript:this.src=\'http://via.placeholder.com/100X100\'">'+
+			     				'			</div>'+
+			     				'			<div class="circle-small circle-small-right">'+
+			     				'				<img src="'+ baseImgPath + storePictureArr[1] +'" onerror="javascript:this.src=\'http://via.placeholder.com/100X100\'">'+
+			     				'			</div>';	
+			     		}
+			     	 htmlStr += '			<div class="product-circle-small-info">'+
+			     				'				<h4>'+ data[i-1].store_name +'</h4>'+
+			     				'				<div class="store-price"><span class="price">'+ data[i-1].store_price.toFixed(2)+'</span></div>'+
+			     				'			</div>'+
+			     				'		</div>'+
+			     				'	</div>'+
+			     				'</div> ';
+		     		}
+		     		$('#shangpingList').append(htmlStr);
+		     	}
+		     	$('#shangpingList').append('<div class="product-box product-box-left" style="height: 220px;"></div>');
+		     }else {
+		     	$.alert('暂无数据');
+		     	return;
+		     }
+		   }
+		
+			$(function() {
+				FastClick.attach(document.body);
+			});
+			
+			// 切换学院
+			function changeCollegeBtn(e){
+				$(e).siblings().each(function(){
+					$(this).removeClass('active-college').addClass('store-kechen-btn');
+				});
+				$(e).addClass('active-college');
+				var academic_type = null,course_type = null;
+				$("[class='store-kechen-btn active-college']").each(function(i){
+					// 获取学院选中
+					academic_type = $("[class='store-kechen-btn active-college']")[i].getAttribute('data-college-id');
+
+				});
+				
+				$("[class='customize-kechen-btn active-course']").each(function(i){
+					// 获取选中专业
+					course_type = $("[class='customize-kechen-btn active-course']")[i].getAttribute('data-course-id');
+					
+				});
+				
+				$.ajax({ 
+			     type : "GET", //提交方式 
+			     url : basePath + '/wenxin_store/findAllStoreByStoreType',//路径 
+			     data : { 
+			     	store_type: 1, // 0 积分商城  1 成长课程
+			      	status_state: 0, // 默认值为1
+			      	shelf_state: 1, // 默认值为1
+			      	academic_type: academic_type, // 学院类型
+			      	course_type: course_type // 商品类型
+			     },//数据，这里使用的是Json格式进行传输 
+			     success : function(result) {
+			     	//返回数据根据结果进行相应的处理 
+// 			     	console.log(JSON.stringify(result));
+			      	initData (result.data);
+			     } 
+			    }); 
+			}
+			
+			// 切换专业
+			function changeCoursetBtn(e){
+				$(e).siblings().each(function(){
+					$(this).removeClass('active-course').addClass('customize-kechen-btn');
+				});
+				$(e).addClass('active-course');
+				var academic_type = null,course_type = null;
+				$("[class='store-kechen-btn active-college']").each(function(i){
+					// 获取学院选中
+					academic_type = $("[class='store-kechen-btn active-college']")[i].getAttribute('data-college-id');
+					
+					
+				});
+				var is_gift=null;
+				$("[class='customize-kechen-btn active-course']").each(function(i){
+					// 获取选中专业
+					course_type = $("[class='customize-kechen-btn active-course']")[i].getAttribute('data-course-id');
+					if(course_type==5){
+						academic_type=null;
+						course_type=null;
+						//is_gift=2;
+					}
+					
+				});
+				
+				$.ajax({ 
+			     type : "GET", //提交方式 
+			     url : basePath + '/wenxin_store/findAllStoreByStoreType',//路径 
+			     data : { 
+			     	store_type: 1, // 0 积分商城  1 成长课程
+			      	status_state: 0, // 默认值为1
+			      	academic_type: academic_type, // 学院类型
+			      	course_type: course_type, // 商品类型
+			      	is_gift: is_gift,
+			      	shelf_state:1
+			     },//数据，这里使用的是Json格式进行传输 
+			     success : function(result) {
+			     	//返回数据根据结果进行相应的处理 
+// 			     	console.log(JSON.stringify(result));
+			      	initData (result.data);
+			     } 
+			    }); 
+			
+			}
+		</script>
+	</body>
+</html>

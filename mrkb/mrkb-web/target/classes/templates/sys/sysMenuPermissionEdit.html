@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+<div th:replace="common/common :: common_resource"></div>
+    <meta charset="utf-8">
+    <title>菜单权限编辑</title>
+</head>
+  
+<body>
+<div id="rapp">
+  <form class="layui-form" style="margin-top: 15px;">
+  	<div class="layui-form-item">
+    	<label class="layui-form-label">权限编码</label>
+    	<div class="layui-input-block">
+      		<input type="text" name="code" v-model="PermissionEdit.code"  autocomplete="off" placeholder="请输入权限编码" class="layui-input" style="width: 200px;">
+    	</div>
+  	</div>
+  	<div class="layui-form-item">
+    	<label class="layui-form-label">url地址</label>
+    	<div class="layui-input-block">
+      		<input type="text" name="url" v-model="PermissionEdit.url" autocomplete="off" placeholder="请输入url地址" class="layui-input" style="width: 200px;">
+    	</div>
+  	</div>
+  	<div class="layui-form-item">
+    	<label class="layui-form-label">权限名称</label>
+    	<div class="layui-input-block">
+      		<input type="text" name="name" v-model="PermissionEdit.name" autocomplete="off" placeholder="请输入权限名称" class="layui-input" style="width: 200px;">
+    	</div>
+  	</div>
+  	<div class="layui-form-item">
+    	<div class="layui-input-block">
+      		<button class="layui-btn" type="button" lay-filter="saveOrUpdate" @click="saveOrUpdate"><i class="layui-icon layui-icon-ok"></i>提交</button>
+<!--       		<button type="reset" class="layui-btn layui-btn-primary"><i class="layui-icon layui-icon-refresh-3"></i>重置</button> -->
+			<button type="button" class="layui-btn layui-btn-primary" @click="closeWindow"><i class="layui-icon layui-icon-close"></i>关闭</button>
+    	</div>
+  	</div>
+  </form>
+</div>
+<script type="text/javascript">
+var resonseMenu_id=[[${menu_id}]];
+var vm = new Vue({
+	el: "#rapp",
+	    data: {
+	        data: null,
+	        showList: true,
+	        title: null,
+	        PermissionEdit: {}
+	    },
+	    mounted:function(){
+	    	this.getmenuPeimissionInfo();
+	    },
+	    methods: {
+	     	saveOrUpdate: function () {
+	            var url = vm.PermissionEdit.id == null ? "/userPermission/permissionSave" : "/userPermission/permissionUpdate";
+	            $.ajax({
+		                type: "POST",
+		                url: basePath+url,
+		                contentType:'application/json',
+		                async:true,
+		                data: JSON.stringify(vm.PermissionEdit),
+		                success: function (r) {
+		                    if (r.errorCode == 200) {
+		                       window.parent.layer.msg(r.message);
+		                       vm.closeWindow();
+		                    } else {
+		                        window.parent.layer.msg(r.message);
+		                    }
+		                },error:function(r){
+		                	window.parent.layer.msg(r.message);
+		                }
+		            });
+	        },
+	        getmenuPeimissionInfo: function(){
+	        	$.get(basePath+"/userPermission/getMenuPemission/"+resonseMenu_id,function (r) {
+		        	if(r.data==null){
+		        		vm.PermissionEdit={menu_id:resonseMenu_id};
+		        	}else{
+		        		vm.PermissionEdit=r.data;
+		        	}
+           		});
+	        },
+	        closeWindow: function(){
+	        	var index = parent.layer.getFrameIndex(window.name); 
+	        	window.parent.layer.close(index);//关闭弹窗
+	        },
+	    }
+});
+</script>
+</body>
+</html>

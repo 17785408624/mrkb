@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<title>复训</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link href="../../css/wx_ltone/weui.min.css" th:href="@{/css/wx_ltone/weui.min.css}" media="all" rel="stylesheet"/>
+		<link href="../../css/wx_ltone/jquery-weui.css" th:href="@{/css/wx_ltone/jquery-weui.css}" media="all" rel="stylesheet"/>
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/swiper.min.css" th:href="@{/css/wx_ltone/swiper.min.css}" />
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/mainstyle.css" th:href="@{/css/wx_ltone/mainstyle.css}" />
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/public.css" th:href="@{/css/wx_ltone/public.css}" />
+		<link href="../../css/wx_ltone/reset.css" th:href="@{/css/wx_ltone/reset.css}" media="all" rel="stylesheet"/>
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/productDetails.css" th:href="@{/css/wx_ltone/productDetails.css}"/>
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/refreshment.css" th:href="@{/css/wx_ltone/refreshment.css}"/>
+		<script src="../../static/js/util/util.js" th:src="@{/js/util/util.js}" ></script>
+	</head>
+
+	<body>
+		<div class="search border-blue">
+			<div class="search-left mui-action-back">
+				<a href="javascript:history.go(-1);">
+					<img th:src="@{/img/wx_ltone/icon/mine/fanhui.png}">
+				</a>
+			</div>
+		</div>
+		<div class="mdfd-content">
+			<div class="position-relative">
+				
+				<!-- 商品轮播图 -->
+				<!-- <div id="swiper"></div> -->
+				
+				<!--商品信息-->
+				<div class="position-relative">
+					<div class="detail-info-box" style="padding:15px 10px;"><!-- style="display: none" -->
+						<h4 class="default-text-color" style="display: none" id="store_id">[[${store_id}]]</h4>
+						<h4 class="default-text-color" id="store_name">[[${store_name}]]</h4>
+						<div class="default-text-fxf">
+						<div class="submit-add-idinfo-box" style="float: right;" onclick="applys()">
+							<input id="button"  class="weui-btn weui-btn_primary btn redr-btn" type="button" value="申请"> <!-- disabled="disabled" -->
+						</div>
+							<!-- <span>复训费256</span> -->
+						</div>
+						<!-- <div style="clear: both;"></div>
+						<div class="default-text-color price" style="float: left;"> 
+							<p class="default-text-colorsdrs">复训限定人数100人</p>
+							<p class="default-text-colorsqrs">已有89人申请</p>
+						</div>
+						<div class="submit-add-idinfo-box" style="float: right;" onclick="applys()">
+							<input id="button" class="weui-btn weui-btn_primary btn redr-btn" type="button" value="申请"> disabled="disabled"
+						</div> -->
+					</div>
+				</div>
+
+				<!--评价-->
+				<div class="evaluation" style="padding: 8px;"> 
+					<div class="evaluation-kcsm">
+						<div class="evaluation-kcsmtit">课程说明：</div>
+						<div class="evaluation-kcsmnr">
+						1、申请后请如期参与。<br />
+						2、若临时有事，请与您的顾问联络取消。<br />
+						3、若有多次申请却未出席，将影响您日后再次复训的申请通过情况。<br />
+						</div>
+						<label class="weui-agree">
+						  <input id="weuiAgree" name="cycle_unit" type="checkbox" class="weui-agree__checkbox">
+						  <span class="weui-agree__text">已阅读完以上条款并同意</span>
+						</label>
+					</div>
+				</div>
+
+				<!--产品详情-->
+				<div class="detail-detail">
+					<p class="detail-tip">--详情--</p>
+					<div class="position-relative" id="store_pictures">[[${store_id}]]</div>
+				</div>
+			</div>
+			<div class="box">
+				<!-- <div class="detail-info-box refrshment">
+					<img class="detail-info-boximg" alt="" th:src="@{/img/wx_ltone/icon/mine/bj.jpg}">
+					<h4 class="default-text-color" id="title1">[[${store_name}]]</h4>
+					<div class="default-text-color price" style="float: left;"> 
+						<p class="default-text-colorsdrs">复训限定人数100人</p>
+						<p class="default-text-colorsqrs">已有89人申请</p>
+					</div>
+					<div class="submit-add-idinfo-box refrshment-fxf">
+						<p>复训费256</p>
+					</div>
+				</div> -->
+				<div class="refrshment-jqkc">
+					<p class="refrshment-jqkctit">近期课程</p>
+					<ul class="refrshment-jqkcList" id="classtime">
+					<!-- 
+						<li class="refrshment-jqkcxgkc">
+							<div style="float: left;width:calc(100% - 90px);margin-top: 15px;">
+								<div style="clear: both;">
+									<p class="refrshment-jqkcxgkctime">2019-06-04</p>
+									<p class="refrshment-jqkcxgkcnr">课程相关内容课程相关内容课程相关内容课程相关内容</p>
+								</div>
+								<div class="skdz">
+									课程上课地址课程上课地址课程上课地址
+								</div>
+							</div>
+							<div class="refrshment-jqkcxgksqBtn ztsqBtn">暂停申请</div>
+						</li>
+						<li class="refrshment-jqkcxgkc">
+							<div style="float: left;width:calc(100% - 90px);margin-top: 15px;">
+								<div style="clear: both;">
+									<p class="refrshment-jqkcxgkctime">2019-06-04</p>
+									<p class="refrshment-jqkcxgkcnr">课程相关内容课程相关内容课程相关内容课程相关内容</p>
+								</div>
+								<div class="skdz">
+									课程上课地址课程上课地址课程上课地址
+								</div>
+							</div>
+							<div class="sqBtn-price">
+								<span>¥545</span>
+								<div class="refrshment-jqkcxgksqBtn" onclick="submitOrder()">申请</div>
+							</div>
+						</li>
+						 -->
+					</ul>
+				</div>
+				
+			</div>
+			<div class="bgdiv"></div>
+		</div>
+		<script src="../../static/js/wx_ltone/jquery-2.1.4.js" th:src="@{/js/wx_ltone/jquery-2.1.4.js}" ></script>
+		<script src="../../static/js/wx_ltone/fastclick.js" th:src="@{/js/wx_ltone/fastclick.js}" ></script>
+		<script src="../../static/js/wx_ltone/jquery-weui.js" th:src="@{/js/wx_ltone/jquery-weui.js}" ></script>
+		<script src="../../static/js/wx_ltone/swiper.js" th:src="@{/js/wx_ltone/swiper.js}" ></script>
+		<script src="../../static/js/wx_ltone/common.js" th:src="@{/js/wx_ltone/common.js}" ></script>
+		<script src="../../static/js/wx_ltone/banner.js" th:src="@{/js/wx_ltone/banner.js}" ></script>
+		<script src="../../static/js/basePathConfig.js" th:src="@{/js/basePathConfig.js}" ></script>
+		<script src="../../static/js/util/userCookie.js" th:src="@{/js/util/userCookie.js}" ></script>
+		
+		<script>
+			var store_id=$("#store_id").html();
+			/* 弹框 */
+			function applys(){
+				var obj = document.getElementsByName("cycle_unit");
+            	var flags = false;  
+            	for(var i=0; i<obj.length; i ++){
+                    if(obj[i].checked==true){
+                    	flags = true;
+                    }
+                }
+            	if (flags == false)  
+            	{  
+            	    alert("请仔细阅读条款并勾选同意!")  
+            	    return false;
+            	}  
+				$(".bgdiv,.box").fadeIn();
+				var tops = $(document).scrollTop();//当页面滚动时，把当前距离赋值给页面，这样保持页面滚动条不动  
+				$(document).bind("scroll",function (){$(document).scrollTop(tops); });
+			}
+			/* 申请  */
+			function submitOrder(class_node_id){
+				$.ajax({ 
+			    	type : "POST", //提交方式 
+			     	url : basePath + '/class_time_enroll/sign_up',// 提交订单
+			     	data : {
+			     		store_id: store_id,
+						store_amount: 1,
+						class_node_id: class_node_id
+			     	} ,
+			     	success : function(result) {
+			     		//返回数据根据结果进行相应的处理 
+			      		//alert(JSON.stringify(result));
+			      		var weixin_id = getCookie('getOpenId'); //用户微信号
+						var orderBasics = result.data;
+						window.location.href = basePath + "/payController/toPay?userId=" + orderBasics.user_basics_id + "&orderNo=" + orderBasics.order_id + "&money=" + orderBasics.all_price + "&openId=" + weixin_id + "&store_id=" + orderBasics.store_id;
+			     	},
+			     	error: function (err){
+			     		$.toast("下单失败，请稍后重试...");
+			     		return;
+			     	}
+			    });
+			}
+			
+			$(function() {
+				/* 弹框 */
+				$(".bgdiv").click(function() {
+					$(".bgdiv,.box").hide();
+					$(document).unbind("scroll");
+				});
+				var store_id=$("#store_id").html();
+				FastClick.attach(document.body);
+			 	// 获取单个商品数据
+			  	$.ajax({ 
+			     	type : "GET", //提交方式 
+			     	url : basePath + '/class_time_enroll/get_node_class_list',//路径 
+			     	data : { 
+			      		store_id: store_id
+			     	},//数据，这里使用的是Json格式进行传输 
+			     	success : function(result) {
+			     		//返回数据根据结果进行相应的处理 
+			     		
+			     		var data=result.data;
+			     		var str="";
+			     		for(var i=0;i<data.length;i++){
+// 			     		alert(data[i].retraining_price);
+			     			str+='<li class="refrshment-jqkcxgkc">'+
+									'<div style="float: left;width:calc(100% - 90px);margin-top: 15px;">'+
+										'<div style="clear: both;">'+
+											'<p class="refrshment-jqkcxgkctime">'+formatDateTimeStr(data[i].class_beagain_time)+'</p>'+
+											'<p class="refrshment-jqkcxgkcnr">'+data[i].store_name+'</p>'+
+										'</div>'+
+										'<div class="skdz">'+data[i].address+'</div>'+
+									'</div>'+
+									'<div class="sqBtn-price">'+
+										'<span>¥'+data[i].retraining_price+'</span>'+
+										'<div class="refrshment-jqkcxgksqBtn" onclick="submitOrder('+data[i].class_node_id+')">申请</div>'+
+									'</div>'+
+								  '</li>';
+			     		}
+ 			     		$("#classtime").html(str);
+			     	} 
+			    });
+			    
+			    
+			});
+			
+		</script>
+	</body>
+</html>

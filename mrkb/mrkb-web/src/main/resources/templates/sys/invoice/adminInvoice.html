@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+<div th:replace="common/common :: common_resource"></div>
+    <title>发票索取</title>
+    <style type="text/css">
+    	.layui-layer-demo{
+    		background-color: #333333;
+    	}
+    </style>
+</head>
+  
+<body>
+<!--列表-->
+<div id="rapp">
+    <div v-show="showList">
+    	<!-- shiro按钮权限示例:<p shiro:hasPermission="sys:menu">有权限</p> -->
+    	<fieldset class="layui-elem-field site-demo-button" style="margin-top: 10px;">
+<!-- 		    <button shiro:hasPermission="sys:menu" class="layui-btn layui-btn-primary" @click="add"><i class="layui-icon layui-icon-add-1"></i>新增</button> -->
+			<div class="layui-input-inline" style="width:300px;">
+	           <form class="layui-form">
+	           		<label class="layui-form-label">发票状态</label>
+			    <div class="layui-input-block">
+			      <select name="invoice_status" lay-filter="invoice_status">
+			        <option value="0" selected="">全部</option>
+			        <option value="1">显示中</option>
+			        <option value="2">默认收票信息</option>
+			        <option value="3">删除</option>
+			      </select>
+			    </div>
+	           </form>
+	        </div>
+		</fieldset>
+	    <table class="layui-table" lay-filter="test">
+	        <thead>
+	            <tr>
+<!-- 	                <th>编号</th> -->
+	                <th>发票类型</th>
+	                <th>税号</th>
+	                <th>接收方名称</th>
+	                <th>接收地址</th>
+	                <th>接收方手机号</th>
+	                <th>开户行</th>
+	                <th>银行卡号</th>
+	                <th>提交索取信息的用户</th>
+	                <th>状态</th>
+	                <th>操作</th>
+	            </tr>
+	        </thead>
+	        <tbody>
+	            <tr v-for="(item,index) in data">
+<!-- 	                <td>{{item.invoice_id}}</td> -->
+	                <td v-if="item.invoice_type==1">个人</td>
+	                <td v-if="item.invoice_type==2">公司</td>
+	                <td>{{item.invoice_num}}</td>
+	                <td>{{item.invoice_name}}</td>
+	                <td>{{item.invoice_address}}</td>
+	                <td>{{item.invoice_mobile}}</td>
+	                <td>{{item.invoice_openbank}}</td>
+	                <td>{{item.invoice_banknum}}</td>
+	                <td>{{item.user_basics_id}}</td>
+	                <td v-if="item.invoice_status==1">显示中</td>
+	                <td v-if="item.invoice_status==2">默认收票信息</td>
+	                <td v-if="item.invoice_status==3">删除</td>
+	                <td >
+						<a v-if="item.invoice_status !=2" class="layui-btn layui-btn-xs" lay-event="jichufapiao" @click='jichufapiao(item.invoice_id,item.invoice_type,item.invoice_num,item.invoice_name,item.invoice_address,item.invoice_mobile)'><i class="layui-icon layui-icon-notice"></i>寄出发票</a>
+<!-- 						<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="dayingfapiao" @click='dayingfapiao(item.invoice_id)'><i class="layui-icon layui-icon-release"></i>打印发票</a> -->
+	                </td>
+	            </tr>
+	        </tbody>
+	    </table>
+    	<!--分页容器-->
+		<div id="pagination"></div>
+    </div>
+</div>
+<script type="text/javascript">
+		//使用layui分页参数
+	    var pageIndex = 1;
+		var pageSize = 10;
+		var totalCount = 0;
+		var invoiceList ="";
+		//初始化vue对象
+		var vm = new Vue({
+		    el: "#rapp",
+		    data: {
+		        data: null,
+		        showList: true,
+		        title: null,
+		        invoice: {}
+		    },
+		     methods: {
+		    	jichufapiao: function (invoice_id,invoice_type,invoice_num,invoice_name,invoice_address,invoice_mobile) {
+		    	    var invoiceType ="";
+		    	    if(invoice_type ==1){
+                        invoiceType ="个人";
+					}else if(invoice_type ==2){
+                        invoiceType ="公司";
+					}else{
+                        invoiceType ="";
+					}
+                    var html="<form class='layui-form' style='margin-top:10px;' id='fahuo_form'>";
+                    html+="<div class='layui-form-item' style='width:350px;'>";
+                    html+="<label class='layui-form-label'>发票编号：</label>";
+                    html+="<div class='layui-input-block'>";
+                    html+="<input readonly='true' type='text' name='invoice_id' lay-verify='invoice_id' value='"+invoice_id+"' class='layui-input'>";
+                    html+="</div>";
+                    html+="</div>";
+                    html+="<div class='layui-form-item' style='width:350px;'>";
+                    html+="<label class='layui-form-label'>发票类型：</label>";
+                    html+="<div class='layui-input-block'>";
+                    html+="<input readonly='true' type='text' name='invoice_type' lay-verify='invoice_type' value='"+invoiceType+"' class='layui-input'>";
+                    html+="</div>";
+                    html+="</div>";
+                    html+="<div class='layui-form-item' style='width:350px;'>";
+                    html+="<label class='layui-form-label'>税   号：</label>";
+                    html+="<div class='layui-input-block'>";
+                    html+="<input readonly='true' type='text' name='invoice_num' lay-verify='invoice_num' value='"+invoice_num+"' class='layui-input'>";
+                    html+="</div>";
+                    html+="</div>";
+                    html+="<div class='layui-form-item' style='width:350px;'>";
+                    html+="<label class='layui-form-label'>姓  名：</label>";
+                    html+="<div class='layui-input-block'>";
+                    html+="<input readonly='true' type='text' name='invoice_name' lay-verify='invoice_name' value='"+invoice_name+"' class='layui-input'>";
+                    html+="</div>";
+                    html+="</div>";
+                    html+="<div class='layui-form-item' style='width:350px;'>";
+                    html+="<label class='layui-form-label'>联系方式：</label>";
+                    html+="<div class='layui-input-block'>";
+                    html+="<input readonly='true' type='text' name='invoice_mobile' lay-verify='invoice_mobile' value='"+invoice_mobile+"' class='layui-input'>";
+                    html+="</div>";
+                    html+="</div>";
+                    html+="<div class='layui-form-item' style='width:350px;'>";
+                    html+="<label class='layui-form-label'>收货地址：</label>";
+                    html+="<div class='layui-input-block'>";
+                    html+="<input readonly='true' type='text' name='invoice_address' lay-verify='invoice_address' value='"+invoice_address+"' class='layui-input'>";
+                    html+="</div>";
+                    html+="</div>";
+                    html+="<div class='layui-form-item' style='width:350px;'>";
+                    html+="<label class='layui-form-label'>快递公司：</label>";
+                    html+="<div class='layui-input-block'>";
+                    html+="<input type='text' name='courier_services_company' lay-verify='courier_services_company' class='layui-input'>";
+                    html+="</div>";
+                    html+="</div>";
+                    html+="<div class='layui-form-item' style='width:350px;'>";
+                    html+="<label class='layui-form-label'>运  单  号：</label>";
+                    html+="<div class='layui-input-block'>";
+                    html+="<input type='text' name='waybill_number' lay-verify='waybill_number' class='layui-input'>";
+                    html+="</div>";
+                    html+="</div>";
+                    html+="<div class='layui-form-item' style='width:350px;'>";
+                    html+="<div class='layui-input-block'>";
+                    html+="<button type='button' onclick=\"saveInvoice('"+invoice_id+"')\" style='width:240px;' class='layui-btn'><i class='layui-icon layui-icon-ok'></i>提交</button>";
+                    html+="</div>";
+                    html+="</div>";
+                    html+="</form>";
+                    layer.open({
+                        type: 1,
+                        title: '发货',
+                        closeBtn: 0,
+                        area: '400px',
+                        anim: 4,
+                        skin: 'layui-layer-no', //样式类名
+                        shadeClose: true,
+                        content: html
+                    });
+		        },
+		        /*dayingfapiao :function(invoice_id){
+		        
+	        	},*/
+	        }
+	    });
+		pagination(pageIndex,pageSize);
+		layui.use(['laypage','table'], function(){
+		    var table = layui.table, //表格
+		    laypage = layui.laypage
+		    laypage.render({
+		        elem: 'pagination'
+		        , count: totalCount
+		        , layout: ['count', 'prev', 'page', 'next', 'limit', 'refresh', 'skip']
+		        , jump: function (obj, first) {
+		            //点击非第一页页码时的处理逻辑。比如这里调用了ajax方法，异步获取分页数据
+		            if (!first) {
+		                pagination(obj.curr, obj.limit);//第二个参数不能用变量pageSize，因为当切换每页大小的时候会出问题
+		                pageIndex = obj.curr;
+						pageSize = obj.limit;
+		            }
+		        },
+		        
+		    });
+		    //layui下拉框选择事件
+		    form.on('select(invoice_status)', function(data){
+				pagination(pageIndex,pageSize,data.value);
+			});
+
+		});
+		function pagination(pageIndex,pageSize,invoice_status){
+			//查询条件
+		    var param = {
+		        pageIndex: pageIndex,
+		        pageSize: pageSize,
+		        invoice_status: invoice_status
+		        //其它查询条件可在下面添加
+		    };
+		    $.ajax({
+		        type: 'POST',
+		        url: basePath+'/admin_invoice/adminFindInvoicePageList',
+		        dataType: 'json',
+                data: param,
+		        async: false,//这里设置为同步执行，目的是等数据加载完再调用layui分页组件，不然分页组件拿不到totalCount的值
+		        success: function (data) {
+		            vm.data = data.data.list;
+		            totalCount = data.data.total;
+                    invoiceList=data.data.list;
+		        }
+		    });
+		};
+        //寄送发票提交
+        function saveInvoice(invoice_id){
+            var courier_services_company=$("#fahuo_form input[name=courier_services_company]").val();
+            if(courier_services_company.length<=0){
+                layer.msg('请填写快递公司名称', {icon: 2});
+                return;
+            }
+            var waybill_number=$("#fahuo_form input[name=waybill_number]").val();
+            if(waybill_number.length<=0){
+                layer.msg('请填写快递单号', {icon:2});
+                return;
+            }
+            $.ajax({
+                url:basePath+'/admin_invoice/updateInvoice',
+                contentType:'application/json',
+                type:'post',
+                data:JSON.stringify({invoice_id:invoice_id,courier_services_company:courier_services_company,waybill_number:waybill_number}),
+                success:function(data){
+                    layer.msg(data.message, {icon:1});
+
+                    window.location.reload();
+                },
+                error:function(){
+                    layer.msg('请求异常', {icon:2});
+                }
+            })
+        }
+
+
+</script>
+</body>
+</html>

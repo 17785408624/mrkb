@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<title>商城</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/weui.min.css" th:href="@{/css/wx_ltone/weui.min.css}"/>
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/jquery-weui.css" th:href="@{/css/wx_ltone/jquery-weui.css}"/>
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/jquery-weui.min.css" th:href="@{/css/wx_ltone/jquery-weui.min.css}"/>
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/reset.css" th:href="@{/css/wx_ltone/reset.css}"/>
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/swiper.min.css" th:href="@{/css/wx_ltone/swiper.min.css}" />
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/bigFoison.css" th:href="@{/css/wx_ltone/bigFoison.css}" />
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/mainstyle.css" th:href="@{/css/wx_ltone/mainstyle.css}" />
+		
+	</head>
+
+	<body style="background: #ffffff;">
+		<!-- <div class="search">
+			<div class="search-center">
+				<h4 class="default-text-color">
+					<span class="category">积分商城</span>
+					<span class="category category-active">课程兑换</span>
+				</h4>
+			</div>
+		</div> -->
+		<div class="weui_content">
+			<div id="bigFoisonbanner"></div>
+			<!-- <div class="store-kechen">
+				<div class="store-kechen-btn active" data-sort-id="1" onclick="changeKechenBtn(this)">前端课</div>
+				<div class="store-kechen-btn" data-sort-id="2" onclick="changeKechenBtn(this)">品牌课</div>
+				<div class="store-kechen-btn" data-sort-id="3" onclick="changeKechenBtn(this)">精品课</div>
+				<div class="store-kechen-btn" data-sort-id="4" onclick="changeKechenBtn(this)">专业课</div>
+			</div> -->
+			<div id="shangpingList" class="store-product-box"></div>	
+		</div>
+		<div class="weui-tabbar">
+			<div onclick="window.location = basePath + '/HomeController/home'" class="weui-tabbar__item">
+				<div class="weui-tabbar__icon">
+					<img th:src="@{/img/wx_ltone/icon/tabbar/icon-home.png}">
+				</div>
+				<p class="weui-tabbar__label">首页</p>
+			</div>
+			<div class="weui-tabbar__item weui-bar__item--on">
+				<div class="weui-tabbar__icon">
+					<img th:src="@{/img/wx_ltone/icon/tabbar/icon-big-foison-active.png}">
+				</div>
+				<p class="weui-tabbar__label">商城</p>
+			</div>
+			<div onclick="window.location = basePath + '/HomeController/bigGrowUp'" class="weui-tabbar__item">
+				<div class="weui-tabbar__icon">
+					<img th:src="@{/img/wx_ltone/icon/tabbar/icon-big-grow-up.png}">
+				</div>
+				<p class="weui-tabbar__label">成长课程</p>
+			</div>
+			<div onclick="window.location=window.location = basePath + '/HomeController/mine'" class="weui-tabbar__item">
+				<div class="weui-tabbar__icon">
+					<img th:src="@{/img/wx_ltone/icon/tabbar/icon-mine.png}">
+				</div>
+				<p class="weui-tabbar__label">我的后院</p>
+			</div>
+		</div>
+		
+		<script src="../../static/js/wx_ltone/jquery-2.1.4.js" th:src="@{/js/wx_ltone/jquery-2.1.4.js}" ></script>
+		<script src="../../static/js/wx_ltone/fastclick.js" th:src="@{/js/wx_ltone/fastclick.js}" ></script>
+		<script src="../../static/js/wx_ltone/jquery-weui.js" th:src="@{/js/wx_ltone/jquery-weui.js}" ></script>
+		<script src="../../static/js/wx_ltone/swiper.js" th:src="@{/js/wx_ltone/swiper.js}" ></script>
+		<script src="../../static/js/basePathConfig.js" th:src="@{/js/basePathConfig.js}" ></script>
+		<script type="text/javascript">
+			$(document).ready(function(){
+			  $.ajax({ 
+			     type : "GET", //提交方式 
+			     url : basePath + '/wenxin_store/findAllStoreByStoreType',//路径 
+			     data : { 
+			      	store_type: 0, // 0 商城  1 成长课程  2积分商城
+			      	status_state: 0, // 默认值为1
+			      	/* academic_type: 1, // 学院类型 */
+			      	//course_type: 1 ,// 商品类型
+			      	shelf_state: 1 // 上架类型
+			     },//数据，这里使用的是Json格式进行传输 
+			     success : function(result) {
+			     	//返回数据根据结果进行相应的处理 
+			      	initData (result.data);
+			     } 
+			    });
+			    
+			    //加载动态轮播图
+				$.ajax({ 
+			    	type : "GET", //提交方式 
+			    	url : basePath + '/weixin_news/findNews',
+			    	contentType:'application/json',
+			    	data : { 
+			     		news_type: 7
+			    	},//数据，这里使用的是Json格式进行传输 
+			    	success : function(result) {
+			     		//返回数据根据结果进行相应的处理 
+			      		if(result.data){
+			      			var dataArr = [];
+			      			for(var i = 0; i < result.data.length; i++){
+			      				var bannerData = { news_id: result.data[i].news_id, news_picture: result.data[i].news_picture.split(';')[0] }
+			      				dataArr.push(bannerData);
+			      			}
+			      			
+			      			bannerClick(document.getElementById('bigFoisonbanner'),dataArr,true);
+			      		}
+			    	},
+		     		error: function (err){
+			     		$.toast('网络错误，请稍后重试...');
+			     		return;
+		     		}
+			    });
+			});
+			
+			/**
+			 * 动态加载点击的轮播图
+			 */
+			function bannerClick(elementObj,data,indicator){
+				var sliderDiv = document.createElement('div');
+					sliderDiv.className = 'swiper-container swiper-container-horizontal';
+					elementObj.appendChild(sliderDiv);
+				
+				// 图片层
+				var sliderGroup = document.createElement('div');
+					sliderGroup.className = 'swiper-wrapper';
+					sliderDiv.appendChild(sliderGroup);
+				
+				var html = '';
+				for (var i = 0; i < data.length + 2; i++) {
+					if (i == 0) {
+						html += '<div class="swiper-slide swiper-slide-duplicate">' +
+								'	<a href="javascript:void(0);" onclick="showPage('+ data[data.length - 1].news_id +');">' +
+								'		<img src="' + data[data.length - 1].news_picture + '" onerror="javascript:this.src=\'http://via.placeholder.com/216X120\'">' +
+								'	</a>' +
+								'</div>';
+					} else if (i == data.length + 1) {
+						html += '<div class="swiper-slide swiper-slide-duplicate">' +
+								'	<a href="javascript:void(0);" onclick="showPage('+ data[0].news_id +');">' +
+								'		<img src="'+ data[0].news_picture +'" onerror="javascript:this.src=\'http://via.placeholder.com/216X120\'">' +
+								'	</a>' +
+								'</div>';
+					} else {
+						var k = i - 1;
+						html += '<div class="swiper-slide">' +
+								'	<a href="javascript:void(0);" onclick="showPage('+ data[k].news_id +');">' +
+								'		<img src="' + data[k].news_picture + '" onerror="javascript:this.src=\'http://via.placeholder.com/216X120\'">' +
+								'	</a>' +
+								'</div>';
+					}
+				}
+				sliderGroup.innerHTML = html;
+				// 判断是否需要加载小圆点
+				if(indicator){
+					// 图片下面的圆点
+					var sliderIndicator = document.createElement('div');
+					sliderIndicator.className = 'swiper-pagination swiper-pagination-bullets';
+					sliderDiv.appendChild(sliderIndicator);
+					var indicatorHTML = '';
+					for (var j = 0; j < data.length; j++) {
+						if (j == 0) {
+							indicatorHTML += '<span class="swiper-pagination-bullet swiper-pagination-bullet-active"></span>';
+						} else {
+							indicatorHTML += '<span class="swiper-pagination-bullet"></span>';
+							$("#swiper-pagination-bullet").append("<span class=\"swiper-pagination-bullet\"></span>");
+						}
+					}
+					sliderIndicator.innerHTML = indicatorHTML;
+				}
+				$(".swiper-container").swiper({
+					loop: true,
+					autoplay: 3000
+				});
+			} 
+			
+			function showPage(news_id){
+				window.location = basePath+"/HomeController/indexRollImgDetail?news_id="+news_id
+			}
+		   
+		   // 默认数据加载
+		   function initData (data) {
+		   
+		     $('#shangpingList').empty();
+		     if (data != null){
+		     	for(var i = 1; i < data.length + 1; i++){
+		     	 	var htmlStr = '';
+                    var storePictureArr=[];
+		     	 	if(data[i-1].store_picture!=null||data[i-1].store_picture!=undefined){
+                        storePictureArr = data[i-1].store_picture.split(';');
+					}
+
+
+		     		if (i % 2 !== 0){
+		     		 htmlStr += '<div class="product-box product-box-left">'+
+			     				'	<div class="dot dot-left">'+
+			     				'		<div class="dot-div"></div>'+
+			     				'	</div>'+
+			     				'	<div class="ledgement ledgement-left">'+
+			     				'		<div class="product product-left" onclick="window.location =\'' + basePath + '/HomeController/productDetails?store_id=' + data[i-1]["store_id"] + '\'">';
+			     		if (data[i-1].tutor_num == 1){
+			     	 htmlStr += '			<div class="circle-big">'+
+			     	 			'				<img src="'+ baseImgPath + storePictureArr[0] +'" onerror="javascript:this.src=\'http://via.placeholder.com/100X100\'">'+
+			     	 			'			</div>';		
+			     		}else {
+			     	 htmlStr += '			<div class="circle-small circle-small-left">'+
+			     				'				<img src="'+ baseImgPath + storePictureArr[0] +'" onerror="javascript:this.src=\'http://via.placeholder.com/100X100\'">'+
+			     				'			</div>'+
+			     				'			<div class="circle-small circle-small-right">'+
+			     				'				<img src="'+ baseImgPath + storePictureArr[1] +'" onerror="javascript:this.src=\'http://via.placeholder.com/100X100\'">'+
+			     				'			</div>';	
+			     		}
+			     	 htmlStr +=	'			<div class="product-circle-small-info">'+
+			     				'			<h4>'+ data[i-1].store_name +'</h4>'+
+			     				'			<div class="store-price"><span class="price">'+ data[i-1].store_price.toFixed(2)+'</span></div>'+
+			     				'		</div>'+
+			     				'	</div>'+
+			     				'</div> ';
+		     		}else {
+		     		 htmlStr += '<div class="product-box product-box-right">'+
+			     				'	<div class="dot dot-right">'+
+			     				'		<div class="dot-div"></div>'+
+			     				'	</div>'+
+			     				'	<div class="ledgement ledgement-right">'+
+			     				'		<div class="product product-right" onclick="window.location =\'' + basePath + '/HomeController/productDetails?store_id=' + data[i-1]["store_id"] + '\'">';
+			     		if (data[i-1].tutor_num == 1){
+			     	 htmlStr += '			<div class="circle-big">'+
+			     	 			'				<img src="'+ baseImgPath + storePictureArr[0] +'" onerror="javascript:this.src=\'http://via.placeholder.com/100X100\'">'+
+			     	 			'			</div>';		
+			     		}else {
+			     	 htmlStr += '			<div class="circle-small circle-small-left">'+
+			     				'				<img src="'+ baseImgPath + storePictureArr[0] +'" onerror="javascript:this.src=\'http://via.placeholder.com/100X100\'">'+
+			     				'			</div>'+
+			     				'			<div class="circle-small circle-small-right">'+
+			     				'				<img src="'+ baseImgPath + storePictureArr[1] +'" onerror="javascript:this.src=\'http://via.placeholder.com/100X100\'">'+
+			     				'			</div>';	
+			     		}
+			     	 htmlStr += '			<div class="product-circle-small-info">'+
+			     				'				<h4>'+ data[i-1].store_name +'</h4>'+
+			     				'				<div class="store-price"><span class="price">'+ data[i-1].store_price.toFixed(2)+'</span></div>'+
+			     				'			</div>'+
+			     				'		</div>'+
+			     				'	</div>'+
+			     				'</div> ';
+		     		}
+		     		$('#shangpingList').append(htmlStr);
+		     	}
+		     	$('#shangpingList').append('<div class="product-box product-box-left" style="height: 220px;"></div>');
+		     }else {
+		     	$.toast("暂无数据");
+		     	return;
+		     }
+		   }
+			
+			$(function() {
+				FastClick.attach(document.body);
+			});
+			
+			function changeKechenBtn(e){
+				$(e).siblings().each(function(){
+					$(this).removeClass('active').addClass('store-kechen-btn');
+				});
+				$(e).addClass('active');
+				var course_type = e.getAttribute('data-sort-id');
+				$.ajax({ 
+			    	type : "GET", //提交方式 
+			     	url : basePath + '/wenxin_store/findAllStoreByStoreType',//路径 
+			     	data : { 
+			      		store_type: 0, // 0 积分商城  1 成长课程
+			      		status_state: 0, // 默认值为1
+			      		course_type: course_type, // 商品类型
+			      		shelf_state: 1 //上架类型
+			     	},//数据，这里使用的是Json格式进行传输 
+			     	success : function(result) {
+			     		//返回数据根据结果进行相应的处理 
+			      		initData (result.data);
+			     	} 
+			    }); 
+			}
+		</script>
+	</body>
+</html>

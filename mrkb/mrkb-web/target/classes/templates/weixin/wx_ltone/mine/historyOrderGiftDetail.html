@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<title>历史赠送详情</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/weui.min.css" th:href="@{/css/wx_ltone/weui.min.css}"/>
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/jquery-weui.css" th:href="@{/css/wx_ltone/jquery-weui.css}"/>
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/reset.css" th:href="@{/css/wx_ltone/reset.css}"/>
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/mainstyle.css" th:href="@{/css/wx_ltone/mainstyle.css}" />
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/public.css" th:href="@{/css/wx_ltone/public.css}" />
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/myOrderDetail.css" th:href="@{/css/wx_ltone/myOrderDetail.css}"/>
+		
+	</head>
+	<body>
+		<div class="search">
+			<div class="search-left">
+				<a href="javascript:history.go(-1);">
+					<img th:src="@{/img/wx_ltone/icon/mine/fanhui.png}">
+				</a>
+			</div>
+		</div>
+		<div class="mdfd-content">
+			<div class="historyGiftDetail-img">
+				<img id="img1" alt="" th:src="@{/img/wx_ltone/icon/mine/zscg.png}">
+				<!-- th:src="@{/img/wx_ltone/icon/mine/lqcg.png}" -->
+			</div>
+			<div id="show-giftlist" class="historyGiftDetail-list">
+				<!-- <p>赠送课程：《悦女人》</p>
+				<p>会员名称：末岛晴空名称</p>
+				<p>会员编号：54566554</p>
+				<p>交易时间：2019-06-14 22：52：25</p> -->
+			</div>
+		</div>
+		<script src="../../static/js/wx_ltone/jquery-2.1.4.js" th:src="@{/js/wx_ltone/jquery-2.1.4.js}" ></script>
+		<script src="../../static/js/wx_ltone/fastclick.js" th:src="@{/js/wx_ltone/fastclick.js}" ></script>
+		<script src="../../static/js/wx_ltone/jquery-weui.js" th:src="@{/js/wx_ltone/jquery-weui.js}" ></script>
+		<script src="../../static/js/wx_ltone/common.js" th:src="@{/js/wx_ltone/common.js}" ></script>
+		<script src="../../static/js/basePathConfig.js" th:src="@{/js/basePathConfig.js}" ></script>
+		<script src="../../static/js/util/util.js" th:src="@{/js/util/util.js}" ></script>
+		<script>
+			$(function() {
+				FastClick.attach(document.body);
+				var gift_id = getUrlParam('gift_id');
+				var gift_user_id = getUrlParam('gift_user_id');
+				// 查询课程详情
+				$.ajax({ 
+				    	type : "GET", //提交方式 
+				    	url : basePath + '/wenxin_store/findStoreGiftBasics',
+				    	data : { 
+				    		gift_id:gift_id,
+				    		gift_user_id:gift_user_id
+				    	},//数据，这里使用的是Json格式进行传输 
+				    	success : function(result) {
+				      		if(result.data){
+				      		 var html="";
+				      		 var showList = result.data;
+				      		 for(var i = 0 ; i<showList.length; i++){
+				      		 	html += 
+				      		 	'<div style="border-bottom:1px solid #E5E5E5;">'+
+					      		 '<p>赠送课程：'+showList[i].store_name +'</p>'+
+					      		 '<p>会员名称：'+ showList[i].gift_user_name+'</p>'+
+					      		 '<p>会员编号：'+ showList[i].gift_user_basics_id+'</p>'+
+					      		 '<p>交易时间：'+formatDateTimeStr(showList[i].business_date,1) +'</p>'+
+					      	  '</div>';
+				      		 }
+				      		 $('#show-giftlist').append(html);
+				      		}else{
+				      		  $.toast("暂无数据!");
+				      		}
+				    	},
+			     		error: function (err){
+				     		$.toast('网络错误，请稍后重试...');
+				     		return;
+			     		}
+				    });
+			});
+		</script>
+	</body>
+</html>

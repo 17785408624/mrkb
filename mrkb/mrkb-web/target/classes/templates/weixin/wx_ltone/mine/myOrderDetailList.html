@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<title>订单详情列表</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/weui.min.css" th:href="@{/css/wx_ltone/weui.min.css}"/>
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/jquery-weui.css" th:href="@{/css/wx_ltone/jquery-weui.css}"/>
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/reset.css" th:href="@{/css/wx_ltone/reset.css}"/>
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/mainstyle.css" th:href="@{/css/wx_ltone/mainstyle.css}" />
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/public.css" th:href="@{/css/wx_ltone/public.css}" />
+		<link rel="stylesheet" type="text/css" href="../../css/wx_ltone/myOrderDetail.css" th:href="@{/css/wx_ltone/myOrderDetail.css}"/>
+		
+	</head>
+	<body>
+		<div class="search">
+			<div class="search-left">
+				<a href="javascript:history.go(-1);">
+					<img th:src="@{/img/wx_ltone/icon/mine/fanhui.png}">
+				</a>
+			</div>
+		</div>
+		<div class="mdfd-content">
+			<!--订单信息-->
+			<div class="order-detail-box" id="showGiftList"></div>
+			<div class="box">
+				<div class="box-flex">
+					<p class="box-title">请您填写被赠送人的会员编号</p>
+					<p class="box-title" id="userName"></p>
+					<input id="user_gift_id" type="text" class="box-input" />
+					<div class="box-flextrue">
+						<div class="storehuiBtn">取消</div>
+						<div class="storeBtn">确定</div>
+					</div>
+				</div>
+				
+			</div>
+			<div class="bgdiv"></div>
+		</div>
+		
+		
+		<script src="../../static/js/wx_ltone/jquery-2.1.4.js" th:src="@{/js/wx_ltone/jquery-2.1.4.js}" ></script>
+		<script src="../../static/js/wx_ltone/fastclick.js" th:src="@{/js/wx_ltone/fastclick.js}" ></script>
+		<script src="../../static/js/wx_ltone/jquery-weui.js" th:src="@{/js/wx_ltone/jquery-weui.js}" ></script>
+		<script src="../../static/js/wx_ltone/common.js" th:src="@{/js/wx_ltone/common.js}" ></script>
+		<script src="../../static/js/basePathConfig.js" th:src="@{/js/basePathConfig.js}" ></script>
+		<script>
+			//赠送 按钮
+			function storeBtn(gift_id,store_id){
+			 //$("#user_gift_id").val("");
+			// $("#userName").html("");
+			   var gift_user_id =null;
+			   var datas= null;
+		    	$(".bgdiv,.box").fadeIn();
+				var tops = $(document).scrollTop();//当页面滚动时，把当前距离赋值给页面，这样保持页面滚动条不动  
+				$(document).bind("scroll",function (){$(document).scrollTop(tops); });
+				//监听input 事件值得变化
+				$('input').bind('input propertychange', function(){
+				  gift_user_id = $(this).val();
+				   if($(this).val()){
+				   		$.ajax({ 
+				    	type : "GET", //提交方式 
+				    	url : basePath + '/user_weixin/findUserInfoById',
+				    	data : { 
+				    		user_basics_id:gift_user_id
+				    	},//数据，这里使用的是Json格式进行传输 
+				    	success : function(result) {
+				    	datas = result.data;
+				    	 //console.log(JSON.stringify(result.data));
+				    	if(result.errorCode == 200){
+				    	   var userName = result.data.information_compellation;
+				    	   if(userName == null ||userName ==""){
+				    	   	 $("#userName").html("该会员无实名认证！");
+				    	   	 return;
+				    	   }
+				    	   	$("#userName").html(userName);
+				    	}else{
+				    		$("#userName").html("暂无该会员编号");
+				    		$.toast(result.message);
+				    		return;
+				    	}
+				    	},
+			     		error: function (err){
+				     		$.toast('网络错误，请稍后重试...');
+				     		return;
+			     		}
+				    });
+				   
+				   }
+				});
+				$(document).on("click", ".storeBtn", function() {
+				    if(gift_user_id == null || gift_user_id == "" ||gift_user_id == undefined){
+				    	$.alert('请您填写被赠送人的会员编号');
+			     	    return;
+				    }
+				   // alert(JSON.stringify(datas));
+				     if(datas ==null){
+				     	  $.toast("请输入正确的会员编号！");
+				     	  return;
+				     }else{
+				     	$.ajax({ 
+				    	type : "POST", //提交方式 
+				    	url : basePath + '/wenxin_store/giftCourse',
+				    	data : { 
+				    		gift_id:gift_id,
+				    		gift_user_id:gift_user_id,
+				    		store_id:store_id
+				    	},//数据，这里使用的是Json格式进行传输 
+				    	success : function(result) {
+				    	if(result.errorCode == 200){
+				    	  $.toast(result.message);
+				    	   window.location = basePath + '/maid/historyOrderGiftDetail?gift_id='+gift_id+'&gift_user_id='+gift_user_id;
+				    	   
+				    	}else{
+							$.toast(result.message);
+							return;
+				    	}
+				    	},
+			     		error: function (err){
+				     		$.toast('网络错误，请稍后重试...');
+				     		return;
+			     		}
+				    });
+				  }
+				});
+				
+		    }
+			$(function() {
+				FastClick.attach(document.body);
+				var order_id = getUrlParam('order_id');
+			    var gift_user_id = null ;
+			    var store_id = null;
+			    var gift_id = null;
+				// 查询大礼包套餐
+				$.ajax({ 
+				    	type : "GET", //提交方式 
+				    	url : basePath + '/wenxin_store/findSotreGift',
+				    	data : { 
+				    		order_id:order_id
+				    	},//数据，这里使用的是Json格式进行传输 
+				    	success : function(result) {
+				      		if(result.data){
+				      		 var html="";
+				      		 var showList = result.data.storeGiftList;
+				      		 for(var i=0  ;i<showList.length;i++){
+				      		   store_id = showList[i].store_id;
+				      		   html+= '<div class="order-detail orderList">'+
+				      		   		   ' <div class="order-info" style="padding-left:0;">'+ 
+				      		   		   '  <div class="default-text-color store-title" style="height: 30px;" id="gift_name">'+showList[i].gift_name+'</div>'+
+				      		   		   '    <div style="display: block;height: 30px;line-height: 30px;">'+
+				      		   		   '    <span class="float-r" id="num">'+'x'+showList[i].ids_num+'</span>'+
+				      		   		   '  </div>'+
+				      		   		   '   <div class="store-titleBtn" onclick="storeBtn('+showList[i].gift_id +','+showList[i].store_id +')">赠送</div>'+
+				      		   		   ' </div>'+
+				      		   		   '</div>';
+				      		 }
+				      		 $('#showGiftList').append(html);
+				      		}else{
+				      		  $.toast("暂无数据!");
+				      		}
+				    	},
+			     		error: function (err){
+				     		$.toast('网络错误，请稍后重试...');
+				     		return;
+			     		}
+				    });
+			    /**确定按钮*/
+			    $(".storeBtn").click(function() {
+				    	        //alert(111);
+								$(".bgdiv,.box").hide();
+								$(document).unbind("scroll");
+								$("#user_gift_id").val("");
+								$("#userName").html("");
+							});
+			    /* 弹框 */
+				$(".storehuiBtn").click(function() {
+					$(".bgdiv,.box").hide();
+					$(document).unbind("scroll");
+					$("#user_gift_id").val("");
+					$("#userName").html("");
+				});
+			});
+		</script>
+	</body>
+</html>
