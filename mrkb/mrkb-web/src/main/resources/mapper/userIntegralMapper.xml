@@ -71,10 +71,13 @@ UPDATE user_integral set
     user_basics_id=#{user_basics_id,jdbcType=INTEGER}
 
     <if test="integral_basics!=null">
-,integral_basics=integral_basics+(#{integral_basics,jdbcType=INTEGER})
+,integral_basics=integral_basics+(#{integral_basics,jdbcType=DOUBLE})
+    </if>
+    <if test="integral_bonus!=null">
+        ,integral_bonus=integral_bonus+(#{integral_bonus,jdbcType=DOUBLE})
     </if>
 <if test="conver_num!=null">
-,conver_num=conver_num+(#{conver_num,jdbcType=INTEGER})
+,conver_num=conver_num+(#{conver_num,jdbcType=DOUBLE})
 </if>
 
 WHERE 1=1

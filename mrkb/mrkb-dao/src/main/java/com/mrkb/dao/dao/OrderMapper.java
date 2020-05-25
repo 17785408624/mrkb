@@ -3,13 +3,10 @@ package com.mrkb.dao.dao;
 import java.util.HashMap;
 import java.util.List;
 
+import com.mrkb.dao.modle.order.*;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import com.mrkb.dao.modle.order.OrderBasics;
-import com.mrkb.dao.modle.order.OrderRefund;
-import com.mrkb.dao.modle.order.OrderRestore;
-import com.mrkb.dao.modle.order.OrderSupplement;
 import com.mrkb.dao.modle.store.StoreBasics;
 
 @Mapper
@@ -80,8 +77,8 @@ public interface OrderMapper {
 	 * @throws
 	 */
 	List<OrderBasics> selectOrderBasicsToAnd(OrderBasics orderBasics);
-	
-	
+
+    List<OrderStore> findOrderStore(int order_id);
 	
 	
 	

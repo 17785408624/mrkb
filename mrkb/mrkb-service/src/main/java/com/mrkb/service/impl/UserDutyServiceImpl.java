@@ -173,6 +173,7 @@ public class UserDutyServiceImpl implements UserDutyService {
 			capitalAccount.setAccount_explain(storeBasics.getStore_name());// 流水说明
 			double amountPrice = (storeBasics.getStore_price() + storeBasics.getOther_price()) * storeNum;// 算出已商品价格为准的总价
 			Double store_price = Double.valueOf(orderBasics.getAll_price());// 订单价格
+
 			UserInformationEntity ufe = userInformationMapper.selectUserInformationEntityToUserId(user_basics_id);
 			// 加积分快乐豆
 			if (userGradeId > 1) {
@@ -312,23 +313,7 @@ public class UserDutyServiceImpl implements UserDutyService {
 					String message_content = PrivateMessages.getPushMessage(update2, message);
 					um.setMessage_content(message_content);
 					userMessageMapper.addMessage(um);
-					// 添加第一代业绩
-//					UserSale us1 = new UserSale();
-//					us1.setTable_name("user_sale_mon_" + mon);
-//					us1.setUser_basics_id(uw2.getUser_basics_id());
-//					us1.setSale_date(day);
-//					us1.setSale_volume1(orderBasics.getAll_price());
-//					us1.setSale_money(orderBasics.getAll_price());
-//					int updates2 = userSaleMapper.updateUserSale(us1);
-//					if (updates2 < 1) {
-//						userSaleMapper.addUserSale(us1);
-//					}
-//					us1.setTable_name("user_sale_mon_" + year);
-//					us1.setSale_date(mon);
-//					int updates5 = userSaleMapper.updateUserSale(us1);
-//					if (updates5 < 1) {
-//						userSaleMapper.addUserSale(us1);
-//					}
+
 				}
 			}
 

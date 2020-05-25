@@ -11,6 +11,12 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import com.mrkb.common.utils.messages.PrivateMessages;
+import com.mrkb.dao.dao.*;
+import com.mrkb.dao.modle.account.IntegralAccount;
+import com.mrkb.dao.modle.account.UserMoneyAccountEntity;
+import com.mrkb.dao.modle.order.*;
+import com.mrkb.dao.modle.user.UserMessage;
 import net.sf.json.JSONObject;
 
 import org.dom4j.DocumentException;
@@ -18,47 +24,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.mrkb.common.utils.DateUtil;
-import com.mrkb.common.utils.globalStatic.GlobalStatic;
-import com.mrkb.common.utils.messages.PrivateMessages;
+
 import com.mrkb.common.utils.weixinservice.WxCustomerServiceMessageUtil;
-import com.mrkb.dao.dao.BasicStoreMapper;
-import com.mrkb.dao.dao.BasicUserMapper;
-import com.mrkb.dao.dao.CapitalAccountMapper;
-import com.mrkb.dao.dao.CoFounderMonSaleMapper;
-import com.mrkb.dao.dao.CompanyBasicsMapper;
-import com.mrkb.dao.dao.CompanyMapper;
-import com.mrkb.dao.dao.CompanyMonthMapper;
-import com.mrkb.dao.dao.IntegralMapper;
-import com.mrkb.dao.dao.NewsMapper;
-import com.mrkb.dao.dao.OrderAddrMapper;
-import com.mrkb.dao.dao.OrderMapper;
-import com.mrkb.dao.dao.UserAchievementMapper;
-import com.mrkb.dao.dao.UserDutyMapper;
-import com.mrkb.dao.dao.UserInformationMapper;
-import com.mrkb.dao.dao.UserIntegralMapper;
-import com.mrkb.dao.dao.UserMessageMapper;
-import com.mrkb.dao.dao.UserRecommendMapper;
-import com.mrkb.dao.dao.UserSaleMapper;
-import com.mrkb.dao.dao.UserWeixinMapper;
-import com.mrkb.dao.modle.account.CapitalAccount;
-import com.mrkb.dao.modle.account.IntegralAccount;
-import com.mrkb.dao.modle.company.CoFounderMonSale;
-import com.mrkb.dao.modle.company.CompanyBasicsEntity;
-import com.mrkb.dao.modle.company.CompanyMonthSales;
-import com.mrkb.dao.modle.core.AwardOperationEntityAll;
-import com.mrkb.dao.modle.news.News;
-import com.mrkb.dao.modle.order.OrderBasics;
-import com.mrkb.dao.modle.order.OrderRefund;
-import com.mrkb.dao.modle.order.OrderRestore;
-import com.mrkb.dao.modle.order.OrderSupplement;
-import com.mrkb.dao.modle.sale.UserSale;
 import com.mrkb.dao.modle.store.StoreBasics;
-import com.mrkb.dao.modle.store.UserDuty;
 import com.mrkb.dao.modle.user.BasicsUser;
-import com.mrkb.dao.modle.user.UserAchievement;
 import com.mrkb.dao.modle.user.UserInformationEntity;
-import com.mrkb.dao.modle.user.UserMessage;
 import com.mrkb.dao.modle.user.UserWeixin;
 import com.mrkb.service.CoreService;
 import com.mrkb.service.OrderService;
@@ -106,6 +76,8 @@ public class OrderServiceImpl implements OrderService {
 	private UserSaleMapper userSaleMapper;
 	@Resource
 	private UserDutyMapper userDutyMapper;
+    @Autowired
+    private UserMoneyAccountMapper userMoneyAccountMapper;
 
 	public OrderBasics addOrder(OrderBasics ob, HashMap<String, Object> map) {
 		basicOrderMapper.addOrder(ob);
@@ -205,22 +177,6 @@ public class OrderServiceImpl implements OrderService {
 		List<OrderBasics> orderBasicsList = basicOrderMapper.findOrderAffirm(pointInTime);// 超过收货未确认收货时间的订单
 		if (orderBasicsList.size() != 0) {// 未确认的订单不为零
 			basicOrderMapper.BatchUpdateOrderStatus(orderBasicsList);
-			// for (OrderBasics orderBasics : orderBasicsList) {
-			// CapitalAccount capitalAccount=new CapitalAccount();
-			// capitalAccount.setAccount_explain("购买商品订单号:"+orderBasics.getOrder_id());//流水说明
-			// capitalAccount.setCapital_trigger(orderBasics.getOrder_id());//关联触发数据的id
-			// capitalAccount.setAdd_account_date(date.getTime());//添加时间
-			// capitalAccount.setCapital_account_type(1);//流水类型（1购买商品）
-			// capitalAccount.setCapital_number(orderBasics.getAll_price());//资金数量
-			// /**
-			// * 商品贩卖人id,这里需要获取此id，暂时默认为1（系统）
-			// */
-			// Integer Fo_user_basics_id=1;
-			// capitalAccount.setFo_user_basics_id(Fo_user_basics_id);//接收人id（商品贩卖人）
-			// capitalAccount.setTo_user_basics_id(orderBasics.getUser_basics_id());//发起人id（购买人）
-			// capitalAccountList.add(capitalAccount);
-			// insertNum=capitalAccountMapper.batchInsertCapitalAccount(capitalAccountList);
-			// }
 
 		}
 		return insertNum;
@@ -330,10 +286,20 @@ public class OrderServiceImpl implements OrderService {
 		OrderBasics orderBasics = basicOrderMapper.findOrderOne(map);// 根据订单id查询订单
 		if(orderBasics.getOrder_type()==1||orderBasics.getOrder_type()==2){
 			map.put("order_status",4);
-		}else{
-			map.put("order_status",3);
 		}
 		basicOrderMapper.updateFinishOrder(map);// 将订单状态修改为已完成
+        List<OrderStore> los=basicOrderMapper.findOrderStore(orderBasics.getOrder_id());
+        double amountPrice=0.00;
+        //addIntergral(Integer user_basics_id,Integer order_id,Double amountPrice,Double integral,Integer series)
+        for(int i=0;i<los.size();i++){
+
+            // 根据商品id查询商品类型
+            StoreBasics storeBasics = basicStoreMapper.findStoreBasics(los.get(i).getStore_id());
+            storeBasics.getProfit_monry();
+            amountPrice+=storeBasics.getProfit_monry()*los.get(i).getStore_num()*0.1;
+
+        }
+
 		// 根据商品id查询商品类型
 		StoreBasics storeBasics = basicStoreMapper.findStoreBasics(orderBasics.getStore_id());
 		if (storeBasics.getStore_type() == 1) { // 商品类型为1则说明该商品能进行升级返利
@@ -341,75 +307,105 @@ public class OrderServiceImpl implements OrderService {
 			BasicsUser basicsUser = basicUserMapper.findUserBasics(orderBasics.getUser_basics_id());
 			int user_basics_id=basicsUser.getUser_basics_id();//购买人用户编号
 			// 查询该用户上级(推荐人)信息
-			BasicsUser commendUsers = userRecommendMapper.selectRecommendById(basicsUser.getUser_basics_id());
+			BasicsUser commendUsers = userRecommendMapper.selectRecommendById(user_basics_id);
 			int supgrade=commendUsers.getUser_grade_id();//推荐人等级
 			int storeNum = orderBasics.getStore_amount();// 获取购买数量
-			int commenduserId = commendUsers.getUser_basics_id();// （推荐人）上级用户id
-			double amountPrice = (storeBasics.getStore_price() + storeBasics.getOther_price()) * storeNum;// 算出已商品价格为准的总价
-			
-			//将用户购买课程获得的用户信息及订单信息插入当班表中
-			UserDuty userDuty  = new UserDuty();
-		    userDuty.setUser_basics_id(basicsUser.getUser_basics_id());
-			userDuty.setOrder_id(order_id);
-			userDuty.setIf_duty(0);
-			userDuty.setAdd_date(System.currentTimeMillis());
-			userDuty.setSource_type(1);
-			if(orderBasics.getOrder_type()==2){
-				userDuty.setSource_type(3);
-			}
-			userDuty.setStore_id(storeBasics.getStore_id());
-			int userDutys =userDutyMapper.addUserDuty(userDuty);
-			if(supgrade<2||commendUsers.getUser_basics_id()==1){//过滤上级为游客的 及摩尔卡巴
+			int commenduserId = commendUsers.getUser_basics_id();// 一级上级用户id
+			double profitMonry = (storeBasics.getProfit_monry() + storeBasics.getOther_price()) * storeNum;// 算出已商品可分配利润
+
+
+			if(commendUsers.getUser_basics_id()==1){//过滤上级为游客的 及摩尔卡巴
 				return OrderIds;
 			}
-			
-			Double store_price = Double.valueOf(orderBasics.getAll_price());// 订单价格
-			String share = "share" + supgrade + storeBasics.getCourse_type();//
-			String shares = String.valueOf(GlobalStatic.json.get(share));
-			double commendIntegral = 0.00;// 上级获取的积分
-			double userIntegral = 0.00;// 用户获取积分
-			int sharePrice = 0;// 用户获取的（未激活）快乐豆初始化参数
-			try {
-				int sharess = Integer.valueOf(shares);
-				sharePrice = sharess;
-			} catch (Exception e) {
-				double sharess = Double.valueOf(shares);
-				sharePrice = new Double(amountPrice * sharess).intValue();
-			}
-			if (shares == null || shares.equals("")) {// 当前商品无购买奖励
-				return OrderIds;
-			}
-			//判断推荐用户是否为总公司会员
-			UserInformationEntity ufe1 = userInformationMapper
-					.selectUserInformationEntityToUserId(user_basics_id);
-			if (ufe1.getCompany_id() == 1) {
-				// 给推荐用户加积分,快乐豆（积分为未激活状态）
-				HashMap<String, Object> commendUserAchievementMap = new HashMap<String, Object>();// 未激活积分map
-				commendUserAchievementMap.put("integrals_no_active", amountPrice);// 推荐人未激活积分
-				commendUserAchievementMap.put("user_basics_id", commenduserId);
-				commendUserAchievementMap.put("integral_no_active", sharePrice);// 用户未激活快乐豆
-				userAchievementMapper.updateArchivement1(commendUserAchievementMap);// 修改未激活积分
-			}
+           // addIntergral(Integer user_basics_id,Integer order_id,Double amountPrice,Double integral,Integer series)
+            addIntergral(user_basics_id,order_id,profitMonry);//自己添加奖金
 
-			// 添加用户积分快乐豆
-			UserInformationEntity ufe2 = userInformationMapper
-					.selectUserInformationEntityToUserId(basicsUser.getUser_basics_id());
-			if (ufe2.getCompany_id() == 1) {
-				// 给用户加积分（积分和快乐豆均未激活）
-				HashMap<String, Object> userAchievementMap = new HashMap<String, Object>();// 未激活积分map
-				userAchievementMap.put("integrals_no_active", amountPrice);// 用户未激活积分
-				userAchievementMap.put("user_basics_id", basicsUser.getUser_basics_id());// 用户未激活快乐豆
-				//UserAchievement userAchievement1 = userAchievementMapper.findUserAchievementAll(basicsUser.getUser_basics_id());
-				userAchievementMapper.updateArchivement1(userAchievementMap);// 修改未激活积分
-
-				
-			}
+            //一级上级添加奖金
+            BasicsUser commendUsers1 = userRecommendMapper.selectRecommendById(user_basics_id);
+            if(commendUsers1!=null&&commendUsers1.getUser_basics_id()!=1){
+                addIntergral(commendUsers1.getUser_basics_id(),order_id,profitMonry);//一级添加奖金
+                //二级上级添加奖金
+                BasicsUser commendUsers2 = userRecommendMapper.selectRecommendById(commendUsers1.getUser_basics_id());
+                if(commendUsers2!=null&&commendUsers2.getUser_basics_id()!=1){
+                    addIntergral(commendUsers2.getUser_basics_id(),order_id,profitMonry);//二级添加奖金
+                    //三级上级添加奖金
+                    BasicsUser commendUsers3= userRecommendMapper.selectRecommendById(commendUsers2.getUser_basics_id());
+                    if(commendUsers3!=null&&commendUsers3.getUser_basics_id()!=1){
+                        addIntergral(commendUsers3.getUser_basics_id(),order_id,profitMonry);//三级添加奖金
+                    }
+                }
+            }
 
 		}
 
 		return OrderIds;
 
 	}
+
+	public void addIntergral(Integer user_basics_id,Integer order_id,Double amountPrice){
+        // 添加积分
+        HashMap<String, Object> bonusMap = new HashMap<String, Object>();// 加积分
+        bonusMap.put("user_basics_id", user_basics_id);
+        bonusMap.put("integral_bonus",(double)amountPrice);
+        bonusMap.put("conver_num",(double)amountPrice*0.01);// 加积分
+        userIntegralMapper.updateIntegralBonus1(bonusMap);
+        userAchievementMapper.updateArchivement1(bonusMap);
+        UserWeixin uw3 = userWeixinMapper
+                .findUserWeixinUserBasicsOne(user_basics_id);// 购买人微信信息,包含姓名
+
+        // 上级添加积分快乐豆
+        HashMap<String, Object> bonusMap1 = new HashMap<String, Object>();// 加积分
+        bonusMap1.put("user_basics_id", user_basics_id);
+        bonusMap.put("integral_bonus",amountPrice);
+        bonusMap.put("integral_basics",amountPrice);
+        bonusMap1.put("conver_num",amountPrice);// 加积分
+        userIntegralMapper.updateIntegralBonus1(bonusMap1);
+        bonusMap1.put("records_integral", amountPrice);// 加快乐豆
+        bonusMap1.put("conver_num",(double) amountPrice*0.01);// 减积分
+        userAchievementMapper.updateArchivement1(bonusMap1);// 加历史积分,减去未激活快乐豆
+        //上级钱包加钱流水
+        UserMoneyAccountEntity um=new UserMoneyAccountEntity();
+        um.setUser_basics_id(user_basics_id);
+        um.setAccount_value(amountPrice);
+        um.setAccount_add_date(System.currentTimeMillis());
+        um.setAccount_explain("团队购买返利");
+        um.setAccount_reason(3);
+        um.setAccount_correlation_id(order_id);
+        userMoneyAccountMapper.insertUserMoneyAccount(um);
+        //钱包加钱
+        basicUserMapper.updateUserMoneyPlus(amountPrice,user_basics_id);
+        //流水
+        IntegralAccount ilt = new IntegralAccount();
+        ilt.setAccount_option("integral_bonus");
+        ilt.setUser_basics_id(user_basics_id);// 用户编号
+        ilt.setAccount_option_name("奖金");
+        ilt.setAccount_add_date(System.currentTimeMillis());
+        ilt.setIntegral_account_num(String.valueOf(amountPrice));// 提成
+        ilt.setIntegral_account_explain(uw3.getWeixin_nickname()
+                + "购买获取快乐豆奖励");
+        ilt.setIntegral_account_type(1);
+        ilt.setIntegral_trigger(order_id);// 订单编号
+        integralMapper.addIntegralAccount(ilt);
+        // 添加消息提示
+        UserMessage ume = new UserMessage();
+        ume.setUser_basics_id(user_basics_id);
+        ume.setTb_id(order_id);
+        ume.setTb_name("order_basics");
+        ume.setMessage_type(2);
+        ume.setAdd_date(System.currentTimeMillis());
+        ume.setIf_read(0);
+        SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        java.util.Date dt = new Date();
+        String update2 = sdf2.format(dt);
+        BasicsUser bus1 = basicUserMapper.findUserBasics(user_basics_id);
+        String message = "您好，您的会员\"" + uw3.getWeixin_nickname() + "\"已完成订单,获取推广奖励:" + amountPrice + "奖金。";
+
+
+        String message_content = PrivateMessages.getPushMessage(update2, message);
+        ume.setMessage_content(message_content);
+        userMessageMapper.addMessage(ume);
+    }
+
 
 	@Override
 	public StoreBasics selectStoreBasicsId(int store_id) {
