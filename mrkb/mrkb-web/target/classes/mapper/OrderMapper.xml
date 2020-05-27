@@ -59,6 +59,9 @@
 		 and a.order_type=#{order_type,jdbcType=INTEGER}
 		</if>
 	</select>
+    <select id="findOrderStore" resultType="com.mrkb.dao.modle.order.OrderStore" parameterType="int">
+       select * from order_store where order_id=#{order_id,jdbcType=INTEGER}
+    </select>
 	<select id="findRefundOne" resultType="com.mrkb.dao.modle.order.OrderRefund" parameterType="java.util.HashMap">
 		select * from order_refund 
 		 WHERE 1=1
