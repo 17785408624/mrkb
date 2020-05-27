@@ -32,7 +32,6 @@ public class VueTestServiceImpl implements VueTestService {
 		try {
 			r = dao.del(id);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			log.error("删除异常");
 		}

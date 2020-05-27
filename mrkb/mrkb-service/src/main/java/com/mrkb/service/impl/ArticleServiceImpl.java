@@ -15,6 +15,7 @@ import com.mrkb.service.ArticleService;
 public class ArticleServiceImpl implements ArticleService{
 	@Resource
 	private ArticleMapper articleMapper;
+
  
 	@Override
 	public List<ArticleEntity> findAllArticle(ArticleEntity articleEntity) {
