@@ -34,7 +34,7 @@ public class StoreBasics {//商品信息
 	private  Integer gift_user_basics_id;//会员名称
 	private  Long  business_date;//交易时间
 	private Integer shelf_state;  //是否下架(1.否，2是)
-    private Double profit_monry;//利润
+    private Double profit_money;//利润
     private Integer business_id;//商家编号
 	public String getUser_nickname() {
 		return user_nickname;
@@ -219,12 +219,12 @@ public class StoreBasics {//商品信息
 		this.shelf_state = shelf_state;
 	}
 
-    public Double getProfit_monry() {
-        return profit_monry;
+    public Double getProfit_money() {
+        return profit_money;
     }
 
-    public void setProfit_monry(Double profit_monry) {
-        this.profit_monry = profit_monry;
+    public void setProfit_money(Double profit_money) {
+        this.profit_money = profit_money;
     }
 
     public Integer getBusiness_id() {
@@ -268,7 +268,7 @@ public class StoreBasics {//商品信息
                 ", gift_user_basics_id=" + gift_user_basics_id +
                 ", business_date=" + business_date +
                 ", shelf_state=" + shelf_state +
-                ", profit_monry=" + profit_monry +
+                ", profit_money=" + profit_money +
                 ", business_id=" + business_id +
                 '}';
     }

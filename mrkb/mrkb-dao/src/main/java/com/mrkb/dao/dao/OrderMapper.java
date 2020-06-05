@@ -79,7 +79,7 @@ public interface OrderMapper {
 	List<OrderBasics> selectOrderBasicsToAnd(OrderBasics orderBasics);
 
     List<OrderStore> findOrderStore(int order_id);
-	
-	
+
+    int addOrderStores(@Param("emps") List<OrderStore> emps);
 	
 }

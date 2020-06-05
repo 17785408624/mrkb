@@ -7,6 +7,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.mrkb.dao.modle.order.*;
+import net.sf.json.JSON;
 import org.apache.shiro.session.SessionException;
 import org.dom4j.DocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.mrkb.common.util.ResponseData;
-import com.mrkb.dao.modle.order.OrderAddr;
-import com.mrkb.dao.modle.order.OrderBasics;
-import com.mrkb.dao.modle.order.OrderRefund;
-import com.mrkb.dao.modle.order.OrderRestore;
-import com.mrkb.dao.modle.order.OrderSupplement;
 import com.mrkb.dao.modle.store.StoreBasics;
 import com.mrkb.dao.modle.store.UserDuty;
 import com.mrkb.service.AccountService;
@@ -52,13 +49,13 @@ public class OrderController {
 	 * 添加单个订单
 	 * 
 	 * @param request
-	 * @param jsonData
+	 * @param
 	 * @return
 	 * @throws Exception
 	 */
 	@RequestMapping("addOrder")
 	@ResponseBody
-	public ResponseData addStore(HttpServletResponse response, HttpServletRequest request) {// 添加订单
+	public ResponseData addStore(HttpServletResponse response, HttpServletRequest request,@RequestBody OrderBasics sb) {// 添加订单
 		ResponseData rs = new ResponseData();
 		System.out.println("进入添加单个订单");
 		SessionEntity se = null;
@@ -69,58 +66,77 @@ public class OrderController {
 			e.printStackTrace();
 		}
 		Integer user_basics_id = 0;
-
+        HashMap<String, Object> map = new HashMap<String, Object>();
 		try {
 			user_basics_id = se.getUser_basics_id();
 		} catch (Exception e) {
 			rs.setIsSuccess(false);
 			return rs;
 		}
+        List<OrderStore> ols=sb.getLos();
+		double all_price=0.00;
+		double profit=0.00;
+        for(int i=0;i<ols.size();i++){
+            int store_id=ols.get(i).getStore_id();
+            int num=ols.get(i).getStore_num();
+            // 查询商品名称
+            StoreBasics sbs = new StoreBasics();
+            sbs.setStore_id(store_id);
+            StoreBasics returnsb = orderService.findStoreBasics(store_id);
+            all_price+=returnsb.getStore_price()*num;
+            profit+=returnsb.getProfit_money()*num;
+            if(i==0){
+                sb.setStore_picture(returnsb.getStore_picture());
+                sb.setOrder_type(returnsb.getStore_type());
+                sb.setStore_id(returnsb.getStore_id());
+                map.put("store_picture", returnsb.getStore_picture());
+            }
+        }
 
-		OrderBasics sb = new OrderBasics();
+
+
 		long time = System.currentTimeMillis();
 		Long order_add_date = time;
 		int order_status = 2;
 		Long order_edit_date = time;
 
-		int store_id = Integer.valueOf(request.getParameter("store_id"));
-		// 查询商品名称
-		StoreBasics sbs = new StoreBasics();
-		sbs.setStore_id(store_id);
-		StoreBasics returnsb = orderService.findStoreBasics(store_id);
 
-		String order_addr = request.getParameter("order_addr");
-		String store_picture = returnsb.getStore_picture();
-		double store_price = returnsb.getStore_price();
-		int store_amount = Integer.valueOf(request.getParameter("store_amount"));
-		double all_price = store_price * store_amount;
+
+		String order_addr = sb.getOrder_addr();
+
+
 		sb.setOrder_addr(order_addr);
-		sb.setStore_picture(store_picture);
+        sb.setProfit(profit);
 		sb.setOrder_add_date(order_add_date);
 		sb.setOrder_status(order_status);
 		sb.setOrder_edit_date(order_edit_date);
 		sb.setUser_basics_id(user_basics_id);
-		sb.setStore_id(store_id);
-		sb.setStore_amount(store_amount);
 		sb.setAll_price(all_price);
-		sb.setOrder_type(returnsb.getStore_type());
+
 		sb.setPayment_date(0l);
 
-		// 查询商品名称
-		sbs.setStore_id(store_id);
+
+
 
 		String user_name = request.getParameter("user_name");
 		String tel_phone = request.getParameter("tel_phone");
 
-		HashMap<String, Object> map = new HashMap<String, Object>();
+
 		map.put("user_name", user_name);
 		map.put("tel_phone", tel_phone);
 		map.put("order_addr", order_addr);
-		map.put("store_picture", store_picture);
+
 		map.put("send_date", time);
 		
 
 		OrderBasics obs = orderService.addOrder(sb, map);
+
+        for(int i=0;i<ols.size();i++){
+            ols.get(i).setOrder_id(obs.getOrder_id());
+        }
+        orderService.addOrderStores(ols);//添加订单包含的商品
+
+
 		rs.setData(obs);
 		rs.setIsSuccess(true);
 		rs.setMessage("添加成功");
@@ -132,7 +148,7 @@ public class OrderController {
 	 * 查询单个订单
 	 * 
 	 * @param request
-	 * @param jsonData
+	 * @param
 	 * @return
 	 */
 	@RequestMapping("findOrderOne")
@@ -186,7 +202,7 @@ public class OrderController {
 	 * 查询个人所有订单
 	 * 
 	 * @param request
-	 * @param jsonData
+	 * @param
 	 * @return
 	 */
 	@RequestMapping("findOrder")
@@ -247,7 +263,7 @@ public class OrderController {
 	 * 删除单个订单
 	 * 
 	 * @param request
-	 * @param jsonData
+	 * @param
 	 * @return
 	 */
 	@ResponseBody
@@ -290,7 +306,7 @@ public class OrderController {
 	 * 修改单个订单
 	 * 
 	 * @param request
-	 * @param jsonData
+	 * @param
 	 * @return
 	 */
 	@ResponseBody
@@ -337,7 +353,7 @@ public class OrderController {
 	 * 添加收货地址
 	 * 
 	 * @param request
-	 * @param jsonData
+	 * @param
 	 * @return
 	 * @throws Exception
 	 */
@@ -376,7 +392,7 @@ public class OrderController {
 	 * 申请退款
 	 * 
 	 * @param request
-	 * @param jsonData
+	 * @param
 	 * @return
 	 */
 	@ResponseBody
@@ -428,7 +444,7 @@ public class OrderController {
 	 * 查询收货地址
 	 * 
 	 * @param request
-	 * @param jsonData
+	 * @param
 	 * @return
 	 * @throws Exception
 	 */
@@ -463,7 +479,7 @@ public class OrderController {
 	 * 查询默认收货地址
 	 * 
 	 * @param request
-	 * @param jsonData
+	 * @param
 	 * @return
 	 * @throws Exception
 	 */
@@ -496,7 +512,7 @@ public class OrderController {
 	 * 查询单个收货地址
 	 * 
 	 * @param request
-	 * @param jsonData
+	 * @param
 	 * @return
 	 * @throws Exception
 	 */
@@ -534,7 +550,7 @@ public class OrderController {
 	 * 设置收货默认地址
 	 * 
 	 * @param request
-	 * @param jsonData
+	 * @param
 	 * @return
 	 * @throws Exception
 	 */
@@ -571,7 +587,7 @@ public class OrderController {
 	 * 修改收货地址
 	 * 
 	 * @param request
-	 * @param jsonData
+	 * @param
 	 * @return
 	 * @throws Exception
 	 */
@@ -615,7 +631,7 @@ public class OrderController {
 	 * 删除收货地址
 	 * 
 	 * @param request
-	 * @param jsonData
+	 * @param
 	 * @return
 	 * @throws Exception
 	 */
@@ -649,7 +665,7 @@ public class OrderController {
 	 * 申请退款
 	 * 
 	 * @param request
-	 * @param jsonData
+	 * @param
 	 * @return
 	 */
 	@ResponseBody
@@ -689,7 +705,7 @@ public class OrderController {
 	 * 申请退货
 	 * 
 	 * @param request
-	 * @param jsonData
+	 * @param
 	 * @return
 	 */
 	@ResponseBody
@@ -748,7 +764,7 @@ public class OrderController {
 	 * 当班
 	 * 
 	 * @param request
-	 * @param jsonData
+	 * @param
 	 * @return
 	 */
 	@ResponseBody

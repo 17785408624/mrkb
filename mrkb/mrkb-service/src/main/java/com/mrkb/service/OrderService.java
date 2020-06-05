@@ -3,12 +3,10 @@ package com.mrkb.service;
 import java.util.HashMap;
 import java.util.List;
 
+import com.mrkb.dao.modle.order.*;
+import org.apache.ibatis.annotations.Param;
 import org.dom4j.DocumentException;
 
-import com.mrkb.dao.modle.order.OrderBasics;
-import com.mrkb.dao.modle.order.OrderRefund;
-import com.mrkb.dao.modle.order.OrderRestore;
-import com.mrkb.dao.modle.order.OrderSupplement;
 import com.mrkb.dao.modle.store.StoreBasics;
 
 
@@ -72,4 +70,6 @@ public interface OrderService {
 	 * @throws
 	 */
 	List<HashMap<String,Object>> adminFindOrderStatusByPage(HashMap<String,Object> map);//后台查询所有订单
+
+    int addOrderStores(@Param("emps") List<OrderStore> emps);
 }

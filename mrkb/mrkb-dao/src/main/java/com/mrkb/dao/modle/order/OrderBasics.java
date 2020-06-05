@@ -1,5 +1,7 @@
 package com.mrkb.dao.modle.order;
 
+import java.util.List;
+
 public class OrderBasics {
 	private Integer order_id;//订单id
 	private Long order_add_date;//订单添加时间
@@ -14,7 +16,18 @@ public class OrderBasics {
 	private Double all_price;//订单总价
 	private Integer order_type;//订单类型
 	private Long payment_date;//付款时间
-	public Integer getOrder_id() {
+    private List<OrderStore> los;//订单包含的商品
+    private Double profit;//利润
+
+    public List<OrderStore> getLos() {
+        return los;
+    }
+
+    public void setLos(List<OrderStore> los) {
+        this.los = los;
+    }
+
+    public Integer getOrder_id() {
 		return order_id;
 	}
 	public void setOrder_id(Integer order_id) {
@@ -92,18 +105,33 @@ public class OrderBasics {
 	public void setPayment_date(Long payment_date) {
 		this.payment_date = payment_date;
 	}
-	@Override
-	public String toString() {
-		return "OrderBasics [order_id=" + order_id + ", order_add_date="
-				+ order_add_date + ", order_status=" + order_status
-				+ ", order_edit_date=" + order_edit_date + ", user_basics_id="
-				+ user_basics_id + ", add_user_basics_id=" + add_user_basics_id
-				+ ", store_id=" + store_id + ", store_amount=" + store_amount
-				+ ", order_addr=" + order_addr + ", store_picture="
-				+ store_picture + ", all_price=" + all_price + ", order_type="
-				+ order_type + ", payment_date=" + payment_date + "]";
-	}
-	
 
-	
+    public Double getProfit() {
+        return profit;
+    }
+
+    public void setProfit(Double profit) {
+        this.profit = profit;
+    }
+
+    @Override
+    public String toString() {
+        return "OrderBasics{" +
+                "order_id=" + order_id +
+                ", order_add_date=" + order_add_date +
+                ", order_status=" + order_status +
+                ", order_edit_date=" + order_edit_date +
+                ", user_basics_id=" + user_basics_id +
+                ", add_user_basics_id=" + add_user_basics_id +
+                ", store_id=" + store_id +
+                ", store_amount=" + store_amount +
+                ", order_addr='" + order_addr + '\'' +
+                ", store_picture='" + store_picture + '\'' +
+                ", all_price=" + all_price +
+                ", order_type=" + order_type +
+                ", payment_date=" + payment_date +
+                ", los=" + los +
+                ", profit=" + profit +
+                '}';
+    }
 }

@@ -281,7 +281,13 @@
 		and store_id=#{store_id,jdbcType=INTEGER}
 		and user_basics_id=#{user_basics_id,jdbcType=INTEGER}
 	</select>
-	
+    <insert id="addOrderStores">
+        INSERT INTO order_store(order_id,store_id,store_num)
+        VALUES
+        <foreach collection="emps" item="emp" separator=",">
+            (#{emp.order_id},#{emp.store_id},#{emp.store_num})
+        </foreach>
+	</insert>
 	
 	
 </mapper>

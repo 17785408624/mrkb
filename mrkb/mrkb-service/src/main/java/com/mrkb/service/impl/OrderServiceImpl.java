@@ -217,7 +217,12 @@ public class OrderServiceImpl implements OrderService {
 		return basicOrderMapper.adminFindOrderStatusByPage(map);
 	}
 
-	@Override
+    @Override
+    public int addOrderStores(List<OrderStore> emps) {
+        return basicOrderMapper.addOrderStores(emps);
+    }
+
+    @Override
 	public OrderRefund refund(HashMap<String, Object> map, OrderRefund orderRefund) {
 		OrderBasics orderBasics = basicOrderMapper.findOrderOne(map);
 		Double refund_money = orderBasics.getAll_price();
