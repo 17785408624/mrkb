@@ -300,8 +300,8 @@ public class OrderServiceImpl implements OrderService {
 
             // 根据商品id查询商品类型
             StoreBasics storeBasics = basicStoreMapper.findStoreBasics(los.get(i).getStore_id());
-            storeBasics.getProfit_monry();
-            amountPrice+=storeBasics.getProfit_monry()*los.get(i).getStore_num()*0.1;
+            storeBasics.getProfit_money();
+            amountPrice+=storeBasics.getProfit_money()*los.get(i).getStore_num()*0.1;
 
         }
 
@@ -316,7 +316,7 @@ public class OrderServiceImpl implements OrderService {
 			int supgrade=commendUsers.getUser_grade_id();//推荐人等级
 			int storeNum = orderBasics.getStore_amount();// 获取购买数量
 			int commenduserId = commendUsers.getUser_basics_id();// 一级上级用户id
-			double profitMonry = (storeBasics.getProfit_monry() + storeBasics.getOther_price()) * storeNum;// 算出已商品可分配利润
+			double profitMonry = (storeBasics.getProfit_money() + storeBasics.getOther_price()) * storeNum;// 算出已商品可分配利润
 
 
 			if(commendUsers.getUser_basics_id()==1){//过滤上级为游客的 及摩尔卡巴
